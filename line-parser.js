@@ -1,50 +1,8 @@
-const FULL_URL_MATCHER = /^(https?):\/\/(.+)$/
-const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
-
-let URLclass = null
-
-function parseURL(url) {
-  if (typeof window !== 'undefined' && window.URL) {
-    return new window.URL(url)
-  }
-
-  URLclass = URLclass || require('url')
-  return URLclass.parse(url)
-}
-
-class Result {
-  constructor() {
-    this.success = []
-    this.errors = []
-  }
-
-  addSuccess(redirect) {
-    this.success.push(redirect)
-  }
-
-  addError(idx, line, options) {
-    const reason = options && options.reason
-    this.errors.push({
-      lineNum: idx + 1,
-      line,
-      reason
-    })
-  }
-}
-
-function parseFullOrigin(origin) {
-  let url = null
-  try {
-    url = parseURL(origin)
-  } catch (e) {
-    return null
-  }
-
-  return { host: url.host, scheme: url.protocol.replace(/:$/, ''), path: url.path }
-}
+const Result = require('./result')
+const common = require('./common')
 
 function splatForwardRule(redirect, nextPart) {
-  return redirect.path.match(/\/\*$/) && nextPart.match(FORWARD_STATUS_MATCHER)
+  return redirect.path.match(/\/\*$/) && nextPart.match(common.FORWARD_STATUS_MATCHER)
 }
 
 function arrayToObj(source) {
@@ -77,7 +35,7 @@ function redirectMatch(line) {
   }
 
   const origin = parts.shift()
-  const redirect = origin.match(FULL_URL_MATCHER) ? parseFullOrigin(origin) : { path: origin }
+  const redirect = origin.match(common.FULL_URL_MATCHER) ? common.parseFullOrigin(origin) : { path: origin }
   if (redirect == null || !parts.length) {
     return null
   }
@@ -85,7 +43,7 @@ function redirectMatch(line) {
   if (splatForwardRule(redirect, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
-    const newHostRuleIdx = parts.findIndex(el => el.match(/^\//) || el.match(FULL_URL_MATCHER))
+    const newHostRuleIdx = parts.findIndex(el => el.match(/^\//) || el.match(common.FULL_URL_MATCHER))
     if (newHostRuleIdx < 0) {
       return null
     }
@@ -125,14 +83,6 @@ function redirectMatch(line) {
   return redirect
 }
 
-function isInvalidSource(redirect) {
-  return redirect.path.match(/^\/\.netlify/)
-}
-
-function isProxy(redirect) {
-  return redirect.proxy || (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
-}
-
 function parse(text) {
   const result = new Result()
 
@@ -148,12 +98,12 @@ function parse(text) {
       return
     }
 
-    if (isInvalidSource(redirect)) {
+    if (common.isInvalidSource(redirect)) {
       result.addError(idx, line, { reason: 'Invalid /.netlify path in redirect source' })
       return
     }
 
-    if (isProxy(redirect)) {
+    if (common.isProxy(redirect)) {
       redirect.proxy = true
     }
 
