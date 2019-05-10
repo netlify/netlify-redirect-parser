@@ -17,7 +17,10 @@ module.exports = {
     return redirect.path.match(/^\/\.netlify/)
   },
   isProxy: function(redirect) {
-    return redirect.proxy || (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
+    return (
+      redirect.proxy ||
+      (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
+    )
   },
   parseFullOrigin: function(origin) {
     let url = null
@@ -27,6 +30,10 @@ module.exports = {
       return null
     }
 
-    return { host: url.host, scheme: url.protocol.replace(/:$/, ''), path: url.path }
-  }
+    return {
+      host: url.host,
+      scheme: url.protocol.replace(/:$/, ''),
+      path: url.path,
+    }
+  },
 }

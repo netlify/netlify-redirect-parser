@@ -16,7 +16,7 @@ redirects = [
       { path: '/home', to: '/' },
       { path: '/admin/*', to: '/admin/:splat', status: 200, force: true },
       { path: '/index', to: '/', status: 302 },
-      { path: '/from', to: '/to', status: 302 }
+      { path: '/from', to: '/to', status: 302 },
     ],
     result.success
   )
@@ -36,7 +36,12 @@ test('redirects with parameter matches', t => {
     [
       { path: '/', to: '/news', params: { page: 'news' } },
       { path: '/blog', to: '/blog/:post_id', params: { post: ':post_id' } },
-      { path: '/', to: '/about', params: { _escaped_fragment_: '/about' }, status: 301 }
+      {
+        path: '/',
+        to: '/about',
+        params: { _escaped_fragment_: '/about' },
+        status: 301,
+      },
     ],
     result.success
   )
@@ -51,7 +56,14 @@ redirects = [
 
   const result = parser.parse(source)
   t.deepEqual(
-    [{ host: 'hello.bitballoon.com', scheme: 'http', path: '/*', to: 'http://www.hello.com/:splat' }],
+    [
+      {
+        host: 'hello.bitballoon.com',
+        scheme: 'http',
+        path: '/*',
+        to: 'http://www.hello.com/:splat',
+      },
+    ],
     result.success
   )
 })
@@ -64,7 +76,17 @@ test('proxy instruction', t => {
 `
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/api/*', to: 'https://api.bitballoon.com/*', status: 200, proxy: true }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/api/*',
+        to: 'https://api.bitballoon.com/*',
+        status: 200,
+        proxy: true,
+      },
+    ],
+    result.success
+  )
 })
 
 test('headers on proxy rule', t => {
@@ -76,7 +98,15 @@ test('headers on proxy rule', t => {
 
   const result = parser.parse(source)
   t.deepEqual(
-    [{ path: '/', to: 'https://api.bitballoon.com', status: 200, headers: { anything: 'something' }, proxy: true }],
+    [
+      {
+        path: '/',
+        to: 'https://api.bitballoon.com',
+        status: 200,
+        headers: { anything: 'something' },
+        proxy: true,
+      },
+    ],
     result.success
   )
 })
@@ -92,8 +122,18 @@ test('redirect country conditions', t => {
   const result = parser.parse(source)
   t.deepEqual(
     [
-      { path: '/', to: '/china', status: 302, conditions: { Country: ['ch', 'tw'] } },
-      { path: '/', to: '/china', status: 302, conditions: { Country: ['il'], Language: ['en'] } }
+      {
+        path: '/',
+        to: '/china',
+        status: 302,
+        conditions: { Country: ['ch', 'tw'] },
+      },
+      {
+        path: '/',
+        to: '/china',
+        status: 302,
+        conditions: { Country: ['il'], Language: ['en'] },
+      },
     ],
     result.success
   )
@@ -122,8 +162,18 @@ test('redirect role conditions', t => {
   const result = parser.parse(source)
   t.deepEqual(
     [
-      { path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: ['admin'] } },
-      { path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: ['admin', 'member'] } }
+      {
+        path: '/admin/*',
+        to: '/admin/:splat',
+        status: 200,
+        conditions: { Role: ['admin'] },
+      },
+      {
+        path: '/admin/*',
+        to: '/admin/:splat',
+        status: 200,
+        conditions: { Role: ['admin', 'member'] },
+      },
     ],
     result.success
   )

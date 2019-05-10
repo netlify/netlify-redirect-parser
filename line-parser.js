@@ -2,7 +2,10 @@ const Result = require('./result')
 const common = require('./common')
 
 function splatForwardRule(redirect, nextPart) {
-  return redirect.path.match(/\/\*$/) && nextPart.match(common.FORWARD_STATUS_MATCHER)
+  return (
+    redirect.path.match(/\/\*$/) &&
+    nextPart.match(common.FORWARD_STATUS_MATCHER)
+  )
 }
 
 function arrayToObj(source) {
@@ -35,7 +38,9 @@ function redirectMatch(line) {
   }
 
   const origin = parts.shift()
-  const redirect = origin.match(common.FULL_URL_MATCHER) ? common.parseFullOrigin(origin) : { path: origin }
+  const redirect = origin.match(common.FULL_URL_MATCHER)
+    ? common.parseFullOrigin(origin)
+    : { path: origin }
   if (redirect == null || !parts.length) {
     return null
   }
@@ -43,7 +48,9 @@ function redirectMatch(line) {
   if (splatForwardRule(redirect, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
-    const newHostRuleIdx = parts.findIndex(el => el.match(/^\//) || el.match(common.FULL_URL_MATCHER))
+    const newHostRuleIdx = parts.findIndex(
+      el => el.match(/^\//) || el.match(common.FULL_URL_MATCHER)
+    )
     if (newHostRuleIdx < 0) {
       return null
     }
@@ -99,7 +106,9 @@ function parse(text) {
     }
 
     if (common.isInvalidSource(redirect)) {
-      result.addError(idx, line, { reason: 'Invalid /.netlify path in redirect source' })
+      result.addError(idx, line, {
+        reason: 'Invalid /.netlify path in redirect source',
+      })
       return
     }
 

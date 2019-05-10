@@ -18,7 +18,7 @@ test('simple redirects', t => {
       { path: '/home', to: '/' },
       { path: '/blog/my-post.php', to: '/blog/my-post' },
       { path: '/blog/my-post-ads.php', to: '/blog/my-post#ads' },
-      { path: '/news', to: '/blog' }
+      { path: '/news', to: '/blog' },
     ],
     result.success
   )
@@ -38,7 +38,7 @@ test('redirects with status codes', t => {
       { path: '/home', to: '/', status: 301 },
       { path: '/my-redirect', to: '/', status: 302 },
       { path: '/pass-through', to: '/', status: 200 },
-      { path: '/ecommerce', to: '/store-closed', status: 404 }
+      { path: '/ecommerce', to: '/store-closed', status: 404 },
     ],
     result.success
   )
@@ -55,7 +55,12 @@ test('redirects with parameter matches', t => {
     [
       { path: '/', to: '/news', params: { page: 'news' } },
       { path: '/blog', to: '/blog/:post_id', params: { post: ':post_id' } },
-      { path: '/', to: '/about', params: { _escaped_fragment_: '/about' }, status: 301 }
+      {
+        path: '/',
+        to: '/about',
+        params: { _escaped_fragment_: '/about' },
+        status: 301,
+      },
     ],
     result.success
   )
@@ -66,7 +71,14 @@ test('redirects with full hostname', t => {
 
   const result = parser.parse(source)
   t.deepEqual(
-    [{ host: 'hello.bitballoon.com', scheme: 'http', path: '/*', to: 'http://www.hello.com/:splat' }],
+    [
+      {
+        host: 'hello.bitballoon.com',
+        scheme: 'http',
+        path: '/*',
+        to: 'http://www.hello.com/:splat',
+      },
+    ],
     result.success
   )
 })
@@ -75,42 +87,94 @@ test('proxy instruction', t => {
   const source = `/api/*  https://api.bitballoon.com/*   200`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/api/*', to: 'https://api.bitballoon.com/*', status: 200, proxy: true }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/api/*',
+        to: 'https://api.bitballoon.com/*',
+        status: 200,
+        proxy: true,
+      },
+    ],
+    result.success
+  )
 })
 
 test('redirect with country conditions', t => {
   const source = `/  /china 302 Country=ch,tw`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/', to: '/china', status: 302, conditions: { Country: 'ch,tw' } }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/',
+        to: '/china',
+        status: 302,
+        conditions: { Country: 'ch,tw' },
+      },
+    ],
+    result.success
+  )
 })
 
 test('redirect with country and language conditions', t => {
   const source = `/  /china 302 Country=il Language=en`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/', to: '/china', status: 302, conditions: { Country: 'il', Language: 'en' } }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/',
+        to: '/china',
+        status: 302,
+        conditions: { Country: 'il', Language: 'en' },
+      },
+    ],
+    result.success
+  )
 })
 
 test('splat based redirect with no force instruction', t => {
   const source = `/*  https://www.bitballoon.com/:splat 301`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301 }], result.success)
+  t.deepEqual(
+    [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301 }],
+    result.success
+  )
 })
 
 test('splat based redirect with force instruction', t => {
   const source = `/*  https://www.bitballoon.com/:splat 301!`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301, force: true }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/*',
+        to: 'https://www.bitballoon.com/:splat',
+        status: 301,
+        force: true,
+      },
+    ],
+    result.success
+  )
 })
 
 test('redirect rule with equal', t => {
   const source = `/test https://www.bitballoon.com/test=hello 301`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/test', to: 'https://www.bitballoon.com/test=hello', status: 301 }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/test',
+        to: 'https://www.bitballoon.com/test=hello',
+        status: 301,
+      },
+    ],
+    result.success
+  )
 })
 
 test('some real world edge case rules', t => {
@@ -123,18 +187,27 @@ test('some real world edge case rules', t => {
           to: '/donate/usa?source=:source&email=:email',
           params: { source: ':source', email: ':email' },
           status: 302,
-          conditions: { Country: 'us' }
-        }
-      ]
+          conditions: { Country: 'us' },
+        },
+      ],
     },
     {
       source: `/ https://origin.wework.com 200`,
-      result: [{ path: '/', to: 'https://origin.wework.com', status: 200, proxy: true }]
+      result: [
+        {
+          path: '/',
+          to: 'https://origin.wework.com',
+          status: 200,
+          proxy: true,
+        },
+      ],
     },
     {
       source: `/:lang/locations/* /locations/:splat 200`,
-      result: [{ path: '/:lang/locations/*', to: '/locations/:splat', status: 200 }]
-    }
+      result: [
+        { path: '/:lang/locations/*', to: '/locations/:splat', status: 200 },
+      ],
+    },
   ]
   cases.forEach(testcase => {
     const result = parser.parse(testcase.source)
@@ -203,10 +276,15 @@ test('complicated _redirects file', t => {
 })
 
 test('long _redirects file', t => {
-  const source = fs.readFileSync('./test-files/redirects', { encoding: 'utf-8' })
+  const source = fs.readFileSync('./test-files/redirects', {
+    encoding: 'utf-8',
+  })
 
   const result = parser.parse(source)
-  t.deepEqual([640, 734, 917, 918, 919, 920, 987], result.errors.map(e => e.lineNum))
+  t.deepEqual(
+    [640, 734, 917, 918, 919, 920, 987],
+    result.errors.map(e => e.lineNum)
+  )
   t.truthy(result.success.length > 0)
 })
 
@@ -221,7 +299,7 @@ test('redirect with proxy signing', t => {
       status: 200,
       force: true,
       signed: 'API_SECRET',
-      proxy: true
+      proxy: true,
     },
     result.success[0]
   )
@@ -249,7 +327,7 @@ https://www.ximble.com/* https://www.ximble.com/au/:splat 301! Country=au
       to: 'https://www.ximble.com/au/:splat',
       status: 301,
       force: true,
-      conditions: { Country: 'au' }
+      conditions: { Country: 'au' },
     },
     result.success[0]
   )
@@ -259,7 +337,17 @@ test('redirect role conditions', t => {
   const source = `/admin/*  /admin/:splat 200 Role=admin`
 
   const result = parser.parse(source)
-  t.deepEqual([{ path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: 'admin' } }], result.success)
+  t.deepEqual(
+    [
+      {
+        path: '/admin/*',
+        to: '/admin/:splat',
+        status: 200,
+        conditions: { Role: 'admin' },
+      },
+    ],
+    result.success
+  )
 })
 
 test('redirect with multiple roles', t => {
@@ -267,7 +355,14 @@ test('redirect with multiple roles', t => {
 
   const result = parser.parse(source)
   t.deepEqual(
-    [{ path: '/member/*', to: '/member/:splat', status: 200, conditions: { Role: 'admin,member' } }],
+    [
+      {
+        path: '/member/*',
+        to: '/member/:splat',
+        status: 200,
+        conditions: { Role: 'admin,member' },
+      },
+    ],
     result.success
   )
 })
@@ -281,7 +376,7 @@ test('parse forward rule', t => {
   t.deepEqual(
     [
       { path: '/admin/*', to: '/admin/:splat', status: 200 },
-      { path: '/admin/*', to: '/admin/:splat', status: 200, force: true }
+      { path: '/admin/*', to: '/admin/:splat', status: 200, force: true },
     ],
     result.success
   )
