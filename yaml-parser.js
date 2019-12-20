@@ -1,4 +1,3 @@
-const TOML = require('@iarna/toml')
 const Result = require('./result')
 const {
   isPlainObj,
@@ -6,12 +5,13 @@ const {
   isInvalidSource,
   isProxy,
 } = require('./common')
+const yaml = require('yamljs')
 
 function parse(source) {
   const result = new Result()
-  const config = TOML.parse(source)
+  const config = yaml.parse(source)
 
-  if (!config.redirects) {
+  if (!Array.isArray(config.redirects)) {
     return result
   }
 
