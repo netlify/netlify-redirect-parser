@@ -1,4 +1,3 @@
-const TOML = require('@iarna/toml')
 const Result = require('./result')
 const {
   isPlainObj,
@@ -6,12 +5,13 @@ const {
   isInvalidSource,
   isProxy,
 } = require('./common')
+const resolveConfig = require('@netlify/config')
 
-function parse(source) {
+async function parse(filePath) {
   const result = new Result()
-  const config = TOML.parse(source)
+  const config = await resolveConfig(filePath)
 
-  if (!config.redirects) {
+  if (!Array.isArray(config.redirects)) {
     return result
   }
 

@@ -1,5 +1,10 @@
+const fs = require('fs')
+const { promisify } = require('util')
+
 const Result = require('./result')
 const common = require('./common')
+
+const readFileAsync = promisify(fs.readFile)
 
 function splatForwardRule(redirect, nextPart) {
   return (
@@ -90,8 +95,9 @@ function redirectMatch(line) {
   return redirect
 }
 
-function parse(text) {
+async function parse(filePath) {
   const result = new Result()
+  const text = await readFileAsync(filePath, 'utf-8')
 
   text.split('\n').forEach((line, idx) => {
     line = line.trim()
