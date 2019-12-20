@@ -2,7 +2,7 @@
 
 This is a small node library for parsing Netlify's redirect rules.
 
-It works with `_redirect`, `netlify.toml` and `netlify.yml` files and will
+It works with `_redirect`, `netlify.toml`, `netlify.yml` and `netlify.json` files and will
 turn the rules into a canonical list of object literals representing
 the parsed rules
 
