@@ -52,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/netlify/node-redirects-parser.git"
+    "url": "git+https://github.com/netlify/netlify-redirect-parser.git"
   },
   "bugs": {
-    "url": "https://github.com/netlify/node-redirects-parser/issues"
+    "url": "https://github.com/netlify/netlify-redirect-parser/issues"
   },
-  "homepage": "https://github.com/netlify/node-redirects-parser#readme"
+  "homepage": "https://github.com/netlify/netlify-redirect-parser#readme"
 }
