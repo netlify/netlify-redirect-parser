@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const Result = require('./result')
 const common = require('./common')
 
@@ -90,8 +92,9 @@ function redirectMatch(line) {
   return redirect
 }
 
-function parse(text) {
+function parse(filePath) {
   const result = new Result()
+  const text = fs.readFileSync(filePath, 'utf-8')
 
   text.split('\n').forEach((line, idx) => {
     line = line.trim()
