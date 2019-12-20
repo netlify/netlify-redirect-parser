@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { promisify } = require('utils')
+const { promisify } = require('util')
 
 const Result = require('./result')
 const common = require('./common')
