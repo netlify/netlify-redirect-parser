@@ -25,8 +25,11 @@
     "gh-release": "^3.5.0"
   },
   "files": [
+    "common.js",
     "index.js",
-    "line-parser.js"
+    "line-parser.js",
+    "netlify-config-parser.js",
+    "result.js"
   ],
   "husky": {
     "hooks": {
