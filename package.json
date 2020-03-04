@@ -14,7 +14,7 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "@netlify/config": "^0.1.12"
+    "@netlify/config": "^0.3.0"
   },
   "devDependencies": {
     "husky": "^2.2.0",
