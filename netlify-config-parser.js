@@ -7,9 +7,9 @@ const {
 } = require('./common')
 const resolveConfig = require('@netlify/config')
 
-async function parse(filePath) {
+async function parse(configPath) {
   const result = new Result()
-  const { config } = await resolveConfig(filePath)
+  const { config } = await resolveConfig({ config: configPath })
 
   if (!Array.isArray(config.redirects)) {
     return result
