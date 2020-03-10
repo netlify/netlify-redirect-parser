@@ -1,0 +1,10 @@
+# Send all traffic from Australia to the right country URL
+http://ximble.com.au/* https://www.ximble.com/au/:splat 301! Country=au
+http://www.ximble.com.au/* https://www.ximble.com/au/:splat 301! Country=au
+https://ximble.com.au/* https://www.ximble.com/au/:splat 301! Country=au
+https://www.ximble.com.au/* https://www.ximble.com/au/:splat 301! Country=au
+https://www.ximble.com/* https://www.ximble.com/au/:splat 301! Country=au
+
+# Pages on NimbleSchedule.com that have changed
+/about-us     /about
+/easy-employee-scheduling/    /scheduling
