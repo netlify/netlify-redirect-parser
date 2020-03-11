@@ -1,0 +1,21 @@
+redirects:
+  - from: /old-path
+    to: /new-path
+    status: 301
+    force: false
+    query:
+      path: ':path'
+    conditions:
+      Language:
+        - en
+      Country:
+        - US
+      Role:
+        - admin
+  - from: /search
+    to: 'https://api.mysearch.com'
+    status: 200
+    force: true
+    headers:
+      X-From: Netlify
+    signed: API_SIGNATURE_TOKEN

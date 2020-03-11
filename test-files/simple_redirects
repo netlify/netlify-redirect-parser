@@ -1,0 +1,4 @@
+/home              /
+/blog/my-post.php  /blog/my-post # this is just an old leftover
+/blog/my-post-ads.php  /blog/my-post#ads # this is a valid anchor with a comment
+/news              /blog
