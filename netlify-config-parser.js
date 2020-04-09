@@ -7,15 +7,17 @@ const {
 } = require('./common')
 const resolveConfig = require('@netlify/config')
 
-async function parse(configPath) {
+async function parse(config) {
   const result = new Result()
-  const { config } = await resolveConfig({ config: configPath })
+  const {
+    config: { redirects },
+  } = await resolveConfig({ config })
 
-  if (!Array.isArray(config.redirects)) {
+  if (!Array.isArray(redirects)) {
     return result
   }
 
-  config.redirects.forEach((obj, idx) => {
+  redirects.forEach((obj, idx) => {
     if (!isPlainObj(obj)) {
       result.addError(idx, obj)
       return
