@@ -14,7 +14,7 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "@netlify/config": "^0.9.1"
+    "@netlify/config": "^0.11.1"
   },
   "devDependencies": {
     "auto-changelog": "^1.13.0",
