@@ -1,3 +1,4 @@
+const isPlainObj = require('lodash.isplainobject')
 let URLclass = null
 
 function parseURL(url) {
@@ -18,10 +19,6 @@ function splatForwardRule(path, obj, dest) {
     obj.status < 300 &&
     obj.force
   )
-}
-
-function isPlainObj(o) {
-  return typeof o == 'object' && o.constructor == Object
 }
 
 function fetch(obj, options) {
