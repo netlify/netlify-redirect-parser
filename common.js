@@ -1,30 +1,27 @@
 const isPlainObj = require('lodash.isplainobject')
+
 let URLclass = null
 
 function parseURL(url) {
+  /* eslint-disable node/no-unsupported-features/node-builtins */
   if (typeof window !== 'undefined' && window.URL) {
     return new window.URL(url)
+    /* eslint-enable node/no-unsupported-features/node-builtins */
   }
 
+  // eslint-disable-next-line node/global-require
   URLclass = URLclass || require('url')
-  return URLclass.parse(url)
+  return new URLclass.URL(url)
 }
 
 function splatForwardRule(path, obj, dest) {
-  return (
-    path.match(/\/\*$/) &&
-    dest == null &&
-    obj.status &&
-    obj.status >= 200 &&
-    obj.status < 300 &&
-    obj.force
-  )
+  return path.match(/\/\*$/) && dest == null && obj.status && obj.status >= 200 && obj.status < 300 && obj.force
 }
 
 function fetch(obj, options) {
-  for (const i in options) {
-    if (obj.hasOwnProperty(options[i])) {
-      return obj[options[i]]
+  for (const option in options) {
+    if (Object.prototype.hasOwnProperty.call(obj, options[option])) {
+      return obj[options[option]]
     }
   }
   return null
@@ -32,10 +29,7 @@ function fetch(obj, options) {
 
 function redirectMatch(obj) {
   const origin = fetch(obj, ['from', 'origin'])
-  const redirect =
-    origin && origin.match(exp.FULL_URL_MATCHER)
-      ? exp.parseFullOrigin(origin)
-      : { path: origin }
+  const redirect = origin && origin.match(exp.FULL_URL_MATCHER) ? exp.parseFullOrigin(origin) : { path: origin }
   if (redirect == null || (redirect.path == null && redirect.host == null)) {
     return null
   }
@@ -58,7 +52,7 @@ function redirectMatch(obj) {
   redirect.headers = fetch(obj, ['headers'])
   redirect.signed = fetch(obj, ['sign', 'signing', 'signed'])
 
-  Object.keys(redirect).forEach(key => {
+  Object.keys(redirect).forEach((key) => {
     if (redirect[key] === null) {
       delete redirect[key]
     }
@@ -79,27 +73,24 @@ const exp = {
   FULL_URL_MATCHER: /^(https?):\/\/(.+)$/,
   FORWARD_STATUS_MATCHER: /^2\d\d!?$/,
 
-  isInvalidSource: function(redirect) {
+  isInvalidSource(redirect) {
     return redirect.path.match(/^\/\.netlify/)
   },
-  isProxy: function(redirect) {
-    return (
-      redirect.proxy ||
-      (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
-    )
+  isProxy(redirect) {
+    return redirect.proxy || (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
   },
-  parseFullOrigin: function(origin) {
+  parseFullOrigin(origin) {
     let url = null
     try {
       url = parseURL(origin)
-    } catch (e) {
+    } catch (error) {
       return null
     }
 
     return {
       host: url.host,
       scheme: url.protocol.replace(/:$/, ''),
-      path: url.path,
+      path: url.pathname,
     }
   },
 }

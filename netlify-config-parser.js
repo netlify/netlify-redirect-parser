@@ -1,11 +1,7 @@
-const Result = require('./result')
-const {
-  isPlainObj,
-  redirectMatch,
-  isInvalidSource,
-  isProxy,
-} = require('./common')
 const resolveConfig = require('@netlify/config')
+
+const { isPlainObj, redirectMatch, isInvalidSource, isProxy } = require('./common')
+const Result = require('./result')
 
 async function parse(config) {
   const result = new Result()
