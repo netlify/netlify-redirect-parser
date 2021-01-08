@@ -1,16 +1,13 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const Result = require('./result')
 const common = require('./common')
+const Result = require('./result')
 
 const readFileAsync = promisify(fs.readFile)
 
 function splatForwardRule(redirect, nextPart) {
-  return (
-    redirect.path.match(/\/\*$/) &&
-    nextPart.match(common.FORWARD_STATUS_MATCHER)
-  )
+  return redirect.path.match(/\/\*$/) && nextPart.match(common.FORWARD_STATUS_MATCHER)
 }
 
 function arrayToObj(source) {
@@ -29,33 +26,29 @@ function parseStatus(source) {
     return null
   }
 
-  return [parseInt(source, 10), source.match(/\!$/)]
+  return [Number.parseInt(source, 10), source.match(/!$/)]
 }
 
 function redirectMatch(line) {
-  const allParts = line.split(/\s+/).map(el => el.trim())
+  const allParts = line.split(/\s+/).map((el) => el.trim())
   let parts = []
-  for (const i in allParts) {
-    if (allParts[i].match(/^#/)) {
+  for (const part in allParts) {
+    if (allParts[part].match(/^#/)) {
       break
     }
-    parts.push(allParts[i])
+    parts.push(allParts[part])
   }
 
   const origin = parts.shift()
-  const redirect = origin.match(common.FULL_URL_MATCHER)
-    ? common.parseFullOrigin(origin)
-    : { path: origin }
-  if (redirect == null || !parts.length) {
+  const redirect = origin.match(common.FULL_URL_MATCHER) ? common.parseFullOrigin(origin) : { path: origin }
+  if (redirect == null || parts.length === 0) {
     return null
   }
 
   if (splatForwardRule(redirect, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
-    const newHostRuleIdx = parts.findIndex(
-      el => el.match(/^\//) || el.match(common.FULL_URL_MATCHER)
-    )
+    const newHostRuleIdx = parts.findIndex((el) => el.match(/^\//) || el.match(common.FULL_URL_MATCHER))
     if (newHostRuleIdx < 0) {
       return null
     }
@@ -81,13 +74,13 @@ function redirectMatch(line) {
     }
   }
 
-  if (parts.length) {
+  if (parts.length !== 0) {
     const kv = arrayToObj(parts)
     if (kv.Sign) {
       redirect.signed = kv.Sign
       delete kv.Sign
     }
-    if (Object.keys(kv).length) {
+    if (Object.keys(kv).length !== 0) {
       redirect.conditions = kv
     }
   }
