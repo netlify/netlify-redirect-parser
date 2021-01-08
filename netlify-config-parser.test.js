@@ -36,34 +36,3 @@ test('netlify.toml redirects parsing', async (t) => {
     },
   ])
 })
-
-test('netlify.yml redirects parsing', async (t) => {
-  const result = await parser.parse(path.resolve(testFilesDir, 'netlify.yml'))
-  t.deepEqual(result.success, [
-    {
-      path: '/old-path',
-      to: '/new-path',
-      status: 301,
-      conditions: {
-        Country: ['US'],
-        Language: ['en'],
-        Role: ['admin'],
-      },
-      force: false,
-      params: {
-        path: ':path',
-      },
-    },
-    {
-      path: '/search',
-      to: 'https://api.mysearch.com',
-      status: 200,
-      force: true,
-      signed: 'API_SIGNATURE_TOKEN',
-      proxy: true,
-      headers: {
-        'X-From': 'Netlify',
-      },
-    },
-  ])
-})
