@@ -11,6 +11,9 @@
   "keywords": [
     "netlify"
   ],
+  "engines": {
+    "node": ">=8.17.0"
+  },
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
