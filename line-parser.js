@@ -33,14 +33,14 @@ function redirectMatch(line) {
   const allParts = line.split(/\s+/).map((el) => el.trim())
   let parts = []
   for (const part in allParts) {
-    if (allParts[part].match(/^#/)) {
+    if (/^#/.test(allParts[part])) {
       break
     }
     parts.push(allParts[part])
   }
 
   const origin = parts.shift()
-  const redirect = origin.match(common.FULL_URL_MATCHER) ? common.parseFullOrigin(origin) : { path: origin }
+  const redirect = common.FULL_URL_MATCHER.test(origin) ? common.parseFullOrigin(origin) : { path: origin }
   if (redirect == null || parts.length === 0) {
     return null
   }
@@ -94,7 +94,7 @@ async function parse(filePath) {
 
   text.split('\n').forEach((line, idx) => {
     line = line.trim()
-    if (line == '' || line.match(/^#/)) {
+    if (line == '' || /^#/.test(line)) {
       return
     }
 

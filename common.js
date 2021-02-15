@@ -29,7 +29,7 @@ function fetch(obj, options) {
 
 function redirectMatch(obj) {
   const origin = fetch(obj, ['from', 'origin'])
-  const redirect = origin && origin.match(exp.FULL_URL_MATCHER) ? exp.parseFullOrigin(origin) : { path: origin }
+  const redirect = origin && exp.FULL_URL_MATCHER.test(origin) ? exp.parseFullOrigin(origin) : { path: origin }
   if (redirect == null || (redirect.path == null && redirect.host == null)) {
     return null
   }
