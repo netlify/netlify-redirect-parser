@@ -164,7 +164,7 @@ test('complicated _redirects file', async (t) => {
 test('long _redirects file', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'redirects'))
   t.deepEqual(
-    result.errors.map((error) => error.lineNum),
+    result.errors.map(({ lineNum }) => lineNum),
     [640, 734, 917, 918, 919, 920, 987],
   )
   t.true(result.success.length !== 0)
