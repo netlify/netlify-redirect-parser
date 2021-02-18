@@ -2,7 +2,7 @@
   "name": "netlify-redirect-parser",
   "version": "3.0.3",
   "description": "Parses netlify redirects into a js object representation",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "run-s format test:dev",
     "test:dev": "ava",
@@ -38,11 +38,8 @@
     "nyc": "^15.1.0"
   },
   "files": [
-    "common.js",
-    "index.js",
-    "line-parser.js",
-    "netlify-config-parser.js",
-    "result.js"
+    "src/**/*.js",
+    "!src/**/*.test.js"
   ],
   "husky": {
     "hooks": {
