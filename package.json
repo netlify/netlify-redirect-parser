@@ -33,7 +33,7 @@
     "lodash.isplainobject": "^4.0.6"
   },
   "devDependencies": {
-    "@netlify/eslint-config-node": "^2.6.0",
+    "@netlify/eslint-config-node": "^2.6.1",
     "ava": "^2.4.0",
     "nyc": "^15.1.0"
   },
