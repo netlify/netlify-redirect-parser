@@ -4,6 +4,7 @@
   "description": "Parses netlify redirects into a js object representation",
   "main": "src/index.js",
   "scripts": {
+    "prepublishOnly": "npm ci && npm test",
     "test": "run-s format test:dev",
     "test:dev": "ava",
     "test:ci": "nyc -r lcovonly -r text -r json ava",
