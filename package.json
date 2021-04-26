@@ -30,11 +30,11 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "@netlify/config": "^6.2.0",
+    "@netlify/config": "^6.2.1",
     "lodash.isplainobject": "^4.0.6"
   },
   "devDependencies": {
-    "@netlify/eslint-config-node": "^2.6.3",
+    "@netlify/eslint-config-node": "^2.6.4",
     "ava": "^2.4.0",
     "nyc": "^15.1.0"
   },
