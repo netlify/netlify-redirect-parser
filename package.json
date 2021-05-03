@@ -30,7 +30,7 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "@netlify/config": "^6.4.1",
+    "@netlify/config": "^6.4.2",
     "lodash.isplainobject": "^4.0.6"
   },
   "devDependencies": {
