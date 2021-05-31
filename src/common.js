@@ -1,5 +1,7 @@
 const { URL } = require('url')
 
+const filterObj = require('filter-obj')
+
 function addSuccess(result, object) {
   return { ...result, success: [...result.success, object] }
 }
@@ -18,14 +20,30 @@ function isProxy(redirect) {
 
 const FULL_URL_MATCHER = /^(https?):\/\/(.+)$/
 
-function parseFullOrigin(origin) {
-  try {
-    const { host, protocol, pathname } = new URL(origin)
-    const scheme = protocol.slice(0, -1)
-    return { host, scheme, path: pathname }
-  } catch (error) {
-    return null
+function parseFrom(from) {
+  if (from === undefined) {
+    return {}
   }
+
+  if (!FULL_URL_MATCHER.test(from)) {
+    return { path: from }
+  }
+
+  try {
+    const { host, protocol, pathname: path } = new URL(from)
+    const scheme = protocol.slice(0, -1)
+    return { scheme, host, path }
+  } catch (error) {
+    return {}
+  }
+}
+
+function isDefined(key, value) {
+  return value !== undefined
+}
+
+function removeUndefinedValues(object) {
+  return filterObj(object, isDefined)
 }
 
 module.exports = {
@@ -34,5 +52,6 @@ module.exports = {
   isInvalidSource,
   isProxy,
   FULL_URL_MATCHER,
-  parseFullOrigin,
+  parseFrom,
+  removeUndefinedValues,
 }

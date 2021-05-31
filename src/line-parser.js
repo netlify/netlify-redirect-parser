@@ -1,7 +1,15 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const { addSuccess, addError, isInvalidSource, isProxy, FULL_URL_MATCHER, parseFullOrigin } = require('./common')
+const {
+  addSuccess,
+  addError,
+  isInvalidSource,
+  isProxy,
+  FULL_URL_MATCHER,
+  parseFrom,
+  removeUndefinedValues,
+} = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -35,15 +43,19 @@ function isPathOrUrl(part) {
 }
 
 function redirectMatch(line) {
-  let [origin, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
-
-  const redirect = FULL_URL_MATCHER.test(origin) ? parseFullOrigin(origin) : { path: origin }
-  if (redirect == null || parts.length === 0) {
+  let [from, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
+  if (parts.length === 0) {
     return null
   }
 
-  if (splatForwardRule(redirect.path, parts[0])) {
-    redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
+  const { scheme, host, path } = parseFrom(from)
+  if (path === undefined) {
+    return null
+  }
+
+  const redirect = {}
+  if (splatForwardRule(path, parts[0])) {
+    redirect.to = path.replace(/\/\*$/, '/:splat')
   } else {
     const newHostRuleIdx = parts.findIndex(isPathOrUrl)
     if (newHostRuleIdx < 0) {
@@ -60,7 +72,7 @@ function redirectMatch(line) {
   }
 
   if (parts.length === 0) {
-    return { ...redirect, force: false }
+    return removeUndefinedValues({ ...redirect, scheme, host, path, force: false })
   }
 
   const part = parts.shift()
@@ -82,7 +94,7 @@ function redirectMatch(line) {
     }
   }
 
-  return redirect
+  return removeUndefinedValues({ ...redirect, scheme, host, path })
 }
 
 function trimLine(line) {

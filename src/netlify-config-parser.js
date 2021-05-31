@@ -1,15 +1,10 @@
 const resolveConfig = require('@netlify/config')
-const filterObj = require('filter-obj')
 const isPlainObj = require('is-plain-obj')
 
-const { addSuccess, addError, isInvalidSource, isProxy, FULL_URL_MATCHER, parseFullOrigin } = require('./common')
+const { addSuccess, addError, isInvalidSource, isProxy, parseFrom, removeUndefinedValues } = require('./common')
 
 function splatForwardRule(path, status, force, to) {
   return path.endsWith('/*') && to == null && status && status >= 200 && status < 300 && force
-}
-
-function isDefined(key, value) {
-  return value !== undefined
 }
 
 function redirectMatch({
@@ -28,13 +23,8 @@ function redirectMatch({
   signing = signed,
   sign = signing,
 }) {
-  const redirect = from && FULL_URL_MATCHER.test(from) ? parseFullOrigin(from) : { path: from }
-  if (redirect == null) {
-    return null
-  }
-
-  const { host, scheme, path } = redirect
-  if (path == null && host == null) {
+  const { scheme, host, path } = parseFrom(from)
+  if (path === undefined) {
     return null
   }
 
@@ -48,10 +38,18 @@ function redirectMatch({
     return null
   }
 
-  return filterObj(
-    { host, scheme, path, to: finalTo, params: query, status, force, conditions, headers, signed: sign },
-    isDefined,
-  )
+  return removeUndefinedValues({
+    host,
+    scheme,
+    path,
+    to: finalTo,
+    params: query,
+    status,
+    force,
+    conditions,
+    headers,
+    signed: sign,
+  })
 }
 
 function parseRedirect(result, obj, idx) {
