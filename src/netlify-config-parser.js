@@ -32,11 +32,8 @@ async function parse(config) {
       return
     }
 
-    if (isProxy(redirect)) {
-      redirect.proxy = true
-    }
-
-    result.addSuccess(redirect)
+    const proxy = isProxy(redirect)
+    result.addSuccess({ ...redirect, proxy })
   })
 
   return result
