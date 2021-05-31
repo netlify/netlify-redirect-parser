@@ -1,4 +1,4 @@
-const isPlainObj = require('lodash.isplainobject')
+const isPlainObj = require('is-plain-obj')
 
 let URLclass = null
 
@@ -97,7 +97,6 @@ function parseFullOrigin(origin) {
 
 module.exports = {
   splatForwardRule,
-  isPlainObj,
   redirectMatch,
   addSuccess,
   addError,

@@ -31,7 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "@netlify/config": "^6.7.1",
-    "lodash.isplainobject": "^4.0.6"
+    "is-plain-obj": "^2.1.0"
   },
   "devDependencies": {
     "@netlify/eslint-config-node": "^3.0.4",

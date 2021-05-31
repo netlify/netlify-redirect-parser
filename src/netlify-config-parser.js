@@ -1,6 +1,7 @@
 const resolveConfig = require('@netlify/config')
+const isPlainObj = require('is-plain-obj')
 
-const { isPlainObj, redirectMatch, isInvalidSource, isProxy, addError, addSuccess } = require('./common')
+const { redirectMatch, isInvalidSource, isProxy, addError, addSuccess } = require('./common')
 
 function parseRedirect(result, obj, idx) {
   if (!isPlainObj(obj)) {
