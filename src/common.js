@@ -1,3 +1,5 @@
+const { URL } = require('url')
+
 function addSuccess(result, object) {
   return { ...result, success: [...result.success, object] }
 }
@@ -16,32 +18,13 @@ function isProxy(redirect) {
 
 const FULL_URL_MATCHER = /^(https?):\/\/(.+)$/
 
-let URLclass = null
-
-function parseURL(url) {
-  /* eslint-disable node/no-unsupported-features/node-builtins */
-  if (typeof window !== 'undefined' && window.URL) {
-    return new window.URL(url)
-    /* eslint-enable node/no-unsupported-features/node-builtins */
-  }
-
-  // eslint-disable-next-line node/global-require
-  URLclass = URLclass || require('url')
-  return new URLclass.URL(url)
-}
-
 function parseFullOrigin(origin) {
-  let url = null
   try {
-    url = parseURL(origin)
+    const { host, protocol, pathname } = new URL(origin)
+    const scheme = protocol.slice(0, -1)
+    return { host, scheme, path: pathname }
   } catch (error) {
     return null
-  }
-
-  return {
-    host: url.host,
-    scheme: url.protocol.replace(/:$/, ''),
-    path: url.pathname,
   }
 }
 
