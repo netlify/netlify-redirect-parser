@@ -28,10 +28,13 @@ function parsePairs(conditions) {
   return Object.assign({}, ...conditions.map(parsePair))
 }
 
-const COMMENT_REGEXP = /(^|\s)#.*/u
+function isComment(part) {
+  return part.startsWith('#')
+}
 
-function trimComment(line) {
-  return line.replace(COMMENT_REGEXP, '')
+function trimComment(parts) {
+  const commentIndex = parts.findIndex(isComment)
+  return commentIndex === -1 ? parts : parts.slice(0, commentIndex)
 }
 
 const LINE_TOKENS_REGEXP = /\s+/g
@@ -57,7 +60,7 @@ function parseLastParts([statusPart, ...lastParts]) {
 }
 
 function redirectMatch(line) {
-  const [from, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
+  const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
   if (parts.length === 0) {
     return null
   }
