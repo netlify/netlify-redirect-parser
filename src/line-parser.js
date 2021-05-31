@@ -7,8 +7,8 @@ const readFileAsync = promisify(fs.readFile)
 
 const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
 
-function splatForwardRule(redirect, nextPart) {
-  return redirect.path.match(/\/\*$/) && nextPart.match(FORWARD_STATUS_MATCHER)
+function splatForwardRule(path, nextPart) {
+  return path.endsWith('/*') && nextPart.match(FORWARD_STATUS_MATCHER)
 }
 
 function arrayToObj(source) {
@@ -38,7 +38,7 @@ function redirectMatch(line) {
     return null
   }
 
-  if (splatForwardRule(redirect, parts[0])) {
+  if (splatForwardRule(redirect.path, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
     const newHostRuleIdx = parts.findIndex((el) => el.match(/^\//) || el.match(FULL_URL_MATCHER))
