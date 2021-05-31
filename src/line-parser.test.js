@@ -9,27 +9,52 @@ const testFilesDir = path.resolve('__dirname', '../', 'test-files')
 test('simple redirects', async (t) => {
   const result = await parseRedirectsFormat(path.resolve(testFilesDir, 'simple_redirects'))
   t.deepEqual(result.success, [
-    { path: '/home', to: '/', proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/blog/my-post.php', to: '/blog/my-post', proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/blog/my-post-ads.php', to: '/blog/my-post#ads', proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/news', to: '/blog', proxy: false, force: false, query: {}, conditions: {} },
+    { path: '/home', to: '/', proxy: false, force: false, query: {}, conditions: {}, headers: {} },
+    {
+      path: '/blog/my-post.php',
+      to: '/blog/my-post',
+      proxy: false,
+      force: false,
+      query: {},
+      conditions: {},
+      headers: {},
+    },
+    {
+      path: '/blog/my-post-ads.php',
+      to: '/blog/my-post#ads',
+      proxy: false,
+      force: false,
+      query: {},
+      conditions: {},
+      headers: {},
+    },
+    { path: '/news', to: '/blog', proxy: false, force: false, query: {}, conditions: {}, headers: {} },
   ])
 })
 
 test('redirects with status codes', async (t) => {
   const result = await parseRedirectsFormat(path.resolve(testFilesDir, 'status_code_redirects'))
   t.deepEqual(result.success, [
-    { path: '/home', to: '/', status: 301, proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/my-redirect', to: '/', status: 302, proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/pass-through', to: '/', status: 200, proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/ecommerce', to: '/store-closed', status: 404, proxy: false, force: false, query: {}, conditions: {} },
+    { path: '/home', to: '/', status: 301, proxy: false, force: false, query: {}, conditions: {}, headers: {} },
+    { path: '/my-redirect', to: '/', status: 302, proxy: false, force: false, query: {}, conditions: {}, headers: {} },
+    { path: '/pass-through', to: '/', status: 200, proxy: false, force: false, query: {}, conditions: {}, headers: {} },
+    {
+      path: '/ecommerce',
+      to: '/store-closed',
+      status: 404,
+      proxy: false,
+      force: false,
+      query: {},
+      conditions: {},
+      headers: {},
+    },
   ])
 })
 
 test('redirects with parameter matches', async (t) => {
   const result = await parseRedirectsFormat(path.resolve(testFilesDir, 'parameter_match_redirects'))
   t.deepEqual(result.success, [
-    { path: '/', to: '/news', proxy: false, force: false, query: { page: 'news' }, conditions: {} },
+    { path: '/', to: '/news', proxy: false, force: false, query: { page: 'news' }, conditions: {}, headers: {} },
     {
       path: '/blog',
       to: '/blog/:post_id',
@@ -37,6 +62,7 @@ test('redirects with parameter matches', async (t) => {
       force: false,
       query: { post: ':post_id' },
       conditions: {},
+      headers: {},
     },
     {
       path: '/',
@@ -46,6 +72,7 @@ test('redirects with parameter matches', async (t) => {
       force: false,
       query: { _escaped_fragment_: '/about' },
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -62,6 +89,7 @@ test('redirects with full hostname', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -77,6 +105,7 @@ test('proxy instruction', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -92,6 +121,7 @@ test('redirect with country conditions', async (t) => {
       force: false,
       query: {},
       conditions: { Country: 'ch,tw' },
+      headers: {},
     },
   ])
 })
@@ -107,6 +137,7 @@ test('redirect with country and language conditions', async (t) => {
       force: false,
       query: {},
       conditions: { Country: 'il', Language: 'en' },
+      headers: {},
     },
   ])
 })
@@ -122,6 +153,7 @@ test('splat based redirect with no force instruction', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -137,6 +169,7 @@ test('splat based redirect with force instruction', async (t) => {
       force: true,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -152,6 +185,7 @@ test('redirect rule with equal', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -167,6 +201,7 @@ test('some real world edge case rules', async (t) => {
       force: false,
       query: { source: ':source', email: ':email' },
       conditions: { Country: 'us' },
+      headers: {},
     },
     {
       path: '/',
@@ -176,6 +211,7 @@ test('some real world edge case rules', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
     {
       path: '/:lang/locations/*',
@@ -185,6 +221,7 @@ test('some real world edge case rules', async (t) => {
       force: false,
       query: {},
       conditions: {},
+      headers: {},
     },
   ])
 })
@@ -234,6 +271,7 @@ test('redirect with proxy signing', async (t) => {
     signed: 'API_SECRET',
     query: {},
     conditions: {},
+    headers: {},
   })
 })
 
@@ -249,6 +287,7 @@ test('absolute redirects with country condition', async (t) => {
     force: true,
     query: {},
     conditions: { Country: 'au' },
+    headers: {},
   })
 })
 
@@ -263,6 +302,7 @@ test('redirect role conditions', async (t) => {
       force: false,
       query: {},
       conditions: { Role: 'admin' },
+      headers: {},
     },
   ])
 })
@@ -278,6 +318,7 @@ test('redirect with multiple roles', async (t) => {
       force: false,
       query: {},
       conditions: { Role: 'admin,member' },
+      headers: {},
     },
   ])
 })
@@ -285,8 +326,26 @@ test('redirect with multiple roles', async (t) => {
 test('parse forward rule', async (t) => {
   const result = await parseRedirectsFormat(path.resolve(testFilesDir, 'path_forward_redirects'))
   t.deepEqual(result.success, [
-    { path: '/admin/*', to: '/admin/:splat', status: 200, proxy: false, force: false, query: {}, conditions: {} },
-    { path: '/admin/*', to: '/admin/:splat', status: 200, proxy: false, force: true, query: {}, conditions: {} },
+    {
+      path: '/admin/*',
+      to: '/admin/:splat',
+      status: 200,
+      proxy: false,
+      force: false,
+      query: {},
+      conditions: {},
+      headers: {},
+    },
+    {
+      path: '/admin/*',
+      to: '/admin/:splat',
+      status: 200,
+      proxy: false,
+      force: true,
+      query: {},
+      conditions: {},
+      headers: {},
+    },
   ])
 })
 
