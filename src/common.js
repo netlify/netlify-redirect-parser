@@ -10,8 +10,8 @@ function addError(result, object) {
   return { ...result, errors: [...result.errors, object] }
 }
 
-function isInvalidSource(redirect) {
-  return redirect.path.match(/^\/\.netlify/)
+function isInvalidSource(path) {
+  return path.startsWith('/.netlify')
 }
 
 function isProxy(redirect) {

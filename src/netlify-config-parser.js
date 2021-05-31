@@ -62,7 +62,7 @@ function parseRedirect(result, obj, idx) {
     return addError(result, { lineNum: idx + 1, line: JSON.stringify(obj) })
   }
 
-  if (isInvalidSource(redirect)) {
+  if (isInvalidSource(redirect.path)) {
     return addError(result, {
       lineNum: idx + 1,
       line: JSON.stringify(obj),

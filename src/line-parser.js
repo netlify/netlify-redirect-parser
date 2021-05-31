@@ -96,7 +96,7 @@ function parseRedirect(result, line, idx) {
     return addError(result, { lineNum: idx + 1, line })
   }
 
-  if (isInvalidSource(redirect)) {
+  if (isInvalidSource(redirect.path)) {
     return addError(result, {
       lineNum: idx + 1,
       line,
