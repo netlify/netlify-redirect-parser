@@ -13,6 +13,7 @@ test('netlify.toml redirects parsing', async (t) => {
       path: '/old-path',
       to: '/new-path',
       status: 301,
+      proxy: false,
       conditions: {
         Country: ['US'],
         Language: ['en'],
@@ -27,9 +28,9 @@ test('netlify.toml redirects parsing', async (t) => {
       path: '/search',
       to: 'https://api.mysearch.com',
       status: 200,
+      proxy: true,
       force: true,
       signed: 'API_SIGNATURE_TOKEN',
-      proxy: true,
       headers: {
         'X-From': 'Netlify',
       },
