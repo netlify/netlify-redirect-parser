@@ -61,10 +61,20 @@ function redirectMatch(obj) {
   return redirect
 }
 
+function addSuccess(result, object) {
+  return { ...result, success: [...result.success, object] }
+}
+
+function addError(result, object) {
+  return { ...result, errors: [...result.errors, object] }
+}
+
 const exp = {
   splatForwardRule,
   isPlainObj,
   redirectMatch,
+  addSuccess,
+  addError,
 
   FULL_URL_MATCHER: /^(https?):\/\/(.+)$/,
   FORWARD_STATUS_MATCHER: /^2\d\d!?$/,

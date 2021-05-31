@@ -1,42 +1,34 @@
 const resolveConfig = require('@netlify/config')
 
-const { isPlainObj, redirectMatch, isInvalidSource, isProxy } = require('./common')
-const Result = require('./result')
+const { isPlainObj, redirectMatch, isInvalidSource, isProxy, addError, addSuccess } = require('./common')
 
-async function parse(config) {
-  const result = new Result()
-  const {
-    config: { redirects },
-  } = await resolveConfig({ config })
-
-  if (!Array.isArray(redirects)) {
-    return result
+function parseRedirect(result, obj, idx) {
+  if (!isPlainObj(obj)) {
+    return addError(result, { lineNum: idx + 1, line: String(obj) })
   }
 
-  redirects.forEach((obj, idx) => {
-    if (!isPlainObj(obj)) {
-      result.addError(idx, obj)
-      return
-    }
+  const redirect = redirectMatch(obj)
+  if (!redirect) {
+    return addError(result, { lineNum: idx + 1, line: JSON.stringify(obj) })
+  }
 
-    const redirect = redirectMatch(obj)
-    if (!redirect) {
-      result.addError(idx, JSON.stringify(obj))
-      return
-    }
+  if (isInvalidSource(redirect)) {
+    return addError(result, {
+      lineNum: idx + 1,
+      line: JSON.stringify(obj),
+      reason: 'Invalid /.netlify path in redirect source',
+    })
+  }
 
-    if (isInvalidSource(redirect)) {
-      result.addError(idx, JSON.stringify(obj), {
-        reason: 'Invalid /.netlify path in redirect source',
-      })
-      return
-    }
+  return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
+}
 
-    const proxy = isProxy(redirect)
-    result.addSuccess({ ...redirect, proxy })
-  })
+async function parse(config) {
+  const {
+    config: { redirects = [] },
+  } = await resolveConfig({ config })
 
-  return result
+  return redirects.reduce(parseRedirect, { success: [], errors: [] })
 }
 
 exports.parse = parse
