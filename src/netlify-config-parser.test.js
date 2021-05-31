@@ -15,6 +15,7 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 301,
       proxy: false,
       force: false,
+      signed: false,
       conditions: {
         Country: ['US'],
         Language: ['en'],
@@ -30,8 +31,8 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 200,
       proxy: true,
       force: true,
-      conditions: {},
       signed: 'API_SIGNATURE_TOKEN',
+      conditions: {},
       headers: {
         'X-From': 'Netlify',
       },

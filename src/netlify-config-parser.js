@@ -19,7 +19,7 @@ function redirectMatch({
   parameters,
   params = parameters,
   query = params,
-  signed,
+  signed = false,
   signing = signed,
   sign = signing,
 }) {
@@ -46,9 +46,9 @@ function redirectMatch({
     params: query,
     status,
     force,
+    signed: sign,
     conditions,
     headers,
-    signed: sign,
   })
 }
 

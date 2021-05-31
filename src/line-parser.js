@@ -72,14 +72,14 @@ function redirectMatch(line) {
   const [statusPart, ...lastParts] = parts
 
   if (statusPart === undefined) {
-    return removeUndefinedValues({ ...redirect, scheme, host, path, force: false, conditions: {} })
+    return removeUndefinedValues({ ...redirect, scheme, host, path, force: false, signed: false, conditions: {} })
   }
 
   const status = Number.parseInt(statusPart, 10)
   const force = statusPart.endsWith('!')
-  const { Sign, signed = Sign, ...conditions } = parseConditions(lastParts)
+  const { Sign = false, signed = Sign, ...conditions } = parseConditions(lastParts)
 
-  return removeUndefinedValues({ ...redirect, scheme, host, path, status, force, conditions, signed })
+  return removeUndefinedValues({ ...redirect, scheme, host, path, status, force, signed, conditions })
 }
 
 function trimLine(line) {
