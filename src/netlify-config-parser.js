@@ -27,9 +27,9 @@ function redirectMatch({
   parameters = {},
   params = parameters,
   query = params,
-  signed,
-  signing = signed,
-  sign = signing,
+  sign,
+  signing = sign,
+  signed = signing,
 }) {
   const { scheme, host, path, reason } = parseFrom(from)
   if (reason !== undefined) {
@@ -60,7 +60,7 @@ function redirectMatch({
     force,
     conditions,
     headers,
-    signed: sign,
+    signed,
   }
 }
 
