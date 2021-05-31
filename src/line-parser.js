@@ -71,20 +71,17 @@ function redirectMatch(line) {
     parts = parts.slice(newHostRuleIdx + 1)
   }
 
-  if (parts.length === 0) {
+  const [statusPart, ...lastParts] = parts
+
+  if (statusPart === undefined) {
     return removeUndefinedValues({ ...redirect, scheme, host, path, force: false })
   }
 
-  const part = parts.shift()
-  if (part == null) {
-    redirect.force = false
-  } else {
-    redirect.status = Number.parseInt(part, 10)
-    redirect.force = part.endsWith('!')
-  }
+  const status = Number.parseInt(statusPart, 10)
+  const force = statusPart.endsWith('!')
 
-  if (parts.length !== 0) {
-    const kv = arrayToObj(parts)
+  if (lastParts.length !== 0) {
+    const kv = arrayToObj(lastParts)
     if (kv.Sign) {
       redirect.signed = kv.Sign
       delete kv.Sign
@@ -94,7 +91,7 @@ function redirectMatch(line) {
     }
   }
 
-  return removeUndefinedValues({ ...redirect, scheme, host, path })
+  return removeUndefinedValues({ ...redirect, scheme, host, path, status, force })
 }
 
 function trimLine(line) {
