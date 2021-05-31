@@ -30,6 +30,10 @@ function trimComment(line) {
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
+function isPathOrUrl(part) {
+  return part.startsWith('/') || FULL_URL_MATCHER.test(part)
+}
+
 function redirectMatch(line) {
   let [origin, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
 
@@ -41,7 +45,7 @@ function redirectMatch(line) {
   if (splatForwardRule(redirect, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
-    const newHostRuleIdx = parts.findIndex((el) => el.match(/^\//) || el.match(FULL_URL_MATCHER))
+    const newHostRuleIdx = parts.findIndex(isPathOrUrl)
     if (newHostRuleIdx < 0) {
       return null
     }
