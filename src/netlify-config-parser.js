@@ -73,12 +73,11 @@ function parseRedirect(result, obj, idx) {
   return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
 }
 
-async function parse(config) {
+async function parseNetlifyConfig(config) {
   const {
     config: { redirects = [] },
   } = await resolveConfig({ config })
-
   return redirects.reduce(parseRedirect, { success: [], errors: [] })
 }
 
-exports.parse = parse
+module.exports = { parseNetlifyConfig }
