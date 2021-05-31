@@ -2,7 +2,6 @@ const fs = require('fs')
 const { promisify } = require('util')
 
 const common = require('./common')
-const Result = require('./result')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -92,40 +91,30 @@ function trimLine(line) {
   return line.trim()
 }
 
-async function parse(filePath) {
-  const result = new Result()
-  const text = await readFileAsync(filePath, 'utf-8')
+function parseRedirect(result, line, idx) {
+  if (line === '' || line.startsWith('#')) {
+    return result
+  }
 
-  text
-    .split('\n')
-    .map(trimLine)
-    .forEach((line, idx) => {
-      if (line === '' || line.startsWith('#')) {
-        return
-      }
+  const redirect = redirectMatch(line)
+  if (!redirect) {
+    return common.addError(result, { lineNum: idx + 1, line })
+  }
 
-      const redirect = redirectMatch(line)
-      if (!redirect) {
-        result.addError(idx, line)
-        return
-      }
-
-      if (common.isInvalidSource(redirect)) {
-        result.addError(idx, line, {
-          reason: 'Invalid /.netlify path in redirect source',
-        })
-        return
-      }
-
-      if (common.isProxy(redirect)) {
-        redirect.proxy = true
-      }
-
-      const proxy = common.isProxy(redirect)
-      result.addSuccess({ ...redirect, proxy })
+  if (common.isInvalidSource(redirect)) {
+    return common.addError(result, {
+      lineNum: idx + 1,
+      line,
+      reason: 'Invalid /.netlify path in redirect source',
     })
+  }
 
-  return result
+  return common.addSuccess(result, { ...redirect, proxy: common.isProxy(redirect) })
+}
+
+async function parse(filePath) {
+  const text = await readFileAsync(filePath, 'utf-8')
+  return text.split('\n').map(trimLine).reduce(parseRedirect, { success: [], errors: [] })
 }
 
 exports.parse = parse
