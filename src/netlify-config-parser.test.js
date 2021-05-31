@@ -30,6 +30,7 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 200,
       proxy: true,
       force: true,
+      conditions: {},
       signed: 'API_SIGNATURE_TOKEN',
       headers: {
         'X-From': 'Netlify',

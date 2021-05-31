@@ -10,7 +10,7 @@ function splatForwardRule(path, status, force, to) {
 function redirectMatch({
   status,
   force,
-  conditions,
+  conditions = {},
   headers,
   origin,
   from = origin,
