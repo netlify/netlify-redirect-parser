@@ -88,32 +88,42 @@ function redirectMatch(line) {
   return redirect
 }
 
+function trimLine(line) {
+  return line.trim()
+}
+
 async function parse(filePath) {
   const result = new Result()
   const text = await readFileAsync(filePath, 'utf-8')
 
-  text.split('\n').forEach((line, idx) => {
-    line = line.trim()
-    if (line == '' || /^#/.test(line)) {
-      return
-    }
+  text
+    .split('\n')
+    .map(trimLine)
+    .forEach((line, idx) => {
+      if (line === '' || line.startsWith('#')) {
+        return
+      }
 
-    const redirect = redirectMatch(line)
-    if (!redirect) {
-      result.addError(idx, line)
-      return
-    }
+      const redirect = redirectMatch(line)
+      if (!redirect) {
+        result.addError(idx, line)
+        return
+      }
 
-    if (common.isInvalidSource(redirect)) {
-      result.addError(idx, line, {
-        reason: 'Invalid /.netlify path in redirect source',
-      })
-      return
-    }
+      if (common.isInvalidSource(redirect)) {
+        result.addError(idx, line, {
+          reason: 'Invalid /.netlify path in redirect source',
+        })
+        return
+      }
 
-    const proxy = common.isProxy(redirect)
-    result.addSuccess({ ...redirect, proxy })
-  })
+      if (common.isProxy(redirect)) {
+        redirect.proxy = true
+      }
+
+      const proxy = common.isProxy(redirect)
+      result.addSuccess({ ...redirect, proxy })
+    })
 
   return result
 }
