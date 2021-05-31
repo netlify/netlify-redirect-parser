@@ -6,7 +6,7 @@ const {
   addError,
   isInvalidSource,
   isProxy,
-  FULL_URL_MATCHER,
+  isUrl,
   parseFrom,
   isSplatRule,
   removeUndefinedValues,
@@ -37,7 +37,7 @@ function trimComment(line) {
 const LINE_TOKENS_REGEXP = /\s+/g
 
 function isNewHostPart(part) {
-  return part.startsWith('/') || FULL_URL_MATCHER.test(part)
+  return part.startsWith('/') || isUrl(part)
 }
 
 function parseStatus(statusPart) {

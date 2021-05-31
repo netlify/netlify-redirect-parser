@@ -14,18 +14,22 @@ function isInvalidSource(path) {
   return path.startsWith('/.netlify')
 }
 
-function isProxy(redirect) {
-  return Boolean(redirect.proxy || (/^https?:\/\//.test(redirect.to) && redirect.status === 200))
+function isUrl(pathOrUrl) {
+  return SCHEMES.some((scheme) => pathOrUrl.startsWith(scheme))
 }
 
-const FULL_URL_MATCHER = /^(https?):\/\/(.+)$/
+const SCHEMES = ['http://', 'https://']
+
+function isProxy({ status, to }) {
+  return status === 200 && isUrl(to)
+}
 
 function parseFrom(from) {
   if (from === undefined) {
     return {}
   }
 
-  if (!FULL_URL_MATCHER.test(from)) {
+  if (!isUrl(from)) {
     return { path: from }
   }
 
@@ -55,7 +59,7 @@ module.exports = {
   addError,
   isInvalidSource,
   isProxy,
-  FULL_URL_MATCHER,
+  isUrl,
   isSplatRule,
   parseFrom,
   removeUndefinedValues,
