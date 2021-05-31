@@ -29,7 +29,7 @@ function fetch(obj, options) {
 
 function redirectMatch(obj) {
   const origin = fetch(obj, ['from', 'origin'])
-  const redirect = origin && exp.FULL_URL_MATCHER.test(origin) ? exp.parseFullOrigin(origin) : { path: origin }
+  const redirect = origin && FULL_URL_MATCHER.test(origin) ? parseFullOrigin(origin) : { path: origin }
   if (redirect == null || (redirect.path == null && redirect.host == null)) {
     return null
   }
@@ -69,36 +69,41 @@ function addError(result, object) {
   return { ...result, errors: [...result.errors, object] }
 }
 
-const exp = {
+const FULL_URL_MATCHER = /^(https?):\/\/(.+)$/
+const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
+
+function isInvalidSource(redirect) {
+  return redirect.path.match(/^\/\.netlify/)
+}
+
+function isProxy(redirect) {
+  return Boolean(redirect.proxy || (/^https?:\/\//.test(redirect.to) && redirect.status === 200))
+}
+
+function parseFullOrigin(origin) {
+  let url = null
+  try {
+    url = parseURL(origin)
+  } catch (error) {
+    return null
+  }
+
+  return {
+    host: url.host,
+    scheme: url.protocol.replace(/:$/, ''),
+    path: url.pathname,
+  }
+}
+
+module.exports = {
   splatForwardRule,
   isPlainObj,
   redirectMatch,
   addSuccess,
   addError,
-
-  FULL_URL_MATCHER: /^(https?):\/\/(.+)$/,
-  FORWARD_STATUS_MATCHER: /^2\d\d!?$/,
-
-  isInvalidSource(redirect) {
-    return redirect.path.match(/^\/\.netlify/)
-  },
-  isProxy(redirect) {
-    return Boolean(redirect.proxy || (/^https?:\/\//.test(redirect.to) && redirect.status === 200))
-  },
-  parseFullOrigin(origin) {
-    let url = null
-    try {
-      url = parseURL(origin)
-    } catch (error) {
-      return null
-    }
-
-    return {
-      host: url.host,
-      scheme: url.protocol.replace(/:$/, ''),
-      path: url.pathname,
-    }
-  },
+  FULL_URL_MATCHER,
+  FORWARD_STATUS_MATCHER,
+  isInvalidSource,
+  isProxy,
+  parseFullOrigin,
 }
-
-module.exports = exp
