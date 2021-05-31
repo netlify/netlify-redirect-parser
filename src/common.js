@@ -77,7 +77,7 @@ const exp = {
     return redirect.path.match(/^\/\.netlify/)
   },
   isProxy(redirect) {
-    return redirect.proxy || (redirect.to.match(/^https?:\/\//) && redirect.status === 200)
+    return Boolean(redirect.proxy || (/^https?:\/\//.test(redirect.to) && redirect.status === 200))
   },
   parseFullOrigin(origin) {
     let url = null
