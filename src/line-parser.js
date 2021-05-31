@@ -36,17 +36,17 @@ function parseStatus(source) {
   return [Number.parseInt(source, 10), source.match(/!$/)]
 }
 
-function redirectMatch(line) {
-  const allParts = line.split(/\s+/).map((el) => el.trim())
-  let parts = []
-  for (const part in allParts) {
-    if (/^#/.test(allParts[part])) {
-      break
-    }
-    parts.push(allParts[part])
-  }
+const COMMENT_REGEXP = /(^|\s)#.*/u
 
-  const origin = parts.shift()
+function trimComment(line) {
+  return line.replace(COMMENT_REGEXP, '')
+}
+
+const LINE_TOKENS_REGEXP = /\s+/g
+
+function redirectMatch(line) {
+  let [origin, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
+
   const redirect = FULL_URL_MATCHER.test(origin) ? parseFullOrigin(origin) : { path: origin }
   if (redirect == null || parts.length === 0) {
     return null
