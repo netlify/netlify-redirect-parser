@@ -5,7 +5,7 @@ const isPlainObj = require('is-plain-obj')
 const { addSuccess, addError, isInvalidSource, isProxy, FULL_URL_MATCHER, parseFullOrigin } = require('./common')
 
 function splatForwardRule(path, status, force, to) {
-  return path.match(/\/\*$/) && to == null && status && status >= 200 && status < 300 && force
+  return path.endsWith('/*') && to == null && status && status >= 200 && status < 300 && force
 }
 
 function isDefined(key, value) {
