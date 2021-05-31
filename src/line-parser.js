@@ -15,8 +15,8 @@ const readFileAsync = promisify(fs.readFile)
 
 const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
 
-function splatForwardRule(path, nextPart) {
-  return path.endsWith('/*') && nextPart.match(FORWARD_STATUS_MATCHER)
+function splatForwardRule(path, statusPart) {
+  return path.endsWith('/*') && FORWARD_STATUS_MATCHER.test(statusPart)
 }
 
 function splitCondition(condition) {

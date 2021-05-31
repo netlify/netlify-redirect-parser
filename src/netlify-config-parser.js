@@ -4,7 +4,7 @@ const isPlainObj = require('is-plain-obj')
 const { addSuccess, addError, isInvalidSource, isProxy, parseFrom, removeUndefinedValues } = require('./common')
 
 function splatForwardRule(path, status, force, to) {
-  return path.endsWith('/*') && to == null && status && status >= 200 && status < 300 && force
+  return path.endsWith('/*') && to === undefined && status >= 200 && status < 300 && force
 }
 
 function redirectMatch({
