@@ -1,17 +1,11 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const {
-  FULL_URL_MATCHER,
-  FORWARD_STATUS_MATCHER,
-  isProxy,
-  isInvalidSource,
-  parseFullOrigin,
-  addError,
-  addSuccess,
-} = require('./common')
+const { addSuccess, addError, isInvalidSource, isProxy, FULL_URL_MATCHER, parseFullOrigin } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
+
+const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
 
 function splatForwardRule(redirect, nextPart) {
   return redirect.path.match(/\/\*$/) && nextPart.match(FORWARD_STATUS_MATCHER)
