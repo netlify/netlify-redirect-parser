@@ -31,19 +31,23 @@ function redirectMatch({
   signing = signed,
   sign = signing,
 }) {
-  const { scheme, host, path } = parseFrom(from)
-  if (path === undefined) {
-    return null
+  const { scheme, host, path, reason } = parseFrom(from)
+  if (reason !== undefined) {
+    return { reason }
+  }
+
+  if (isInvalidSource(path)) {
+    return { reason: '"path" field must not start with "/.netlify"' }
   }
 
   const finalTo = splatForwardRule(path, status, force, to) ? path.replace(/\/\*$/, '/:splat') : to
 
-  if (finalTo == null) {
-    return null
+  if (finalTo === undefined) {
+    return { reason: 'Missing "to" field' }
   }
 
   if (!isPlainObj(headers)) {
-    return null
+    return { reason: '"headers" field must be an object' }
   }
 
   return {
@@ -65,17 +69,9 @@ function parseRedirect(result, obj, idx) {
     return addError(result, { lineNum: idx + 1, line: String(obj) })
   }
 
-  const redirect = redirectMatch(obj)
-  if (!redirect) {
-    return addError(result, { lineNum: idx + 1, line: JSON.stringify(obj) })
-  }
-
-  if (isInvalidSource(redirect.path)) {
-    return addError(result, {
-      lineNum: idx + 1,
-      line: JSON.stringify(obj),
-      reason: 'Invalid /.netlify path in redirect source',
-    })
+  const { reason, ...redirect } = redirectMatch(obj)
+  if (reason !== undefined) {
+    return addError(result, { lineNum: idx + 1, line: JSON.stringify(obj), reason })
   }
 
   return addSuccess(result, removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) }))

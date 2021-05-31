@@ -26,7 +26,7 @@ function isProxy({ status, to }) {
 
 function parseFrom(from) {
   if (from === undefined) {
-    return {}
+    return { reason: 'Missing source path/URL' }
   }
 
   if (!isUrl(from)) {
@@ -38,7 +38,7 @@ function parseFrom(from) {
     const scheme = protocol.slice(0, -1)
     return { scheme, host, path }
   } catch (error) {
-    return {}
+    return { reason: `Invalid URL: ${error.message}` }
   }
 }
 

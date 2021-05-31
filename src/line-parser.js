@@ -62,12 +62,16 @@ function parseLastParts([statusPart, ...lastParts]) {
 function redirectMatch(line) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
   if (parts.length === 0) {
-    return null
+    return { reason: 'Missing source or destination path/URL' }
   }
 
-  const { scheme, host, path } = parseFrom(from)
-  if (path === undefined) {
-    return null
+  const { scheme, host, path, reason } = parseFrom(from)
+  if (reason !== undefined) {
+    return { reason }
+  }
+
+  if (isInvalidSource(path)) {
+    return { reason: '"path" field must not start with "/.netlify"' }
   }
 
   if (splatForwardRule(path, parts[0])) {
@@ -78,7 +82,7 @@ function redirectMatch(line) {
 
   const newHostPartIndex = parts.findIndex(isNewHostPart)
   if (newHostPartIndex === -1) {
-    return null
+    return { reason: 'Missing destination path/URL' }
   }
 
   const query = parsePairs(parts.slice(0, newHostPartIndex))
@@ -96,17 +100,9 @@ function parseRedirect(result, line, idx) {
     return result
   }
 
-  const redirect = redirectMatch(line)
-  if (!redirect) {
-    return addError(result, { lineNum: idx + 1, line })
-  }
-
-  if (isInvalidSource(redirect.path)) {
-    return addError(result, {
-      lineNum: idx + 1,
-      line,
-      reason: 'Invalid /.netlify path in redirect source',
-    })
+  const { reason, ...redirect } = redirectMatch(line)
+  if (reason !== undefined) {
+    return addError(result, { lineNum: idx + 1, line, reason })
   }
 
   return addSuccess(result, removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) }))
