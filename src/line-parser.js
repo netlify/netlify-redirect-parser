@@ -1,12 +1,20 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const common = require('./common')
+const {
+  FULL_URL_MATCHER,
+  FORWARD_STATUS_MATCHER,
+  isProxy,
+  isInvalidSource,
+  parseFullOrigin,
+  addError,
+  addSuccess,
+} = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
 function splatForwardRule(redirect, nextPart) {
-  return redirect.path.match(/\/\*$/) && nextPart.match(common.FORWARD_STATUS_MATCHER)
+  return redirect.path.match(/\/\*$/) && nextPart.match(FORWARD_STATUS_MATCHER)
 }
 
 function arrayToObj(source) {
@@ -39,7 +47,7 @@ function redirectMatch(line) {
   }
 
   const origin = parts.shift()
-  const redirect = common.FULL_URL_MATCHER.test(origin) ? common.parseFullOrigin(origin) : { path: origin }
+  const redirect = FULL_URL_MATCHER.test(origin) ? parseFullOrigin(origin) : { path: origin }
   if (redirect == null || parts.length === 0) {
     return null
   }
@@ -47,7 +55,7 @@ function redirectMatch(line) {
   if (splatForwardRule(redirect, parts[0])) {
     redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
   } else {
-    const newHostRuleIdx = parts.findIndex((el) => el.match(/^\//) || el.match(common.FULL_URL_MATCHER))
+    const newHostRuleIdx = parts.findIndex((el) => el.match(/^\//) || el.match(FULL_URL_MATCHER))
     if (newHostRuleIdx < 0) {
       return null
     }
@@ -98,18 +106,18 @@ function parseRedirect(result, line, idx) {
 
   const redirect = redirectMatch(line)
   if (!redirect) {
-    return common.addError(result, { lineNum: idx + 1, line })
+    return addError(result, { lineNum: idx + 1, line })
   }
 
-  if (common.isInvalidSource(redirect)) {
-    return common.addError(result, {
+  if (isInvalidSource(redirect)) {
+    return addError(result, {
       lineNum: idx + 1,
       line,
       reason: 'Invalid /.netlify path in redirect source',
     })
   }
 
-  return common.addSuccess(result, { ...redirect, proxy: common.isProxy(redirect) })
+  return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
 }
 
 async function parse(filePath) {
