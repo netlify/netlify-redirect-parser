@@ -1,53 +1,57 @@
 const resolveConfig = require('@netlify/config')
+const filterObj = require('filter-obj')
 const isPlainObj = require('is-plain-obj')
 
 const { addSuccess, addError, isInvalidSource, isProxy, FULL_URL_MATCHER, parseFullOrigin } = require('./common')
 
-function fetch(obj, options) {
-  for (const option in options) {
-    if (Object.prototype.hasOwnProperty.call(obj, options[option])) {
-      return obj[options[option]]
-    }
-  }
-  return null
+function splatForwardRule(path, status, force, to) {
+  return path.match(/\/\*$/) && to == null && status && status >= 200 && status < 300 && force
 }
 
-function splatForwardRule(path, obj, dest) {
-  return path.match(/\/\*$/) && dest == null && obj.status && obj.status >= 200 && obj.status < 300 && obj.force
+function isDefined(key, value) {
+  return value !== undefined
 }
 
-function redirectMatch(obj) {
-  const origin = fetch(obj, ['from', 'origin'])
-  const redirect = origin && FULL_URL_MATCHER.test(origin) ? parseFullOrigin(origin) : { path: origin }
-  if (redirect == null || (redirect.path == null && redirect.host == null)) {
+function redirectMatch({
+  status,
+  force,
+  conditions,
+  headers,
+  origin,
+  from = origin,
+  destination,
+  to = destination,
+  parameters,
+  params = parameters,
+  query = params,
+  signed,
+  signing = signed,
+  sign = signing,
+}) {
+  const redirect = from && FULL_URL_MATCHER.test(from) ? parseFullOrigin(from) : { path: from }
+  if (redirect == null) {
     return null
   }
 
-  const dest = fetch(obj, ['to', 'destination'])
-  redirect.to = splatForwardRule(redirect.path, obj, dest) ? redirect.path.replace(/\/\*$/, '/:splat') : dest
-
-  if (redirect.to == null) {
+  const { host, scheme, path } = redirect
+  if (path == null && host == null) {
     return null
   }
 
-  redirect.params = fetch(obj, ['query', 'params', 'parameters'])
-  redirect.status = fetch(obj, ['status'])
-  redirect.force = fetch(obj, ['force'])
-  redirect.conditions = fetch(obj, ['conditions'])
-  redirect.headers = fetch(obj, ['headers'])
-  redirect.signed = fetch(obj, ['sign', 'signing', 'signed'])
+  const finalTo = splatForwardRule(path, status, force, to) ? path.replace(/\/\*$/, '/:splat') : to
 
-  Object.keys(redirect).forEach((key) => {
-    if (redirect[key] === null) {
-      delete redirect[key]
-    }
-  })
-
-  if (redirect.headers && !isPlainObj(redirect.headers)) {
+  if (finalTo == null) {
     return null
   }
 
-  return redirect
+  if (headers && !isPlainObj(headers)) {
+    return null
+  }
+
+  return filterObj(
+    { host, scheme, path, to: finalTo, params: query, status, force, conditions, headers, signed: sign },
+    isDefined,
+  )
 }
 
 function parseRedirect(result, obj, idx) {
