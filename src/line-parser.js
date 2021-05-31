@@ -111,11 +111,8 @@ async function parse(filePath) {
       return
     }
 
-    if (common.isProxy(redirect)) {
-      redirect.proxy = true
-    }
-
-    result.addSuccess(redirect)
+    const proxy = common.isProxy(redirect)
+    result.addSuccess({ ...redirect, proxy })
   })
 
   return result
