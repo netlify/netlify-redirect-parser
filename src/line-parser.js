@@ -19,15 +19,13 @@ function splatForwardRule(path, nextPart) {
   return path.endsWith('/*') && nextPart.match(FORWARD_STATUS_MATCHER)
 }
 
-function arrayToObj(source) {
-  return source.reduce((obj, condition) => {
-    if (condition == null) {
-      return obj
-    }
-    const pair = condition.split('=')
-    obj[pair[0]] = pair[1]
-    return obj
-  }, {})
+function splitCondition(condition) {
+  const [key, value] = condition.split('=')
+  return { [key]: value }
+}
+
+function parseConditions(conditions) {
+  return Object.assign({}, ...conditions.map(splitCondition))
 }
 
 const COMMENT_REGEXP = /(^|\s)#.*/u
@@ -64,7 +62,7 @@ function redirectMatch(line) {
 
     redirect.to = parts[newHostRuleIdx]
     if (newHostRuleIdx > 0) {
-      redirect.params = arrayToObj(parts.slice(0, newHostRuleIdx))
+      redirect.params = parseConditions(parts.slice(0, newHostRuleIdx))
     }
 
     // remove parsed parts for params and host
@@ -81,7 +79,7 @@ function redirectMatch(line) {
   const force = statusPart.endsWith('!')
 
   if (lastParts.length !== 0) {
-    const kv = arrayToObj(lastParts)
+    const kv = parseConditions(lastParts)
     if (kv.Sign) {
       redirect.signed = kv.Sign
       delete kv.Sign
