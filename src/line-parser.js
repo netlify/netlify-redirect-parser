@@ -8,24 +8,24 @@ const {
   isProxy,
   FULL_URL_MATCHER,
   parseFrom,
+  isSplatRule,
   removeUndefinedValues,
 } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
-const FORWARD_STATUS_MATCHER = /^2\d\d!?$/
-
 function splatForwardRule(path, statusPart) {
-  return path.endsWith('/*') && FORWARD_STATUS_MATCHER.test(statusPart)
+  const { status } = parseStatus(statusPart)
+  return isSplatRule(path, status)
 }
 
-function splitCondition(condition) {
+function parsePair(condition) {
   const [key, value] = condition.split('=')
   return { [key]: value }
 }
 
-function parseConditions(conditions) {
-  return Object.assign({}, ...conditions.map(splitCondition))
+function parsePairs(conditions) {
+  return Object.assign({}, ...conditions.map(parsePair))
 }
 
 const COMMENT_REGEXP = /(^|\s)#.*/u
@@ -36,12 +36,28 @@ function trimComment(line) {
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
-function isPathOrUrl(part) {
+function isNewHostPart(part) {
   return part.startsWith('/') || FULL_URL_MATCHER.test(part)
 }
 
+function parseStatus(statusPart) {
+  if (statusPart === undefined) {
+    return { force: false }
+  }
+
+  const status = Number.parseInt(statusPart, 10)
+  const force = statusPart.endsWith('!')
+  return { status, force }
+}
+
+function parseLastParts([statusPart, ...lastParts]) {
+  const { status, force } = parseStatus(statusPart)
+  const { Sign, signed = Sign, ...conditions } = parsePairs(lastParts)
+  return { status, force, conditions, signed }
+}
+
 function redirectMatch(line) {
-  let [from, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
+  const [from, ...parts] = trimComment(line).trim().split(LINE_TOKENS_REGEXP)
   if (parts.length === 0) {
     return null
   }
@@ -51,35 +67,21 @@ function redirectMatch(line) {
     return null
   }
 
-  const redirect = {}
   if (splatForwardRule(path, parts[0])) {
-    redirect.to = path.replace(/\/\*$/, '/:splat')
-  } else {
-    const newHostRuleIdx = parts.findIndex(isPathOrUrl)
-    if (newHostRuleIdx < 0) {
-      return null
-    }
-
-    redirect.to = parts[newHostRuleIdx]
-    if (newHostRuleIdx > 0) {
-      redirect.params = parseConditions(parts.slice(0, newHostRuleIdx))
-    }
-
-    // remove parsed parts for params and host
-    parts = parts.slice(newHostRuleIdx + 1)
+    const to = path.replace(/\/\*$/, '/:splat')
+    const { status, force, conditions, signed } = parseLastParts(parts)
+    return removeUndefinedValues({ to, scheme, host, path, status, force, params: {}, conditions, signed })
   }
 
-  const [statusPart, ...lastParts] = parts
-
-  if (statusPart === undefined) {
-    return removeUndefinedValues({ ...redirect, scheme, host, path, force: false, conditions: {} })
+  const newHostPartIndex = parts.findIndex(isNewHostPart)
+  if (newHostPartIndex === -1) {
+    return null
   }
 
-  const status = Number.parseInt(statusPart, 10)
-  const force = statusPart.endsWith('!')
-  const { Sign, signed = Sign, ...conditions } = parseConditions(lastParts)
-
-  return removeUndefinedValues({ ...redirect, scheme, host, path, status, force, conditions, signed })
+  const params = parsePairs(parts.slice(0, newHostPartIndex))
+  const to = parts[newHostPartIndex]
+  const { status, force, conditions, signed } = parseLastParts(parts.slice(newHostPartIndex + 1))
+  return removeUndefinedValues({ to, scheme, host, path, status, force, params, conditions, signed })
 }
 
 function trimLine(line) {

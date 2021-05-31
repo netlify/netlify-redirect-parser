@@ -38,6 +38,10 @@ function parseFrom(from) {
   }
 }
 
+function isSplatRule(path, status) {
+  return path.endsWith('/*') && status >= 200 && status < 300
+}
+
 function isDefined(key, value) {
   return value !== undefined
 }
@@ -52,6 +56,7 @@ module.exports = {
   isInvalidSource,
   isProxy,
   FULL_URL_MATCHER,
+  isSplatRule,
   parseFrom,
   removeUndefinedValues,
 }
