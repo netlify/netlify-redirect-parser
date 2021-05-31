@@ -9,34 +9,35 @@ const testFilesDir = path.resolve('__dirname', '../', 'test-files')
 test('simple redirects', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'simple_redirects'))
   t.deepEqual(result.success, [
-    { path: '/home', to: '/', proxy: false },
-    { path: '/blog/my-post.php', to: '/blog/my-post', proxy: false },
-    { path: '/blog/my-post-ads.php', to: '/blog/my-post#ads', proxy: false },
-    { path: '/news', to: '/blog', proxy: false },
+    { path: '/home', to: '/', proxy: false, force: false },
+    { path: '/blog/my-post.php', to: '/blog/my-post', proxy: false, force: false },
+    { path: '/blog/my-post-ads.php', to: '/blog/my-post#ads', proxy: false, force: false },
+    { path: '/news', to: '/blog', proxy: false, force: false },
   ])
 })
 
 test('redirects with status codes', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'status_code_redirects'))
   t.deepEqual(result.success, [
-    { path: '/home', to: '/', status: 301, proxy: false },
-    { path: '/my-redirect', to: '/', status: 302, proxy: false },
-    { path: '/pass-through', to: '/', status: 200, proxy: false },
-    { path: '/ecommerce', to: '/store-closed', status: 404, proxy: false },
+    { path: '/home', to: '/', status: 301, proxy: false, force: false },
+    { path: '/my-redirect', to: '/', status: 302, proxy: false, force: false },
+    { path: '/pass-through', to: '/', status: 200, proxy: false, force: false },
+    { path: '/ecommerce', to: '/store-closed', status: 404, proxy: false, force: false },
   ])
 })
 
 test('redirects with parameter matches', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'parameter_match_redirects'))
   t.deepEqual(result.success, [
-    { path: '/', to: '/news', params: { page: 'news' }, proxy: false },
-    { path: '/blog', to: '/blog/:post_id', params: { post: ':post_id' }, proxy: false },
+    { path: '/', to: '/news', params: { page: 'news' }, proxy: false, force: false },
+    { path: '/blog', to: '/blog/:post_id', params: { post: ':post_id' }, proxy: false, force: false },
     {
       path: '/',
       to: '/about',
       params: { _escaped_fragment_: '/about' },
       status: 301,
       proxy: false,
+      force: false,
     },
   ])
 })
@@ -50,6 +51,7 @@ test('redirects with full hostname', async (t) => {
       path: '/*',
       to: 'http://www.hello.com/:splat',
       proxy: false,
+      force: false,
     },
   ])
 })
@@ -62,6 +64,7 @@ test('proxy instruction', async (t) => {
       to: 'https://api.bitballoon.com/*',
       status: 200,
       proxy: true,
+      force: false,
     },
   ])
 })
@@ -74,6 +77,7 @@ test('redirect with country conditions', async (t) => {
       to: '/china',
       status: 302,
       proxy: false,
+      force: false,
       conditions: { Country: 'ch,tw' },
     },
   ])
@@ -87,6 +91,7 @@ test('redirect with country and language conditions', async (t) => {
       to: '/china',
       status: 302,
       proxy: false,
+      force: false,
       conditions: { Country: 'il', Language: 'en' },
     },
   ])
@@ -94,7 +99,9 @@ test('redirect with country and language conditions', async (t) => {
 
 test('splat based redirect with no force instruction', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'splat_no_force_redirects'))
-  t.deepEqual(result.success, [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301, proxy: false }])
+  t.deepEqual(result.success, [
+    { path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301, proxy: false, force: false },
+  ])
 })
 
 test('splat based redirect with force instruction', async (t) => {
@@ -118,6 +125,7 @@ test('redirect rule with equal', async (t) => {
       to: 'https://www.bitballoon.com/test=hello',
       status: 301,
       proxy: false,
+      force: false,
     },
   ])
 })
@@ -131,6 +139,7 @@ test('some real world edge case rules', async (t) => {
       params: { source: ':source', email: ':email' },
       status: 302,
       proxy: false,
+      force: false,
       conditions: { Country: 'us' },
     },
     {
@@ -138,8 +147,9 @@ test('some real world edge case rules', async (t) => {
       to: 'https://origin.wework.com',
       status: 200,
       proxy: true,
+      force: false,
     },
-    { path: '/:lang/locations/*', to: '/locations/:splat', status: 200, proxy: false },
+    { path: '/:lang/locations/*', to: '/locations/:splat', status: 200, proxy: false, force: false },
   ])
 })
 
@@ -211,6 +221,7 @@ test('redirect role conditions', async (t) => {
       to: '/admin/:splat',
       status: 200,
       proxy: false,
+      force: false,
       conditions: { Role: 'admin' },
     },
   ])
@@ -224,6 +235,7 @@ test('redirect with multiple roles', async (t) => {
       to: '/member/:splat',
       status: 200,
       proxy: false,
+      force: false,
       conditions: { Role: 'admin,member' },
     },
   ])
@@ -232,7 +244,7 @@ test('redirect with multiple roles', async (t) => {
 test('parse forward rule', async (t) => {
   const result = await parser.parse(path.resolve(testFilesDir, 'path_forward_redirects'))
   t.deepEqual(result.success, [
-    { path: '/admin/*', to: '/admin/:splat', status: 200, proxy: false },
+    { path: '/admin/*', to: '/admin/:splat', status: 200, proxy: false, force: false },
     { path: '/admin/*', to: '/admin/:splat', status: 200, proxy: false, force: true },
   ])
 })

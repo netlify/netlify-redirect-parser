@@ -22,14 +22,6 @@ function arrayToObj(source) {
   }, {})
 }
 
-function parseStatus(source) {
-  if (source == null) {
-    return null
-  }
-
-  return [Number.parseInt(source, 10), source.match(/!$/)]
-}
-
 const COMMENT_REGEXP = /(^|\s)#.*/u
 
 function trimComment(line) {
@@ -64,15 +56,15 @@ function redirectMatch(line) {
   }
 
   if (parts.length === 0) {
-    return redirect
+    return { ...redirect, force: false }
   }
 
-  const statusResult = parseStatus(parts.shift())
-  if (statusResult) {
-    redirect.status = statusResult[0]
-    if (statusResult[1]) {
-      redirect.force = true
-    }
+  const part = parts.shift()
+  if (part == null) {
+    redirect.force = false
+  } else {
+    redirect.status = Number.parseInt(part, 10)
+    redirect.force = part.endsWith('!')
   }
 
   if (parts.length !== 0) {

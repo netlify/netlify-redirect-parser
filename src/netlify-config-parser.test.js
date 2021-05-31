@@ -14,12 +14,12 @@ test('netlify.toml redirects parsing', async (t) => {
       to: '/new-path',
       status: 301,
       proxy: false,
+      force: false,
       conditions: {
         Country: ['US'],
         Language: ['en'],
         Role: ['admin'],
       },
-      force: false,
       params: {
         path: ':path',
       },
