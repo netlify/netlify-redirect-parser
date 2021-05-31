@@ -15,13 +15,13 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 301,
       proxy: false,
       force: false,
+      query: {
+        path: ':path',
+      },
       conditions: {
         Country: ['US'],
         Language: ['en'],
         Role: ['admin'],
-      },
-      params: {
-        path: ':path',
       },
     },
     {
@@ -30,7 +30,7 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 200,
       proxy: true,
       force: true,
-      params: {},
+      query: {},
       conditions: {},
       signed: 'API_SIGNATURE_TOKEN',
       headers: {

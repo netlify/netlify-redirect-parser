@@ -51,7 +51,7 @@ function redirectMatch({
     scheme,
     path,
     to: finalTo,
-    params: query,
+    query,
     status,
     force,
     conditions,
