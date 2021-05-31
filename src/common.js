@@ -35,11 +35,7 @@ function redirectMatch(obj) {
   }
 
   const dest = fetch(obj, ['to', 'destination'])
-  if (splatForwardRule(redirect.path, obj, dest)) {
-    redirect.to = redirect.path.replace(/\/\*$/, '/:splat')
-  } else {
-    redirect.to = dest
-  }
+  redirect.to = splatForwardRule(redirect.path, obj, dest) ? redirect.path.replace(/\/\*$/, '/:splat') : dest
 
   if (redirect.to == null) {
     return null
