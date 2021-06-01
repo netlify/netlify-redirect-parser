@@ -7,8 +7,8 @@ const { parseNetlifyConfig } = require('.')
 const testFilesDir = path.resolve('__dirname', '../', 'test-files')
 
 test('netlify.toml redirects parsing', async (t) => {
-  const result = await parseNetlifyConfig(path.resolve(testFilesDir, 'netlify.toml'))
-  t.deepEqual(result.success, [
+  const redirects = await parseNetlifyConfig(path.resolve(testFilesDir, 'netlify.toml'))
+  t.deepEqual(redirects, [
     {
       path: '/old-path',
       to: '/new-path',
