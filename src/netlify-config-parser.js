@@ -27,6 +27,7 @@ function redirectMatch({
   parameters = {},
   params = parameters,
   query = params,
+  edge_handlers: edgeHandlers = [],
   sign,
   signing = sign,
   signed = signing,
@@ -60,6 +61,7 @@ function redirectMatch({
     force,
     conditions,
     headers,
+    edgeHandlers,
     signed,
   }
 }

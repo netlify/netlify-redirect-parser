@@ -77,7 +77,7 @@ function redirectMatch(line) {
   if (splatForwardRule(path, parts[0])) {
     const to = path.replace(/\/\*$/, '/:splat')
     const { status, force, conditions, signed } = parseLastParts(parts)
-    return { to, scheme, host, path, status, force, query: {}, conditions, headers: {}, signed }
+    return { to, scheme, host, path, status, force, query: {}, conditions, headers: {}, edgeHandlers: [], signed }
   }
 
   const newHostPartIndex = parts.findIndex(isNewHostPart)
@@ -88,7 +88,7 @@ function redirectMatch(line) {
   const query = parsePairs(parts.slice(0, newHostPartIndex))
   const to = parts[newHostPartIndex]
   const { status, force, conditions, signed } = parseLastParts(parts.slice(newHostPartIndex + 1))
-  return { to, scheme, host, path, status, force, query, conditions, headers: {}, signed }
+  return { to, scheme, host, path, status, force, query, conditions, headers: {}, edgeHandlers: [], signed }
 }
 
 function trimLine(line) {

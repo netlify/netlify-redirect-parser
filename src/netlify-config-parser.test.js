@@ -24,6 +24,7 @@ test('netlify.toml redirects parsing', async (t) => {
         Role: ['admin'],
       },
       headers: {},
+      edgeHandlers: [],
     },
     {
       path: '/search',
@@ -37,6 +38,7 @@ test('netlify.toml redirects parsing', async (t) => {
       headers: {
         'X-From': 'Netlify',
       },
+      edgeHandlers: [],
     },
   ])
 })
