@@ -18,8 +18,8 @@
     "format:fix:prettier": "cross-env-shell prettier --write $npm_package_config_prettier"
   },
   "config": {
-    "eslint": "--ignore-path .gitignore --cache --format=codeframe --max-warnings=0 \"*.{js,md}\" \"src/**/*.js\"",
-    "prettier": "--ignore-path .gitignore --loglevel=warn \".github/**/*.{md,yml}\" \"*.{js,yml,json}\" \"src/**/*.js\" \"!package-lock.json\" \"!CHANGELOG.md\""
+    "eslint": "--ignore-path .gitignore --cache --format=codeframe --max-warnings=0 \"*.{js,md}\" \"{src,tests}/**/*.js\"",
+    "prettier": "--ignore-path .gitignore --loglevel=warn \".github/**/*.{md,yml}\" \"*.{js,yml,json}\" \"{src,tests}/**/*.js\" \"!package-lock.json\" \"!CHANGELOG.md\""
   },
   "keywords": [
     "netlify"
@@ -43,6 +43,14 @@
     "src/**/*.js",
     "!src/**/*.test.js"
   ],
+  "ava": {
+    "files": [
+      "tests/*.js"
+    ],
+    "compileEnhancements": false,
+    "babel": false,
+    "verbose": true
+  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
