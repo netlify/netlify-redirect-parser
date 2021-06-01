@@ -43,6 +43,11 @@ const isSplatRule = function (path, status) {
   return path.endsWith('/*') && status >= 200 && status < 300
 }
 
+const finalizeRedirect = function (redirect) {
+  const proxy = isProxy(redirect)
+  return removeUndefinedValues({ ...redirect, proxy })
+}
+
 const removeUndefinedValues = function (object) {
   return filterObj(object, isDefined)
 }
@@ -52,9 +57,8 @@ const isDefined = function (key, value) {
 }
 
 module.exports = {
-  isProxy,
   isUrl,
   isSplatRule,
   parseFrom,
-  removeUndefinedValues,
+  finalizeRedirect,
 }
