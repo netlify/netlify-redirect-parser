@@ -2,10 +2,6 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
-const isProxy = function ({ status, to }) {
-  return status === 200 && isUrl(to)
-}
-
 const parseFrom = function (from) {
   if (from === undefined) {
     throw new Error('Missing source path/URL')
@@ -46,6 +42,10 @@ const isSplatRule = function (path, status) {
 const finalizeRedirect = function (redirect) {
   const proxy = isProxy(redirect)
   return removeUndefinedValues({ ...redirect, proxy })
+}
+
+const isProxy = function ({ status, to }) {
+  return status === 200 && isUrl(to)
 }
 
 const removeUndefinedValues = function (object) {
