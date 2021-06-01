@@ -4,6 +4,15 @@ const { parseRedirectsFormat } = require('..')
 
 const FIXTURES_DIR = `${__dirname}/fixtures`
 
+const DEFAULT_REDIRECT = {
+  proxy: false,
+  force: false,
+  query: {},
+  conditions: {},
+  headers: {},
+  edgeHandlers: [],
+}
+
 const parseRedirects = async function (fixtureName) {
   return await parseRedirectsFormat(`${FIXTURES_DIR}/${fixtureName}`)
 }
@@ -11,36 +20,25 @@ const parseRedirects = async function (fixtureName) {
 test('simple redirects', async (t) => {
   const redirects = await parseRedirects('simple_redirects')
   t.deepEqual(redirects, [
-    { path: '/home', to: '/', proxy: false, force: false, query: {}, conditions: {}, headers: {}, edgeHandlers: [] },
     {
+      ...DEFAULT_REDIRECT,
+      path: '/home',
+      to: '/',
+    },
+    {
+      ...DEFAULT_REDIRECT,
       path: '/blog/my-post.php',
       to: '/blog/my-post',
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/blog/my-post-ads.php',
       to: '/blog/my-post#ads',
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/news',
       to: '/blog',
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -49,48 +47,28 @@ test('redirects with status codes', async (t) => {
   const redirects = await parseRedirects('status_code_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/home',
       to: '/',
       status: 301,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/my-redirect',
       to: '/',
       status: 302,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/pass-through',
       to: '/',
       status: 200,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/ecommerce',
       to: '/store-closed',
       status: 404,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -99,35 +77,23 @@ test('redirects with parameter matches', async (t) => {
   const redirects = await parseRedirects('parameter_match_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/',
       to: '/news',
-      proxy: false,
-      force: false,
       query: { page: 'news' },
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/blog',
       to: '/blog/:post_id',
-      proxy: false,
-      force: false,
       query: { post: ':post_id' },
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/',
       to: '/about',
       status: 301,
-      proxy: false,
-      force: false,
       query: { _escaped_fragment_: '/about' },
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -136,16 +102,11 @@ test('redirects with full hostname', async (t) => {
   const redirects = await parseRedirects('full_hostname_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       host: 'hello.bitballoon.com',
       scheme: 'http',
       path: '/*',
       to: 'http://www.hello.com/:splat',
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -154,15 +115,11 @@ test('proxy instruction', async (t) => {
   const redirects = await parseRedirects('proxy_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/api/*',
       to: 'https://api.bitballoon.com/*',
       status: 200,
       proxy: true,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -171,15 +128,11 @@ test('redirect with country conditions', async (t) => {
   const redirects = await parseRedirects('country_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/',
       to: '/china',
       status: 302,
-      proxy: false,
-      force: false,
-      query: {},
       conditions: { Country: 'ch,tw' },
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -188,15 +141,11 @@ test('redirect with country and language conditions', async (t) => {
   const redirects = await parseRedirects('country_language_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/',
       to: '/china',
       status: 302,
-      proxy: false,
-      force: false,
-      query: {},
       conditions: { Country: 'il', Language: 'en' },
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -205,15 +154,10 @@ test('splat based redirect with no force instruction', async (t) => {
   const redirects = await parseRedirects('splat_no_force_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/*',
       to: 'https://www.bitballoon.com/:splat',
       status: 301,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -222,15 +166,11 @@ test('splat based redirect with force instruction', async (t) => {
   const redirects = await parseRedirects('splat_force_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/*',
       to: 'https://www.bitballoon.com/:splat',
       status: 301,
-      proxy: false,
       force: true,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -239,15 +179,10 @@ test('redirect rule with equal', async (t) => {
   const redirects = await parseRedirects('equal_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/test',
       to: 'https://www.bitballoon.com/test=hello',
       status: 301,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -256,37 +191,25 @@ test('some real world edge case rules', async (t) => {
   const redirects = await parseRedirects('realworld_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/donate',
       to: '/donate/usa?source=:source&email=:email',
       status: 302,
-      proxy: false,
-      force: false,
       query: { source: ':source', email: ':email' },
       conditions: { Country: 'us' },
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/',
       to: 'https://origin.wework.com',
       status: 200,
       proxy: true,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/:lang/locations/*',
       to: '/locations/:splat',
       status: 200,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -319,33 +242,27 @@ test('long _redirects file', async (t) => {
 test('redirect with proxy signing', async (t) => {
   const redirects = await parseRedirects('proxy_signing_redirects')
   t.deepEqual(redirects[0], {
+    ...DEFAULT_REDIRECT,
     path: '/api/*',
     to: 'https://api.example.com/:splat',
     status: 200,
     proxy: true,
     force: true,
     signed: 'API_SECRET',
-    query: {},
-    conditions: {},
-    headers: {},
-    edgeHandlers: [],
   })
 })
 
 test('absolute redirects with country condition', async (t) => {
   const redirects = await parseRedirects('absolute_country_redirects')
   t.deepEqual(redirects[0], {
+    ...DEFAULT_REDIRECT,
     host: 'ximble.com.au',
     scheme: 'http',
     path: '/*',
     to: 'https://www.ximble.com/au/:splat',
     status: 301,
-    proxy: false,
     force: true,
-    query: {},
     conditions: { Country: 'au' },
-    headers: {},
-    edgeHandlers: [],
   })
 })
 
@@ -353,15 +270,11 @@ test('redirect role conditions', async (t) => {
   const redirects = await parseRedirects('role_condition_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/admin/*',
       to: '/admin/:splat',
       status: 200,
-      proxy: false,
-      force: false,
-      query: {},
       conditions: { Role: 'admin' },
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -370,15 +283,11 @@ test('redirect with multiple roles', async (t) => {
   const redirects = await parseRedirects('multiple_roles_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/member/*',
       to: '/member/:splat',
       status: 200,
-      proxy: false,
-      force: false,
-      query: {},
       conditions: { Role: 'admin,member' },
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
@@ -387,26 +296,17 @@ test('parse forward rule', async (t) => {
   const redirects = await parseRedirects('path_forward_redirects')
   t.deepEqual(redirects, [
     {
+      ...DEFAULT_REDIRECT,
       path: '/admin/*',
       to: '/admin/:splat',
       status: 200,
-      proxy: false,
-      force: false,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
     {
+      ...DEFAULT_REDIRECT,
       path: '/admin/*',
       to: '/admin/:splat',
       status: 200,
-      proxy: false,
       force: true,
-      query: {},
-      conditions: {},
-      headers: {},
-      edgeHandlers: [],
     },
   ])
 })
