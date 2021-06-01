@@ -37,20 +37,15 @@ const redirectMatch = function (line) {
     throw new Error('Missing destination path/URL')
   }
 
-  if (splatForwardRule(path, parts[0])) {
-    const to = replaceSplatRule(path)
-    const { status, force, conditions, signed } = parseLastParts(parts)
-    return { to, scheme, host, path, status, force, query: {}, conditions, headers: {}, edgeHandlers: [], signed }
-  }
-
-  const newHostPartIndex = parts.findIndex(isNewHostPart)
+  const newParts = addForwardRule(path, parts)
+  const newHostPartIndex = newParts.findIndex(isNewHostPart)
   if (newHostPartIndex === -1) {
     throw new Error('Missing destination path/URL')
   }
 
-  const query = parsePairs(parts.slice(0, newHostPartIndex))
-  const to = parts[newHostPartIndex]
-  const { status, force, conditions, signed } = parseLastParts(parts.slice(newHostPartIndex + 1))
+  const query = parsePairs(newParts.slice(0, newHostPartIndex))
+  const to = newParts[newHostPartIndex]
+  const { status, force, conditions, signed } = parseLastParts(newParts.slice(newHostPartIndex + 1))
   return { to, scheme, host, path, status, force, query, conditions, headers: {}, edgeHandlers: [], signed }
 }
 
@@ -65,9 +60,9 @@ const isComment = function (part) {
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
-const splatForwardRule = function (path, statusPart) {
-  const { status } = parseStatus(statusPart)
-  return isSplatRule(path, status)
+const addForwardRule = function (path, parts) {
+  const { status } = parseStatus(parts[0])
+  return isSplatRule(path, status) ? [replaceSplatRule(path), ...parts] : parts
 }
 
 const parseLastParts = function ([statusPart, ...lastParts]) {
