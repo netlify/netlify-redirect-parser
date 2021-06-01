@@ -3,11 +3,11 @@ const isPlainObj = require('is-plain-obj')
 
 const { isInvalidSource, isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
 
-function splatForwardRule(path, status, force, to) {
+const splatForwardRule = function (path, status, force, to) {
   return to === undefined && force && isSplatRule(path, status)
 }
 
-function redirectMatch({
+const redirectMatch = function ({
   status,
   force,
   conditions = {},
@@ -55,7 +55,7 @@ function redirectMatch({
   }
 }
 
-function parseRedirect(obj, index) {
+const parseRedirect = function (obj, index) {
   if (!isPlainObj(obj)) {
     throw new Error(`Redirects must be objects not: ${obj}`)
   }
@@ -70,7 +70,7 @@ ${error.message}`)
   }
 }
 
-async function parseNetlifyConfig(config) {
+const parseNetlifyConfig = async function (config) {
   const {
     config: { redirects = [] },
   } = await resolveConfig({ config })

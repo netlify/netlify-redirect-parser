@@ -6,7 +6,6 @@ module.exports = {
     // Those rules from @netlify/eslint-config-node are currently disabled
     // TODO: remove, so those rules are enabled
     'fp/no-mutation': 0,
-    'func-style': 0,
     'no-magic-numbers': 0,
     'max-lines': 0,
     'max-statements': 0,
