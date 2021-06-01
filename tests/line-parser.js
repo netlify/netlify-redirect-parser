@@ -147,8 +147,8 @@ each(
 each(
   [
     { title: 'no_destination_redirects', errorMessage: /Missing destination/ },
-    { title: 'redirects', errorMessage: /Missing source or destination/ },
-    { title: 'mistaken_headers', errorMessage: /Missing source or destination/ },
+    { title: 'redirects', errorMessage: /Missing destination/ },
+    { title: 'mistaken_headers', errorMessage: /Missing destination/ },
   ],
   ({ title }, { fixtureName = title, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {

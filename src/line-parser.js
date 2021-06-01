@@ -30,11 +30,12 @@ ${error.message}`)
 
 const redirectMatch = function (line) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
-  if (parts.length === 0) {
-    throw new Error('Missing source or destination path/URL')
-  }
 
   const { scheme, host, path } = parseFrom(from)
+
+  if (parts.length === 0) {
+    throw new Error('Missing destination path/URL')
+  }
 
   if (splatForwardRule(path, parts[0])) {
     const to = path.replace(/\/\*$/, '/:splat')
