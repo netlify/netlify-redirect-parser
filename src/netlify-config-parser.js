@@ -41,6 +41,10 @@ const redirectMatch = function ({
   signing = sign,
   signed = signing,
 }) {
+  if (from === undefined) {
+    throw new Error('Missing "from" field')
+  }
+
   const { scheme, host, path } = parseFrom(from)
 
   const finalTo = splatForwardRule(path, status, to) ? path.replace(/\/\*$/, '/:splat') : to

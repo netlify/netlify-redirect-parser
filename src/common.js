@@ -7,10 +7,6 @@ const isProxy = function ({ status, to }) {
 }
 
 const parseFrom = function (from) {
-  if (from === undefined) {
-    throw new Error('Missing source path/URL')
-  }
-
   const { scheme, host, path } = parseFromField(from)
   if (path.startsWith('/.netlify')) {
     throw new Error('"path" field must not start with "/.netlify"')
