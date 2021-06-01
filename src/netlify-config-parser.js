@@ -46,7 +46,7 @@ function redirectMatch({
     return null
   }
 
-  return removeUndefinedValues({
+  return {
     host,
     scheme,
     path,
@@ -57,7 +57,7 @@ function redirectMatch({
     conditions,
     headers,
     signed: sign,
-  })
+  }
 }
 
 function parseRedirect(result, obj, idx) {
@@ -78,7 +78,7 @@ function parseRedirect(result, obj, idx) {
     })
   }
 
-  return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
+  return addSuccess(result, removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) }))
 }
 
 async function parseNetlifyConfig(config) {

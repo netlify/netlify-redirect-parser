@@ -70,7 +70,7 @@ function redirectMatch(line) {
   if (splatForwardRule(path, parts[0])) {
     const to = path.replace(/\/\*$/, '/:splat')
     const { status, force, conditions, signed } = parseLastParts(parts)
-    return removeUndefinedValues({ to, scheme, host, path, status, force, params: {}, conditions, signed })
+    return { to, scheme, host, path, status, force, params: {}, conditions, signed }
   }
 
   const newHostPartIndex = parts.findIndex(isNewHostPart)
@@ -81,7 +81,7 @@ function redirectMatch(line) {
   const params = parsePairs(parts.slice(0, newHostPartIndex))
   const to = parts[newHostPartIndex]
   const { status, force, conditions, signed } = parseLastParts(parts.slice(newHostPartIndex + 1))
-  return removeUndefinedValues({ to, scheme, host, path, status, force, params, conditions, signed })
+  return { to, scheme, host, path, status, force, params, conditions, signed }
 }
 
 function trimLine(line) {
@@ -106,7 +106,7 @@ function parseRedirect(result, line, idx) {
     })
   }
 
-  return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
+  return addSuccess(result, removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) }))
 }
 
 async function parseRedirectsFormat(filePath) {
