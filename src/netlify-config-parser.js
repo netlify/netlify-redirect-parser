@@ -26,7 +26,7 @@ ${error.message}`)
 
 const redirectMatch = function ({
   status,
-  force,
+  force = false,
   conditions = {},
   headers = {},
   origin,
