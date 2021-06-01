@@ -1,7 +1,7 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const { isInvalidSource, isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
+const { isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
 
 const parseNetlifyConfig = async function (config) {
   const {
@@ -43,10 +43,6 @@ const redirectMatch = function ({
   signed = signing,
 }) {
   const { scheme, host, path } = parseFrom(from)
-
-  if (isInvalidSource(path)) {
-    throw new Error('"path" field must not start with "/.netlify"')
-  }
 
   const finalTo = splatForwardRule(path, status, force, to) ? path.replace(/\/\*$/, '/:splat') : to
 

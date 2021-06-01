@@ -2,10 +2,6 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
-const isInvalidSource = function (path) {
-  return path.startsWith('/.netlify')
-}
-
 const isProxy = function ({ status, to }) {
   return status === 200 && isUrl(to)
 }
@@ -15,6 +11,15 @@ const parseFrom = function (from) {
     throw new Error('Missing source path/URL')
   }
 
+  const { scheme, host, path } = parseFromField(from)
+  if (path.startsWith('/.netlify')) {
+    throw new Error('"path" field must not start with "/.netlify"')
+  }
+
+  return { scheme, host, path }
+}
+
+const parseFromField = function (from) {
   if (!isUrl(from)) {
     return { path: from }
   }
@@ -47,7 +52,6 @@ const isDefined = function (key, value) {
 }
 
 module.exports = {
-  isInvalidSource,
   isProxy,
   isUrl,
   isSplatRule,
