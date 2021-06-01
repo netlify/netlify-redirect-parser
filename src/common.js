@@ -2,21 +2,21 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
-function isInvalidSource(path) {
+const isInvalidSource = function (path) {
   return path.startsWith('/.netlify')
 }
 
-function isUrl(pathOrUrl) {
+const isUrl = function (pathOrUrl) {
   return SCHEMES.some((scheme) => pathOrUrl.startsWith(scheme))
 }
 
 const SCHEMES = ['http://', 'https://']
 
-function isProxy({ status, to }) {
+const isProxy = function ({ status, to }) {
   return status === 200 && isUrl(to)
 }
 
-function parseFrom(from) {
+const parseFrom = function (from) {
   if (from === undefined) {
     throw new Error('Missing source path/URL')
   }
@@ -34,15 +34,15 @@ function parseFrom(from) {
   }
 }
 
-function isSplatRule(path, status) {
+const isSplatRule = function (path, status) {
   return path.endsWith('/*') && status >= 200 && status < 300
 }
 
-function isDefined(key, value) {
+const isDefined = function (key, value) {
   return value !== undefined
 }
 
-function removeUndefinedValues(object) {
+const removeUndefinedValues = function (object) {
   return filterObj(object, isDefined)
 }
 

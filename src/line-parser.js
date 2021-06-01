@@ -5,36 +5,36 @@ const { isInvalidSource, isProxy, isUrl, parseFrom, isSplatRule, removeUndefined
 
 const readFileAsync = promisify(fs.readFile)
 
-function splatForwardRule(path, statusPart) {
+const splatForwardRule = function (path, statusPart) {
   const { status } = parseStatus(statusPart)
   return isSplatRule(path, status)
 }
 
-function parsePair(condition) {
+const parsePair = function (condition) {
   const [key, value] = condition.split('=')
   return { [key]: value }
 }
 
-function parsePairs(conditions) {
+const parsePairs = function (conditions) {
   return Object.assign({}, ...conditions.map(parsePair))
 }
 
-function isComment(part) {
+const isComment = function (part) {
   return part.startsWith('#')
 }
 
-function trimComment(parts) {
+const trimComment = function (parts) {
   const commentIndex = parts.findIndex(isComment)
   return commentIndex === -1 ? parts : parts.slice(0, commentIndex)
 }
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
-function isNewHostPart(part) {
+const isNewHostPart = function (part) {
   return part.startsWith('/') || isUrl(part)
 }
 
-function parseStatus(statusPart) {
+const parseStatus = function (statusPart) {
   if (statusPart === undefined) {
     return { force: false }
   }
@@ -44,13 +44,13 @@ function parseStatus(statusPart) {
   return { status, force }
 }
 
-function parseLastParts([statusPart, ...lastParts]) {
+const parseLastParts = function ([statusPart, ...lastParts]) {
   const { status, force } = parseStatus(statusPart)
   const { Sign, signed = Sign, ...conditions } = parsePairs(lastParts)
   return { status, force, conditions, signed }
 }
 
-function redirectMatch(line) {
+const redirectMatch = function (line) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
   if (parts.length === 0) {
     throw new Error('Missing source or destination path/URL')
@@ -79,15 +79,15 @@ function redirectMatch(line) {
   return { to, scheme, host, path, status, force, query, conditions, headers: {}, edgeHandlers: [], signed }
 }
 
-function hasRedirect({ line }) {
+const hasRedirect = function ({ line }) {
   return line !== '' && !line.startsWith('#')
 }
 
-function normalizeLine(line, index) {
+const normalizeLine = function (line, index) {
   return { line: line.trim(), index }
 }
 
-function parseRedirect({ line, index }) {
+const parseRedirect = function ({ line, index }) {
   try {
     const redirect = redirectMatch(line)
     return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
@@ -98,7 +98,7 @@ ${error.message}`)
   }
 }
 
-async function parseRedirectsFormat(filePath) {
+const parseRedirectsFormat = async function (filePath) {
   const text = await readFileAsync(filePath, 'utf-8')
   return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
 }
