@@ -43,6 +43,12 @@ const isSplatRule = function (path, status) {
   return path.endsWith('/*') && status >= 200 && status < 300
 }
 
+const replaceSplatRule = function (path) {
+  return path.replace(SPLAT_REGEXP, '/:splat')
+}
+
+const SPLAT_REGEXP = /\/\*$/
+
 const finalizeRedirect = function (redirect) {
   const proxy = isProxy(redirect)
   return removeUndefinedValues({ ...redirect, proxy })
@@ -59,6 +65,7 @@ const isDefined = function (key, value) {
 module.exports = {
   isUrl,
   isSplatRule,
+  replaceSplatRule,
   parseFrom,
   finalizeRedirect,
 }
