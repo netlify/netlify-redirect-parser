@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const { isUrl, parseFrom, isSplatRule, finalizeRedirect } = require('./common')
+const { isUrl, parseFrom, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -38,7 +38,7 @@ const redirectMatch = function (line) {
   }
 
   if (splatForwardRule(path, parts[0])) {
-    const to = path.replace(/\/\*$/, '/:splat')
+    const to = replaceSplatRule(path)
     const { status, force, conditions, signed } = parseLastParts(parts)
     return { to, scheme, host, path, status, force, query: {}, conditions, headers: {}, edgeHandlers: [], signed }
   }

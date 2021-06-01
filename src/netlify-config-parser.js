@@ -1,7 +1,7 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const { parseFrom, isSplatRule, finalizeRedirect } = require('./common')
+const { parseFrom, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
 const parseNetlifyConfig = async function (config) {
   const {
@@ -47,7 +47,7 @@ const redirectMatch = function ({
 
   const { scheme, host, path } = parseFrom(from)
 
-  const finalTo = splatForwardRule(path, status, to) ? path.replace(/\/\*$/, '/:splat') : to
+  const finalTo = splatForwardRule(path, status, to) ? replaceSplatRule(path) : to
 
   if (finalTo === undefined) {
     throw new Error('Missing "to" field')
