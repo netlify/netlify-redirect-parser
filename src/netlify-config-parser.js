@@ -30,20 +30,20 @@ ${error.message}`)
 }
 
 const parseRedirectObject = function ({
-  status,
-  force = false,
-  conditions = {},
-  headers = {},
   origin,
   from = origin,
-  destination,
-  to = destination,
   parameters = {},
   params = parameters,
   query = params,
+  destination,
+  to = destination,
+  status,
+  force = false,
+  conditions = {},
   sign,
   signing = sign,
   signed = signing,
+  headers = {},
 }) {
   if (from === undefined) {
     throw new Error('Missing "from" field')
@@ -57,13 +57,13 @@ const parseRedirectObject = function ({
 
   return {
     from,
-    to: finalTo,
     query,
+    to: finalTo,
     status,
     force,
     conditions,
-    headers,
     signed,
+    headers,
   }
 }
 
