@@ -19,7 +19,7 @@ function redirectMatch({
   status,
   force,
   conditions = {},
-  headers,
+  headers = {},
   origin,
   from = origin,
   destination,
@@ -42,7 +42,7 @@ function redirectMatch({
     return null
   }
 
-  if (headers && !isPlainObj(headers)) {
+  if (!isPlainObj(headers)) {
     return null
   }
 

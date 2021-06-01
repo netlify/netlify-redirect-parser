@@ -23,6 +23,7 @@ test('netlify.toml redirects parsing', async (t) => {
         Language: ['en'],
         Role: ['admin'],
       },
+      headers: {},
     },
     {
       path: '/search',
@@ -30,9 +31,9 @@ test('netlify.toml redirects parsing', async (t) => {
       status: 200,
       proxy: true,
       force: true,
+      signed: 'API_SIGNATURE_TOKEN',
       query: {},
       conditions: {},
-      signed: 'API_SIGNATURE_TOKEN',
       headers: {
         'X-From': 'Netlify',
       },
