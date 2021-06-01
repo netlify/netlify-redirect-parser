@@ -11,7 +11,6 @@ const DEFAULT_REDIRECT = {
   query: {},
   conditions: {},
   headers: {},
-  edgeHandlers: [],
 }
 
 module.exports = { FIXTURES_DIR, normalizeRedirect }
