@@ -2,14 +2,6 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
-function addSuccess(result, object) {
-  return { ...result, success: [...result.success, object] }
-}
-
-function addError(result, object) {
-  return { ...result, errors: [...result.errors, object] }
-}
-
 function isInvalidSource(path) {
   return path.startsWith('/.netlify')
 }
@@ -26,7 +18,7 @@ function isProxy({ status, to }) {
 
 function parseFrom(from) {
   if (from === undefined) {
-    return { reason: 'Missing source path/URL' }
+    throw new Error('Missing source path/URL')
   }
 
   if (!isUrl(from)) {
@@ -38,7 +30,7 @@ function parseFrom(from) {
     const scheme = protocol.slice(0, -1)
     return { scheme, host, path }
   } catch (error) {
-    return { reason: `Invalid URL: ${error.message}` }
+    throw new Error(`Invalid URL: ${error.message}`)
   }
 }
 
@@ -55,8 +47,6 @@ function removeUndefinedValues(object) {
 }
 
 module.exports = {
-  addSuccess,
-  addError,
   isInvalidSource,
   isProxy,
   isUrl,

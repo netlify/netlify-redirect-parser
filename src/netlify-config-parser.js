@@ -1,15 +1,7 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const {
-  addSuccess,
-  addError,
-  isInvalidSource,
-  isProxy,
-  parseFrom,
-  isSplatRule,
-  removeUndefinedValues,
-} = require('./common')
+const { isInvalidSource, isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
 
 function splatForwardRule(path, status, force, to) {
   return to === undefined && force && isSplatRule(path, status)
@@ -32,23 +24,20 @@ function redirectMatch({
   signing = sign,
   signed = signing,
 }) {
-  const { scheme, host, path, reason } = parseFrom(from)
-  if (reason !== undefined) {
-    return { reason }
-  }
+  const { scheme, host, path } = parseFrom(from)
 
   if (isInvalidSource(path)) {
-    return { reason: '"path" field must not start with "/.netlify"' }
+    throw new Error('"path" field must not start with "/.netlify"')
   }
 
   const finalTo = splatForwardRule(path, status, force, to) ? path.replace(/\/\*$/, '/:splat') : to
 
   if (finalTo === undefined) {
-    return { reason: 'Missing "to" field' }
+    throw new Error('Missing "to" field')
   }
 
   if (!isPlainObj(headers)) {
-    return { reason: '"headers" field must be an object' }
+    throw new Error('"headers" field must be an object')
   }
 
   return {
@@ -66,24 +55,26 @@ function redirectMatch({
   }
 }
 
-function parseRedirect(result, obj, idx) {
+function parseRedirect(obj, index) {
   if (!isPlainObj(obj)) {
-    return addError(result, { lineNum: idx + 1, line: String(obj) })
+    throw new Error(`Redirects must be objects not: ${obj}`)
   }
 
-  const { reason, ...redirect } = redirectMatch(obj)
-  if (reason !== undefined) {
-    return addError(result, { lineNum: idx + 1, line: JSON.stringify(obj), reason })
+  try {
+    const redirect = redirectMatch(obj)
+    return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
+  } catch (error) {
+    throw new Error(`Could not parse redirect number ${index + 1}:
+  ${JSON.stringify(obj)}
+${error.message}`)
   }
-
-  return addSuccess(result, removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) }))
 }
 
 async function parseNetlifyConfig(config) {
   const {
     config: { redirects = [] },
   } = await resolveConfig({ config })
-  return redirects.reduce(parseRedirect, { success: [], errors: [] })
+  return redirects.map(parseRedirect)
 }
 
 module.exports = { parseNetlifyConfig }
