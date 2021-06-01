@@ -47,11 +47,7 @@ const redirectMatch = function ({
 
   const { scheme, host, path } = parseFrom(from)
 
-  const finalTo = splatForwardRule(path, status, to) ? replaceSplatRule(path) : to
-
-  if (finalTo === undefined) {
-    throw new Error('Missing "to" field')
-  }
+  const finalTo = addForwardRule(path, status, to)
 
   if (!isPlainObj(headers)) {
     throw new Error('"headers" field must be an object')
@@ -72,8 +68,16 @@ const redirectMatch = function ({
   }
 }
 
-const splatForwardRule = function (path, status, to) {
-  return to === undefined && isSplatRule(path, status)
+const addForwardRule = function (path, status, to) {
+  if (to !== undefined) {
+    return to
+  }
+
+  if (!isSplatRule(path, status)) {
+    throw new Error('Missing "to" field')
+  }
+
+  return replaceSplatRule(path)
 }
 
 module.exports = { parseNetlifyConfig }
