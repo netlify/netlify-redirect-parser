@@ -1,10 +1,18 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const { addSuccess, addError, isInvalidSource, isProxy, parseFrom, removeUndefinedValues } = require('./common')
+const {
+  addSuccess,
+  addError,
+  isInvalidSource,
+  isProxy,
+  parseFrom,
+  isSplatRule,
+  removeUndefinedValues,
+} = require('./common')
 
 function splatForwardRule(path, status, force, to) {
-  return path.endsWith('/*') && to === undefined && status >= 200 && status < 300 && force
+  return to === undefined && force && isSplatRule(path, status)
 }
 
 function redirectMatch({
@@ -16,7 +24,7 @@ function redirectMatch({
   from = origin,
   destination,
   to = destination,
-  parameters,
+  parameters = {},
   params = parameters,
   query = params,
   signed,
