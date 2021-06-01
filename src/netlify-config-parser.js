@@ -3,8 +3,26 @@ const isPlainObj = require('is-plain-obj')
 
 const { isInvalidSource, isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
 
-const splatForwardRule = function (path, status, force, to) {
-  return to === undefined && force && isSplatRule(path, status)
+const parseNetlifyConfig = async function (config) {
+  const {
+    config: { redirects = [] },
+  } = await resolveConfig({ config })
+  return redirects.map(parseRedirect)
+}
+
+const parseRedirect = function (obj, index) {
+  if (!isPlainObj(obj)) {
+    throw new Error(`Redirects must be objects not: ${obj}`)
+  }
+
+  try {
+    const redirect = redirectMatch(obj)
+    return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
+  } catch (error) {
+    throw new Error(`Could not parse redirect number ${index + 1}:
+  ${JSON.stringify(obj)}
+${error.message}`)
+  }
 }
 
 const redirectMatch = function ({
@@ -55,26 +73,8 @@ const redirectMatch = function ({
   }
 }
 
-const parseRedirect = function (obj, index) {
-  if (!isPlainObj(obj)) {
-    throw new Error(`Redirects must be objects not: ${obj}`)
-  }
-
-  try {
-    const redirect = redirectMatch(obj)
-    return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
-  } catch (error) {
-    throw new Error(`Could not parse redirect number ${index + 1}:
-  ${JSON.stringify(obj)}
-${error.message}`)
-  }
-}
-
-const parseNetlifyConfig = async function (config) {
-  const {
-    config: { redirects = [] },
-  } = await resolveConfig({ config })
-  return redirects.map(parseRedirect)
+const splatForwardRule = function (path, status, force, to) {
+  return to === undefined && force && isSplatRule(path, status)
 }
 
 module.exports = { parseNetlifyConfig }

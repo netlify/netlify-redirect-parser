@@ -6,12 +6,6 @@ const isInvalidSource = function (path) {
   return path.startsWith('/.netlify')
 }
 
-const isUrl = function (pathOrUrl) {
-  return SCHEMES.some((scheme) => pathOrUrl.startsWith(scheme))
-}
-
-const SCHEMES = ['http://', 'https://']
-
 const isProxy = function ({ status, to }) {
   return status === 200 && isUrl(to)
 }
@@ -34,16 +28,22 @@ const parseFrom = function (from) {
   }
 }
 
+const isUrl = function (pathOrUrl) {
+  return SCHEMES.some((scheme) => pathOrUrl.startsWith(scheme))
+}
+
+const SCHEMES = ['http://', 'https://']
+
 const isSplatRule = function (path, status) {
   return path.endsWith('/*') && status >= 200 && status < 300
 }
 
-const isDefined = function (key, value) {
-  return value !== undefined
-}
-
 const removeUndefinedValues = function (object) {
   return filterObj(object, isDefined)
+}
+
+const isDefined = function (key, value) {
+  return value !== undefined
 }
 
 module.exports = {
