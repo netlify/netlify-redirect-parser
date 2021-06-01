@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const { isInvalidSource, isProxy, isUrl, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
+const { isProxy, isUrl, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -36,10 +36,6 @@ const redirectMatch = function (line) {
   }
 
   const { scheme, host, path } = parseFrom(from)
-
-  if (isInvalidSource(path)) {
-    throw new Error('"path" field must not start with "/.netlify"')
-  }
 
   if (splatForwardRule(path, parts[0])) {
     const to = path.replace(/\/\*$/, '/:splat')
