@@ -45,7 +45,8 @@ const parseRedirectLine = function (line) {
 
   const query = parsePairs(newParts.slice(0, toIndex))
   const to = newParts[toIndex]
-  const { status, force, conditions, signed } = parseLastParts(newParts.slice(toIndex + 1))
+  const { status, force } = parseStatus(newParts[toIndex + 1])
+  const { Sign, signed = Sign, ...conditions } = parsePairs(newParts.slice(toIndex + 2))
   return { to, scheme, host, path, status, force, query, conditions, headers: {}, signed }
 }
 
@@ -67,12 +68,6 @@ const addForwardRule = function (path, parts) {
 
 const isToPart = function (part) {
   return part.startsWith('/') || isUrl(part)
-}
-
-const parseLastParts = function ([statusPart, ...lastParts]) {
-  const { status, force } = parseStatus(statusPart)
-  const { Sign, signed = Sign, ...conditions } = parsePairs(lastParts)
-  return { status, force, conditions, signed }
 }
 
 const parseStatus = function (statusPart) {
