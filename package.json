@@ -37,7 +37,8 @@
   "devDependencies": {
     "@netlify/eslint-config-node": "^3.0.4",
     "ava": "^2.4.0",
-    "nyc": "^15.1.0"
+    "nyc": "^15.1.0",
+    "test-each": "^2.0.1"
   },
   "files": [
     "src/**/*.js",
@@ -46,6 +47,9 @@
   "ava": {
     "files": [
       "tests/*.js"
+    ],
+    "helpers": [
+      "tests/helpers/"
     ],
     "compileEnhancements": false,
     "babel": false,
