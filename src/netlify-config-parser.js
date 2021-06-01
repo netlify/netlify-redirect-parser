@@ -1,7 +1,7 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const { parseFrom, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
+const { isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
 const parseNetlifyConfig = async function (config) {
   const {
@@ -49,18 +49,14 @@ const parseRedirectObject = function ({
     throw new Error('Missing "from" field')
   }
 
-  const { scheme, host, path } = parseFrom(from)
-
-  const finalTo = addForwardRule(path, status, to)
-
   if (!isPlainObj(headers)) {
     throw new Error('"headers" field must be an object')
   }
 
+  const finalTo = addForwardRule(from, status, to)
+
   return {
-    host,
-    scheme,
-    path,
+    from,
     to: finalTo,
     query,
     status,
@@ -71,16 +67,16 @@ const parseRedirectObject = function ({
   }
 }
 
-const addForwardRule = function (path, status, to) {
+const addForwardRule = function (from, status, to) {
   if (to !== undefined) {
     return to
   }
 
-  if (!isSplatRule(path, status)) {
+  if (!isSplatRule(from, status)) {
     throw new Error('Missing "to" field')
   }
 
-  return replaceSplatRule(path)
+  return replaceSplatRule(from)
 }
 
 module.exports = { parseNetlifyConfig }

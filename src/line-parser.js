@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const { isUrl, parseFrom, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
+const { isUrl, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -31,13 +31,11 @@ ${error.message}`)
 const parseRedirectLine = function (line) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
 
-  const { scheme, host, path } = parseFrom(from)
-
   if (parts.length === 0) {
     throw new Error('Missing destination path/URL')
   }
 
-  const newParts = addForwardRule(path, parts)
+  const newParts = addForwardRule(from, parts)
   const toIndex = newParts.findIndex(isToPart)
   if (toIndex === -1) {
     throw new Error('Missing destination path/URL')
@@ -47,7 +45,7 @@ const parseRedirectLine = function (line) {
   const to = newParts[toIndex]
   const { status, force } = parseStatus(newParts[toIndex + 1])
   const { Sign, signed = Sign, ...conditions } = parsePairs(newParts.slice(toIndex + 2))
-  return { to, scheme, host, path, status, force, query, conditions, headers: {}, signed }
+  return { from, to, status, force, query, conditions, headers: {}, signed }
 }
 
 const trimComment = function (parts) {
@@ -61,9 +59,9 @@ const isComment = function (part) {
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
-const addForwardRule = function (path, parts) {
+const addForwardRule = function (from, parts) {
   const status = getStatusCode(parts[0])
-  return isSplatRule(path, status) ? [replaceSplatRule(path), ...parts] : parts
+  return isSplatRule(from, status) ? [replaceSplatRule(from), ...parts] : parts
 }
 
 const isToPart = function (part) {
