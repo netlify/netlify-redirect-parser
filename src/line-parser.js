@@ -45,7 +45,7 @@ function parseStatus(statusPart) {
     return { force: false }
   }
 
-  const status = Number.parseInt(statusPart, 10)
+  const status = Number.parseInt(statusPart)
   const force = statusPart.endsWith('!')
   return { status, force }
 }
