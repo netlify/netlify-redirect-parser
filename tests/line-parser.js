@@ -1,13 +1,15 @@
-const path = require('path')
-
 const test = require('ava')
 
-const { parseRedirectsFormat } = require('.')
+const { parseRedirectsFormat } = require('..')
 
-const testFilesDir = path.resolve('__dirname', '../', 'test-files')
+const FIXTURES_DIR = `${__dirname}/fixtures`
+
+const parseRedirects = async function (fixtureName) {
+  return await parseRedirectsFormat(`${FIXTURES_DIR}/${fixtureName}`)
+}
 
 test('simple redirects', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'simple_redirects'))
+  const redirects = await parseRedirects('simple_redirects')
   t.deepEqual(redirects, [
     { path: '/home', to: '/', proxy: false, force: false, query: {}, conditions: {}, headers: {}, edgeHandlers: [] },
     {
@@ -44,7 +46,7 @@ test('simple redirects', async (t) => {
 })
 
 test('redirects with status codes', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'status_code_redirects'))
+  const redirects = await parseRedirects('status_code_redirects')
   t.deepEqual(redirects, [
     {
       path: '/home',
@@ -94,7 +96,7 @@ test('redirects with status codes', async (t) => {
 })
 
 test('redirects with parameter matches', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'parameter_match_redirects'))
+  const redirects = await parseRedirects('parameter_match_redirects')
   t.deepEqual(redirects, [
     {
       path: '/',
@@ -131,7 +133,7 @@ test('redirects with parameter matches', async (t) => {
 })
 
 test('redirects with full hostname', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'full_hostname_redirects'))
+  const redirects = await parseRedirects('full_hostname_redirects')
   t.deepEqual(redirects, [
     {
       host: 'hello.bitballoon.com',
@@ -149,7 +151,7 @@ test('redirects with full hostname', async (t) => {
 })
 
 test('proxy instruction', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'proxy_redirects'))
+  const redirects = await parseRedirects('proxy_redirects')
   t.deepEqual(redirects, [
     {
       path: '/api/*',
@@ -166,7 +168,7 @@ test('proxy instruction', async (t) => {
 })
 
 test('redirect with country conditions', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'country_redirects'))
+  const redirects = await parseRedirects('country_redirects')
   t.deepEqual(redirects, [
     {
       path: '/',
@@ -183,7 +185,7 @@ test('redirect with country conditions', async (t) => {
 })
 
 test('redirect with country and language conditions', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'country_language_redirects'))
+  const redirects = await parseRedirects('country_language_redirects')
   t.deepEqual(redirects, [
     {
       path: '/',
@@ -200,7 +202,7 @@ test('redirect with country and language conditions', async (t) => {
 })
 
 test('splat based redirect with no force instruction', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'splat_no_force_redirects'))
+  const redirects = await parseRedirects('splat_no_force_redirects')
   t.deepEqual(redirects, [
     {
       path: '/*',
@@ -217,7 +219,7 @@ test('splat based redirect with no force instruction', async (t) => {
 })
 
 test('splat based redirect with force instruction', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'splat_force_redirects'))
+  const redirects = await parseRedirects('splat_force_redirects')
   t.deepEqual(redirects, [
     {
       path: '/*',
@@ -234,7 +236,7 @@ test('splat based redirect with force instruction', async (t) => {
 })
 
 test('redirect rule with equal', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'equal_redirects'))
+  const redirects = await parseRedirects('equal_redirects')
   t.deepEqual(redirects, [
     {
       path: '/test',
@@ -251,7 +253,7 @@ test('redirect rule with equal', async (t) => {
 })
 
 test('some real world edge case rules', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'realworld_redirects'))
+  const redirects = await parseRedirects('realworld_redirects')
   t.deepEqual(redirects, [
     {
       path: '/donate',
@@ -290,14 +292,11 @@ test('some real world edge case rules', async (t) => {
 })
 
 test('rules with no destination', async (t) => {
-  await t.throwsAsync(
-    parseRedirectsFormat(path.resolve(testFilesDir, 'no_destination_redirects')),
-    /Missing destination/,
-  )
+  await t.throwsAsync(parseRedirects('no_destination_redirects'), /Missing destination/)
 })
 
 test('rules with complex redirects', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'complex_redirects'))
+  const redirects = await parseRedirects('complex_redirects')
   t.is(redirects.length, 1)
   t.is(
     redirects[0].to,
@@ -306,7 +305,7 @@ test('rules with complex redirects', async (t) => {
 })
 
 test('complicated _redirects file', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'complicated_redirects'))
+  const redirects = await parseRedirects('complicated_redirects')
   t.is(redirects.length, 26)
   redirects.forEach((rule) => {
     t.regex(rule.to, /^http/)
@@ -314,11 +313,11 @@ test('complicated _redirects file', async (t) => {
 })
 
 test('long _redirects file', async (t) => {
-  await t.throwsAsync(parseRedirectsFormat(path.resolve(testFilesDir, 'redirects')), /Missing source or destination/)
+  await t.throwsAsync(parseRedirects('redirects'), /Missing source or destination/)
 })
 
 test('redirect with proxy signing', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'proxy_signing_redirects'))
+  const redirects = await parseRedirects('proxy_signing_redirects')
   t.deepEqual(redirects[0], {
     path: '/api/*',
     to: 'https://api.example.com/:splat',
@@ -334,7 +333,7 @@ test('redirect with proxy signing', async (t) => {
 })
 
 test('absolute redirects with country condition', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'absolute_country_redirects'))
+  const redirects = await parseRedirects('absolute_country_redirects')
   t.deepEqual(redirects[0], {
     host: 'ximble.com.au',
     scheme: 'http',
@@ -351,7 +350,7 @@ test('absolute redirects with country condition', async (t) => {
 })
 
 test('redirect role conditions', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'role_condition_redirects'))
+  const redirects = await parseRedirects('role_condition_redirects')
   t.deepEqual(redirects, [
     {
       path: '/admin/*',
@@ -368,7 +367,7 @@ test('redirect role conditions', async (t) => {
 })
 
 test('redirect with multiple roles', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'multiple_roles_redirects'))
+  const redirects = await parseRedirects('multiple_roles_redirects')
   t.deepEqual(redirects, [
     {
       path: '/member/*',
@@ -385,7 +384,7 @@ test('redirect with multiple roles', async (t) => {
 })
 
 test('parse forward rule', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'path_forward_redirects'))
+  const redirects = await parseRedirects('path_forward_redirects')
   t.deepEqual(redirects, [
     {
       path: '/admin/*',
@@ -413,13 +412,10 @@ test('parse forward rule', async (t) => {
 })
 
 test('parse mistaken _headers file', async (t) => {
-  await t.throwsAsync(
-    parseRedirectsFormat(path.resolve(testFilesDir, 'mistaken_headers')),
-    /Missing source or destination/,
-  )
+  await t.throwsAsync(parseRedirects('mistaken_headers'), /Missing source or destination/)
 })
 
 test('valid service destination path', async (t) => {
-  const redirects = await parseRedirectsFormat(path.resolve(testFilesDir, 'service_redirects'))
+  const redirects = await parseRedirects('service_redirects')
   t.is(redirects.length, 1)
 })
