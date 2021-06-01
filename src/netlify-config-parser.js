@@ -16,7 +16,7 @@ const parseRedirect = function (obj, index) {
   }
 
   try {
-    return redirectMatch(obj)
+    return parseRedirectObject(obj)
   } catch (error) {
     throw new Error(`Could not parse redirect number ${index + 1}:
   ${JSON.stringify(obj)}
@@ -24,7 +24,7 @@ ${error.message}`)
   }
 }
 
-const redirectMatch = function ({
+const parseRedirectObject = function ({
   status,
   force,
   conditions = {},

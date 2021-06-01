@@ -20,7 +20,7 @@ const hasRedirect = function ({ line }) {
 
 const parseRedirect = function ({ line, index }) {
   try {
-    return redirectMatch(line)
+    return parseRedirectLine(line)
   } catch (error) {
     throw new Error(`Could not parse redirect line ${index + 1}:
   ${line}
@@ -28,7 +28,7 @@ ${error.message}`)
   }
 }
 
-const redirectMatch = function (line) {
+const parseRedirectLine = function (line) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
 
   const { scheme, host, path } = parseFrom(from)
