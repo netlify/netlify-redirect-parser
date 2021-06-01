@@ -2,6 +2,9 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
+// "to" can only be omitted when using forward rules:
+//  - This requires "from" to end with "/*" and "status" to be 2**
+//  - "to" will then default to "from" but with "/*" replaced to "/:splat"
 const isSplatRule = function (from, status) {
   return from.endsWith('/*') && status >= 200 && status < 300
 }
@@ -12,12 +15,14 @@ const replaceSplatRule = function (from) {
 
 const SPLAT_REGEXP = /\/\*$/
 
+// Applies logic at the end of both `_redirects` and `netlify.toml` parsing
 const finalizeRedirect = function ({ from, ...redirect }) {
   const { scheme, host, path } = parseFrom(from)
   const proxy = isProxy(redirect)
   return removeUndefinedValues({ ...redirect, scheme, host, path, proxy })
 }
 
+// Parses the `from` field which can be either a file path or a URL.
 const parseFrom = function (from) {
   const { scheme, host, path } = parseFromField(from)
   if (path.startsWith('/.netlify')) {
