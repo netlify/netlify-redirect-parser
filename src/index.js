@@ -1,5 +1,4 @@
-const lineParser = require('./line-parser')
-const NetlifyConfigParser = require('./netlify-config-parser')
+const { parseRedirectsFormat } = require('./line-parser')
+const { parseNetlifyConfig } = require('./netlify-config-parser')
 
-exports.parseRedirectsFormat = lineParser.parse
-exports.parseNetlifyConfig = NetlifyConfigParser.parse
+module.exports = { parseRedirectsFormat, parseNetlifyConfig }

@@ -109,9 +109,9 @@ function parseRedirect(result, line, idx) {
   return addSuccess(result, { ...redirect, proxy: isProxy(redirect) })
 }
 
-async function parse(filePath) {
+async function parseRedirectsFormat(filePath) {
   const text = await readFileAsync(filePath, 'utf-8')
   return text.split('\n').map(trimLine).reduce(parseRedirect, { success: [], errors: [] })
 }
 
-exports.parse = parse
+module.exports = { parseRedirectsFormat }
