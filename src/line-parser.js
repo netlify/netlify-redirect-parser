@@ -1,13 +1,13 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
-const { isProxy, isUrl, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
+const { isUrl, parseFrom, isSplatRule, finalizeRedirect } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
 
 const parseRedirectsFormat = async function (filePath) {
   const text = await readFileAsync(filePath, 'utf-8')
-  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect).map(finalizeRedirect)
 }
 
 const normalizeLine = function (line, index) {
@@ -20,8 +20,7 @@ const hasRedirect = function ({ line }) {
 
 const parseRedirect = function ({ line, index }) {
   try {
-    const redirect = redirectMatch(line)
-    return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
+    return redirectMatch(line)
   } catch (error) {
     throw new Error(`Could not parse redirect line ${index + 1}:
   ${line}

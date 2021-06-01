@@ -1,13 +1,13 @@
 const resolveConfig = require('@netlify/config')
 const isPlainObj = require('is-plain-obj')
 
-const { isProxy, parseFrom, isSplatRule, removeUndefinedValues } = require('./common')
+const { parseFrom, isSplatRule, finalizeRedirect } = require('./common')
 
 const parseNetlifyConfig = async function (config) {
   const {
     config: { redirects = [] },
   } = await resolveConfig({ config })
-  return redirects.map(parseRedirect)
+  return redirects.map(parseRedirect).map(finalizeRedirect)
 }
 
 const parseRedirect = function (obj, index) {
@@ -16,8 +16,7 @@ const parseRedirect = function (obj, index) {
   }
 
   try {
-    const redirect = redirectMatch(obj)
-    return removeUndefinedValues({ ...redirect, proxy: isProxy(redirect) })
+    return redirectMatch(obj)
   } catch (error) {
     throw new Error(`Could not parse redirect number ${index + 1}:
   ${JSON.stringify(obj)}
