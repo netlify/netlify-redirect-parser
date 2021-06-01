@@ -44,7 +44,7 @@ const redirectMatch = function ({
 }) {
   const { scheme, host, path } = parseFrom(from)
 
-  const finalTo = splatForwardRule(path, status, force, to) ? path.replace(/\/\*$/, '/:splat') : to
+  const finalTo = splatForwardRule(path, status, to) ? path.replace(/\/\*$/, '/:splat') : to
 
   if (finalTo === undefined) {
     throw new Error('Missing "to" field')
@@ -69,8 +69,8 @@ const redirectMatch = function ({
   }
 }
 
-const splatForwardRule = function (path, status, force, to) {
-  return to === undefined && force && isSplatRule(path, status)
+const splatForwardRule = function (path, status, to) {
+  return to === undefined && isSplatRule(path, status)
 }
 
 module.exports = { parseNetlifyConfig }
