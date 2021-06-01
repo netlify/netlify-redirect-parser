@@ -1,4 +1,0 @@
-/home         /              301
-/my-redirect  /              302
-/pass-through /              200
-/ecommerce    /store-closed  404
