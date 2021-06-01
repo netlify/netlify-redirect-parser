@@ -15,7 +15,7 @@ const normalizeLine = function (line, index) {
 }
 
 const hasRedirect = function ({ line }) {
-  return line !== '' && !line.startsWith('#')
+  return line !== '' && !isComment(line)
 }
 
 const parseRedirect = function ({ line, index }) {
