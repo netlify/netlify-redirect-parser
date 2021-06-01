@@ -220,18 +220,22 @@ test('rules with no destination', async (t) => {
 
 test('rules with complex redirects', async (t) => {
   const redirects = await parseRedirects('complex_redirects')
-  t.is(redirects.length, 1)
-  t.is(
-    redirects[0].to,
-    'https://goo.gl/app/playmusic?ibi=com.google.PlayMusic&isi=691797987&ius=googleplaymusic&link=https://play.google.com/music/m/Ihj4yege3lfmp3vs5yoopgxijpi?t%3DArrested_DevOps',
-  )
+  t.deepEqual(redirects, [
+    {
+      ...DEFAULT_REDIRECT,
+      path: '/google-play',
+      to: 'https://goo.gl/app/playmusic?ibi=com.google.PlayMusic&isi=691797987&ius=googleplaymusic&link=https://play.google.com/music/m/Ihj4yege3lfmp3vs5yoopgxijpi?t%3DArrested_DevOps',
+      status: 301,
+      force: true,
+    },
+  ])
 })
 
 test('complicated _redirects file', async (t) => {
   const redirects = await parseRedirects('complicated_redirects')
   t.is(redirects.length, 26)
   redirects.forEach((rule) => {
-    t.regex(rule.to, /^http/)
+    t.true(rule.to.startsWith('http'))
   })
 })
 
@@ -241,29 +245,33 @@ test('long _redirects file', async (t) => {
 
 test('redirect with proxy signing', async (t) => {
   const redirects = await parseRedirects('proxy_signing_redirects')
-  t.deepEqual(redirects[0], {
-    ...DEFAULT_REDIRECT,
-    path: '/api/*',
-    to: 'https://api.example.com/:splat',
-    status: 200,
-    proxy: true,
-    force: true,
-    signed: 'API_SECRET',
-  })
+  t.deepEqual(redirects, [
+    {
+      ...DEFAULT_REDIRECT,
+      path: '/api/*',
+      to: 'https://api.example.com/:splat',
+      status: 200,
+      proxy: true,
+      force: true,
+      signed: 'API_SECRET',
+    },
+  ])
 })
 
 test('absolute redirects with country condition', async (t) => {
   const redirects = await parseRedirects('absolute_country_redirects')
-  t.deepEqual(redirects[0], {
-    ...DEFAULT_REDIRECT,
-    host: 'ximble.com.au',
-    scheme: 'http',
-    path: '/*',
-    to: 'https://www.ximble.com/au/:splat',
-    status: 301,
-    force: true,
-    conditions: { Country: 'au' },
-  })
+  t.deepEqual(redirects, [
+    {
+      ...DEFAULT_REDIRECT,
+      host: 'ximble.com.au',
+      scheme: 'http',
+      path: '/*',
+      to: 'https://www.ximble.com/au/:splat',
+      status: 301,
+      force: true,
+      conditions: { Country: 'au' },
+    },
+  ])
 })
 
 test('redirect role conditions', async (t) => {
@@ -317,5 +325,12 @@ test('parse mistaken _headers file', async (t) => {
 
 test('valid service destination path', async (t) => {
   const redirects = await parseRedirects('service_redirects')
-  t.is(redirects.length, 1)
+  t.deepEqual(redirects, [
+    {
+      ...DEFAULT_REDIRECT,
+      path: '/api/*',
+      to: '/.netlify/functions/:splat',
+      status: 200,
+    },
+  ])
 })
