@@ -45,7 +45,7 @@ const parseRedirectLine = function (line) {
   const to = newParts[toIndex]
   const { status, force } = parseStatus(newParts[toIndex + 1])
   const { Sign, signed = Sign, ...conditions } = parsePairs(newParts.slice(toIndex + 2))
-  return { from, to, status, force, query, conditions, headers: {}, signed }
+  return { from, query, to, status, force, conditions, signed, headers: {} }
 }
 
 const trimComment = function (parts) {
