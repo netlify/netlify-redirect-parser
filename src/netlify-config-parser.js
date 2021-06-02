@@ -3,6 +3,9 @@ const isPlainObj = require('is-plain-obj')
 
 const { isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
+// Parse `redirects` field in "netlify.toml" to an array of objects.
+// This field is already an array of objects so it only validates and
+// normalizes it.
 const parseNetlifyConfig = async function (config) {
   const {
     config: { redirects = [] },
@@ -29,17 +32,22 @@ ${error.message}`)
   }
 }
 
+// Parse a single `redirects` object
 const parseRedirectObject = function ({
+  // `from` used to be named `origin`
   origin,
   from = origin,
+  // `query` used to be named `params` and `parameters`
   parameters = {},
   params = parameters,
   query = params,
+  // `to` used to be named `destination`
   destination,
   to = destination,
   status,
   force = false,
   conditions = {},
+  // `signed` used to be named `signing` and `sign`
   sign,
   signing = sign,
   signed = signing,
@@ -67,6 +75,7 @@ const parseRedirectObject = function ({
   }
 }
 
+// Add the optional `to` field when using a forward rule
 const addForwardRule = function (from, status, to) {
   if (to !== undefined) {
     return to
