@@ -2,6 +2,22 @@ const { URL } = require('url')
 
 const filterObj = require('filter-obj')
 
+const isSplatRule = function (from, status) {
+  return from.endsWith('/*') && status >= 200 && status < 300
+}
+
+const replaceSplatRule = function (from) {
+  return from.replace(SPLAT_REGEXP, '/:splat')
+}
+
+const SPLAT_REGEXP = /\/\*$/
+
+const finalizeRedirect = function ({ from, ...redirect }) {
+  const { scheme, host, path } = parseFrom(from)
+  const proxy = isProxy(redirect)
+  return removeUndefinedValues({ ...redirect, scheme, host, path, proxy })
+}
+
 const parseFrom = function (from) {
   const { scheme, host, path } = parseFromField(from)
   if (path.startsWith('/.netlify')) {
@@ -31,21 +47,6 @@ const isUrl = function (pathOrUrl) {
 
 const SCHEMES = ['http://', 'https://']
 
-const isSplatRule = function (path, status) {
-  return path.endsWith('/*') && status >= 200 && status < 300
-}
-
-const replaceSplatRule = function (path) {
-  return path.replace(SPLAT_REGEXP, '/:splat')
-}
-
-const SPLAT_REGEXP = /\/\*$/
-
-const finalizeRedirect = function (redirect) {
-  const proxy = isProxy(redirect)
-  return removeUndefinedValues({ ...redirect, proxy })
-}
-
 const isProxy = function ({ status, to }) {
   return status === 200 && isUrl(to)
 }
@@ -62,6 +63,5 @@ module.exports = {
   isUrl,
   isSplatRule,
   replaceSplatRule,
-  parseFrom,
   finalizeRedirect,
 }
