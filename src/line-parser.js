@@ -46,7 +46,7 @@ const redirectMatch = function (line) {
   const query = parsePairs(newParts.slice(0, newHostPartIndex))
   const to = newParts[newHostPartIndex]
   const { status, force, conditions, signed } = parseLastParts(newParts.slice(newHostPartIndex + 1))
-  return { to, scheme, host, path, status, force, query, conditions, headers: {}, edgeHandlers: [], signed }
+  return { to, scheme, host, path, status, force, query, conditions, headers: {}, signed }
 }
 
 const trimComment = function (parts) {

@@ -41,7 +41,6 @@ const redirectMatch = function ({
   parameters = {},
   params = parameters,
   query = params,
-  edge_handlers: edgeHandlers = [],
   sign,
   signing = sign,
   signed = signing,
@@ -68,7 +67,6 @@ const redirectMatch = function ({
     force,
     conditions,
     headers,
-    edgeHandlers,
     signed,
   }
 }
