@@ -10,8 +10,6 @@ module.exports = {
     'max-lines': 0,
     'max-statements': 0,
     complexity: 0,
-    // TODO: harmonize with filename snake_case in other Netlify Dev projects
-    'unicorn/filename-case': [2, { case: 'kebabCase' }],
   },
   overrides: [...overrides],
 }
