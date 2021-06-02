@@ -7,12 +7,17 @@ const parseNetlifyConfig = async function (config) {
   const {
     config: { redirects = [] },
   } = await resolveConfig({ config })
+
+  if (!Array.isArray(redirects)) {
+    throw new TypeError(`Redirects must be an array not: ${redirects}`)
+  }
+
   return redirects.map(parseRedirect).map(finalizeRedirect)
 }
 
 const parseRedirect = function (obj, index) {
   if (!isPlainObj(obj)) {
-    throw new Error(`Redirects must be objects not: ${obj}`)
+    throw new TypeError(`Redirects must be objects not: ${obj}`)
   }
 
   try {
