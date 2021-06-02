@@ -61,7 +61,7 @@ const isComment = function (part) {
 const LINE_TOKENS_REGEXP = /\s+/g
 
 const addForwardRule = function (path, parts) {
-  const { status } = parseStatus(parts[0])
+  const status = getStatusCode(parts[0])
   return isSplatRule(path, status) ? [replaceSplatRule(path), ...parts] : parts
 }
 
@@ -76,9 +76,13 @@ const parseStatus = function (statusPart) {
     return { force: false }
   }
 
-  const status = Number.parseInt(statusPart)
+  const status = getStatusCode(statusPart)
   const force = statusPart.endsWith('!')
   return { status, force }
+}
+
+const getStatusCode = function (statusPart) {
+  return Number.parseInt(statusPart)
 }
 
 const parsePairs = function (conditions) {
