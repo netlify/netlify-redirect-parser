@@ -38,14 +38,14 @@ const parseRedirectLine = function (line) {
   }
 
   const newParts = addForwardRule(path, parts)
-  const newHostPartIndex = newParts.findIndex(isNewHostPart)
-  if (newHostPartIndex === -1) {
+  const toIndex = newParts.findIndex(isToPart)
+  if (toIndex === -1) {
     throw new Error('Missing destination path/URL')
   }
 
-  const query = parsePairs(newParts.slice(0, newHostPartIndex))
-  const to = newParts[newHostPartIndex]
-  const { status, force, conditions, signed } = parseLastParts(newParts.slice(newHostPartIndex + 1))
+  const query = parsePairs(newParts.slice(0, toIndex))
+  const to = newParts[toIndex]
+  const { status, force, conditions, signed } = parseLastParts(newParts.slice(toIndex + 1))
   return { to, scheme, host, path, status, force, query, conditions, headers: {}, signed }
 }
 
@@ -63,6 +63,10 @@ const LINE_TOKENS_REGEXP = /\s+/g
 const addForwardRule = function (path, parts) {
   const status = getStatusCode(parts[0])
   return isSplatRule(path, status) ? [replaceSplatRule(path), ...parts] : parts
+}
+
+const isToPart = function (part) {
+  return part.startsWith('/') || isUrl(part)
 }
 
 const parseLastParts = function ([statusPart, ...lastParts]) {
@@ -92,10 +96,6 @@ const parsePairs = function (conditions) {
 const parsePair = function (condition) {
   const [key, value] = condition.split('=')
   return { [key]: value }
-}
-
-const isNewHostPart = function (part) {
-  return part.startsWith('/') || isUrl(part)
 }
 
 module.exports = { parseRedirectsFormat }
