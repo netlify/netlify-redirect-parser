@@ -6,67 +6,106 @@ const { parseRedirectsFormat } = require('..')
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
 const parseRedirects = async function (fixtureName) {
-  return await parseRedirectsFormat(`${FIXTURES_DIR}/${fixtureName}`)
+  return await parseRedirectsFormat(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
 }
 
 each(
   [
     {
-      title: 'simple_redirects',
+      title: 'empty',
+      output: [],
+    },
+    {
+      title: 'empty_line',
       output: [
-        { path: '/home', to: '/' },
         { path: '/blog/my-post.php', to: '/blog/my-post' },
-        { path: '/blog/my-post-ads.php', to: '/blog/my-post#ads' },
-        { path: '/news', to: '/blog' },
+        { path: '/blog/my-post-two.php', to: '/blog/my-post-two' },
       ],
     },
     {
-      title: 'status_code_redirects',
+      title: 'multiple_lines',
       output: [
-        { path: '/home', to: '/', status: 301 },
-        { path: '/my-redirect', to: '/', status: 302 },
-        { path: '/pass-through', to: '/', status: 200 },
-        { path: '/ecommerce', to: '/store-closed', status: 404 },
+        { path: '/10thmagnitude', to: 'http://www.10thmagnitude.com/', status: 301 },
+        { path: '/bananastand', to: 'http://eepurl.com/Lgde5', status: 301 },
       ],
     },
     {
-      title: 'parameter_match_redirects',
-      output: [
-        { path: '/', to: '/news', query: { page: 'news' } },
-        { path: '/blog', to: '/blog/:post_id', query: { post: ':post_id' } },
-        { path: '/', to: '/about', status: 301, query: { _escaped_fragment_: '/about' } },
-      ],
+      title: 'line_trim',
+      output: [{ path: '/home', to: '/' }],
     },
     {
-      title: 'full_hostname_redirects',
+      title: 'comment_full',
+      output: [{ path: '/blog/my-post.php', to: '/blog/my-post' }],
+    },
+    {
+      title: 'comment_inline',
+      output: [{ path: '/blog/my-post.php', to: '/blog/my-post' }],
+    },
+    {
+      title: 'from_simple',
+      output: [{ path: '/home', to: '/' }],
+    },
+    {
+      title: 'from_absolute_uri',
       output: [{ host: 'hello.bitballoon.com', scheme: 'http', path: '/*', to: 'http://www.hello.com/:splat' }],
     },
     {
-      title: 'proxy_redirects',
-      output: [{ path: '/api/*', to: 'https://api.bitballoon.com/*', status: 200, proxy: true }],
+      title: 'query',
+      output: [
+        { path: '/', to: '/news', query: { page: 'news' } },
+        { path: '/blog', to: '/blog/:post_id', query: { post: ':post_id' } },
+        { path: '/', to: '/about', query: { _escaped_fragment_: '/about' } },
+      ],
     },
     {
-      title: 'country_redirects',
-      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'ch,tw' } }],
+      title: 'to_anchor',
+      output: [{ path: '/blog/my-post-ads.php', to: '/blog/my-post#ads' }],
     },
     {
-      title: 'country_language_redirects',
-      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'il', Language: 'en' } }],
-    },
-    {
-      title: 'splat_no_force_redirects',
+      title: 'to_splat_no_force',
       output: [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301 }],
     },
     {
-      title: 'splat_force_redirects',
+      title: 'to_splat_force',
       output: [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301, force: true }],
     },
     {
-      title: 'equal_redirects',
+      title: 'to_path_forward',
+      output: [
+        { path: '/admin/*', to: '/admin/:splat', status: 200 },
+        { path: '/admin/*', to: '/admin/:splat', status: 200, force: true },
+      ],
+    },
+    {
+      title: 'proxy',
+      output: [{ path: '/api/*', to: 'https://api.bitballoon.com/*', status: 200, proxy: true }],
+    },
+    {
+      title: 'status',
       output: [{ path: '/test', to: 'https://www.bitballoon.com/test=hello', status: 301 }],
     },
     {
-      title: 'realworld_redirects',
+      title: 'status_force',
+      output: [{ path: '/test', to: 'https://www.bitballoon.com/test=hello', status: 301, force: true }],
+    },
+    {
+      title: 'conditions_country',
+      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'ch,tw' } }],
+    },
+    {
+      title: 'conditions_country_language',
+      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'il', Language: 'en' } }],
+    },
+    {
+      title: 'conditions_role',
+      output: [{ path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: 'admin' } }],
+    },
+    {
+      title: 'conditions_roles',
+      output: [{ path: '/member/*', to: '/member/:splat', status: 200, conditions: { Role: 'admin,member' } }],
+    },
+    {
+      title: 'conditions_query',
       output: [
         {
           path: '/donate',
@@ -75,23 +114,10 @@ each(
           query: { source: ':source', email: ':email' },
           conditions: { Country: 'us' },
         },
-        { path: '/', to: 'https://origin.wework.com', status: 200, proxy: true },
-        { path: '/:lang/locations/*', to: '/locations/:splat', status: 200 },
       ],
     },
     {
-      title: 'complex_redirects',
-      output: [
-        {
-          path: '/google-play',
-          to: 'https://goo.gl/app/playmusic?ibi=com.google.PlayMusic&isi=691797987&ius=googleplaymusic&link=https://play.google.com/music/m/Ihj4yege3lfmp3vs5yoopgxijpi?t%3DArrested_DevOps',
-          status: 301,
-          force: true,
-        },
-      ],
-    },
-    {
-      title: 'proxy_signing_redirects',
+      title: 'signed',
       output: [
         {
           path: '/api/*',
@@ -104,37 +130,17 @@ each(
       ],
     },
     {
-      title: 'absolute_country_redirects',
+      title: 'signed_backward_compat',
       output: [
         {
-          host: 'ximble.com.au',
-          scheme: 'http',
-          path: '/*',
-          to: 'https://www.ximble.com/au/:splat',
-          status: 301,
+          path: '/api/*',
+          to: 'https://api.example.com/:splat',
+          status: 200,
+          proxy: true,
           force: true,
-          conditions: { Country: 'au' },
+          signed: 'API_SECRET',
         },
       ],
-    },
-    {
-      title: 'role_condition_redirects',
-      output: [{ path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: 'admin' } }],
-    },
-    {
-      title: 'multiple_roles_redirects',
-      output: [{ path: '/member/*', to: '/member/:splat', status: 200, conditions: { Role: 'admin,member' } }],
-    },
-    {
-      title: 'path_forward_redirects',
-      output: [
-        { path: '/admin/*', to: '/admin/:splat', status: 200 },
-        { path: '/admin/*', to: '/admin/:splat', status: 200, force: true },
-      ],
-    },
-    {
-      title: 'service_redirects',
-      output: [{ path: '/api/*', to: '/.netlify/functions/:splat', status: 200 }],
     },
   ],
   ({ title }, { fixtureName = title, output }) => {
@@ -146,9 +152,12 @@ each(
 
 each(
   [
-    { title: 'no_destination_redirects', errorMessage: /Missing destination/ },
-    { title: 'redirects', errorMessage: /Missing destination/ },
-    { title: 'mistaken_headers', errorMessage: /Missing destination/ },
+    { title: 'invalid_url', errorMessage: /Invalid URL/ },
+    { title: 'invalid_dot_netlify_url', errorMessage: /must not start/ },
+    { title: 'invalid_dot_netlify_path', errorMessage: /must not start/ },
+    { title: 'invalid_no_to_no_status', errorMessage: /Missing destination/ },
+    { title: 'invalid_no_to_status', errorMessage: /Missing destination/ },
+    { title: 'invalid_mistaken_headers', errorMessage: /Missing destination/ },
   ],
   ({ title }, { fixtureName = title, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
@@ -156,11 +165,3 @@ each(
     })
   },
 )
-
-test('complicated _redirects file', async (t) => {
-  const redirects = await parseRedirects('complicated_redirects')
-  t.is(redirects.length, 26)
-  redirects.forEach((rule) => {
-    t.true(rule.to.startsWith('http'))
-  })
-})

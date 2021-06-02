@@ -1,3 +1,1 @@
 /donate source=:source email=:email /donate/usa?source=:source&email=:email 302 Country=us
-/ https://origin.wework.com 200
-/:lang/locations/* /locations/:splat 200
