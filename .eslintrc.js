@@ -3,13 +3,7 @@ const { overrides } = require('@netlify/eslint-config-node')
 module.exports = {
   extends: ['plugin:fp/recommended', '@netlify/eslint-config-node'],
   rules: {
-    // Those rules from @netlify/eslint-config-node are currently disabled
-    // TODO: remove, so those rules are enabled
-    'fp/no-mutation': 0,
-    'no-magic-numbers': 0,
-    'max-lines': 0,
-    'max-statements': 0,
-    complexity: 0,
+    'fp/no-mutation': [2, { commonjs: true }],
   },
   overrides: [...overrides],
 }

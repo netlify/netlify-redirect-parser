@@ -90,10 +90,12 @@ each(
     },
     {
       title: 'conditions_country',
+      // eslint-disable-next-line no-magic-numbers
       output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'ch,tw' } }],
     },
     {
       title: 'conditions_country_language',
+      // eslint-disable-next-line no-magic-numbers
       output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'il', Language: 'en' } }],
     },
     {
@@ -110,6 +112,7 @@ each(
         {
           path: '/donate',
           to: '/donate/usa?source=:source&email=:email',
+          // eslint-disable-next-line no-magic-numbers
           status: 302,
           query: { source: ':source', email: ':email' },
           conditions: { Country: 'us' },
