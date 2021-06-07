@@ -32,7 +32,7 @@
   "dependencies": {
     "@netlify/config": "^6.7.2",
     "filter-obj": "^2.0.2",
-    "is-plain-obj": "^2.1.0"
+    "is-plain-obj": "^4.0.0"
   },
   "devDependencies": {
     "@netlify/eslint-config-node": "^3.1.1",
