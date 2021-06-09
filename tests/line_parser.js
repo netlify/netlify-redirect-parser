@@ -16,6 +16,10 @@ each(
       output: [],
     },
     {
+      title: 'non_existing',
+      output: [],
+    },
+    {
       title: 'empty_line',
       output: [
         { path: '/blog/my-post.php', to: '/blog/my-post' },
