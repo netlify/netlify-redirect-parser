@@ -16,6 +16,10 @@ each(
       output: [],
     },
     {
+      title: 'non_existing',
+      output: [],
+    },
+    {
       title: 'backward_compat_origin',
       output: [{ path: '/old-path', to: '/new-path' }],
     },
@@ -98,6 +102,7 @@ each(
 
 each(
   [
+    { title: 'invalid_toml', errorMessage: /parse configuration file/ },
     { title: 'invalid_type', errorMessage: /must be an array/ },
     { title: 'invalid_object', errorMessage: /must be objects/ },
     { title: 'invalid_no_from', errorMessage: /Missing "from"/ },
