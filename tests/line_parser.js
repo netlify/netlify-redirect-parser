@@ -160,7 +160,7 @@ each(
     { title: 'invalid_dot_netlify_url', errorMessage: /must not start/ },
     { title: 'invalid_dot_netlify_path', errorMessage: /must not start/ },
     { title: 'invalid_no_to_no_status', errorMessage: /Missing destination/ },
-    { title: 'invalid_no_to_status', errorMessage: /Missing destination/ },
+    { title: 'invalid_no_to_status', errorMessage: /Missing "to" field/ },
     { title: 'invalid_mistaken_headers', errorMessage: /Missing destination/ },
   ],
   ({ title }, { fixtureName = title, errorMessage }) => {

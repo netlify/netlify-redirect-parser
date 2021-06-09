@@ -1,6 +1,95 @@
 const { URL } = require('url')
 
 const filterObj = require('filter-obj')
+const isPlainObj = require('is-plain-obj')
+
+const { isUrl } = require('./url')
+
+// Validate and normalize an array of `redirects` objects.
+// This step is performed after `redirects` have been parsed from either
+// `netlify.toml` or `_redirects`.
+const normalizeRedirects = function (redirects) {
+  if (!Array.isArray(redirects)) {
+    throw new TypeError(`Redirects must be an array not: ${redirects}`)
+  }
+
+  return redirects.map(parseRedirect)
+}
+
+const parseRedirect = function (obj, index) {
+  if (!isPlainObj(obj)) {
+    throw new TypeError(`Redirects must be objects not: ${obj}`)
+  }
+
+  try {
+    return parseRedirectObject(obj)
+  } catch (error) {
+    throw new Error(`Could not parse redirect number ${index + 1}:
+  ${JSON.stringify(obj)}
+${error.message}`)
+  }
+}
+
+// Parse a single `redirects` object
+const parseRedirectObject = function ({
+  // `from` used to be named `origin`
+  origin,
+  from = origin,
+  // `query` used to be named `params` and `parameters`
+  parameters = {},
+  params = parameters,
+  query = params,
+  // `to` used to be named `destination`
+  destination,
+  to = destination,
+  status,
+  force = false,
+  conditions = {},
+  // `signed` used to be named `signing` and `sign`
+  sign,
+  signing = sign,
+  signed = signing,
+  headers = {},
+}) {
+  if (from === undefined) {
+    throw new Error('Missing "from" field')
+  }
+
+  if (!isPlainObj(headers)) {
+    throw new Error('"headers" field must be an object')
+  }
+
+  const finalTo = addForwardRule(from, status, to)
+  const { scheme, host, path } = parseFrom(from)
+  const proxy = isProxy(status, finalTo)
+
+  return removeUndefinedValues({
+    scheme,
+    host,
+    path,
+    query,
+    to: finalTo,
+    status,
+    force,
+    conditions,
+    signed,
+    headers,
+    proxy,
+  })
+}
+
+// Add the optional `to` field when using a forward rule
+const addForwardRule = function (from, status, to) {
+  if (to !== undefined) {
+    return to
+  }
+
+  if (!isSplatRule(from, status)) {
+    throw new Error('Missing "to" field')
+  }
+
+  return from.replace(SPLAT_REGEXP, '/:splat')
+}
 
 // "to" can only be omitted when using forward rules:
 //  - This requires "from" to end with "/*" and "status" to be 2**
@@ -9,18 +98,7 @@ const isSplatRule = function (from, status) {
   return from.endsWith('/*') && status >= 200 && status < 300
 }
 
-const replaceSplatRule = function (from) {
-  return from.replace(SPLAT_REGEXP, '/:splat')
-}
-
 const SPLAT_REGEXP = /\/\*$/
-
-// Applies logic at the end of both `_redirects` and `netlify.toml` parsing
-const finalizeRedirect = function ({ from, ...redirect }) {
-  const { scheme, host, path } = parseFrom(from)
-  const proxy = isProxy(redirect)
-  return removeUndefinedValues({ ...redirect, scheme, host, path, proxy })
-}
 
 // Parses the `from` field which can be either a file path or a URL.
 const parseFrom = function (from) {
@@ -46,13 +124,7 @@ const parseFromField = function (from) {
   }
 }
 
-const isUrl = function (pathOrUrl) {
-  return SCHEMES.some((scheme) => pathOrUrl.startsWith(scheme))
-}
-
-const SCHEMES = ['http://', 'https://']
-
-const isProxy = function ({ status, to }) {
+const isProxy = function (status, to) {
   return status === 200 && isUrl(to)
 }
 
@@ -64,9 +136,4 @@ const isDefined = function (key, value) {
   return value !== undefined
 }
 
-module.exports = {
-  isUrl,
-  isSplatRule,
-  replaceSplatRule,
-  finalizeRedirect,
-}
+module.exports = { normalizeRedirects }

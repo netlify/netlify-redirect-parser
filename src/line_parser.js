@@ -3,7 +3,8 @@ const { promisify } = require('util')
 
 const pathExists = require('path-exists')
 
-const { isUrl, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
+const { normalizeRedirects } = require('./common')
+const { isUrl } = require('./url')
 
 const readFileAsync = promisify(fs.readFile)
 
@@ -31,7 +32,8 @@ const parseRedirectsFormat = async function (filePath) {
   }
 
   const text = await readFileAsync(filePath, 'utf-8')
-  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect).map(finalizeRedirect)
+  const redirects = text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+  return normalizeRedirects(redirects)
 }
 
 const normalizeLine = function (line, index) {
@@ -60,17 +62,16 @@ const parseRedirectLine = function (line) {
     throw new Error('Missing destination path/URL')
   }
 
-  const newParts = addForwardRule(from, parts)
-  const toIndex = newParts.findIndex(isToPart)
-  if (toIndex === -1) {
-    throw new Error('Missing destination path/URL')
-  }
+  const {
+    queryParts,
+    to,
+    lastParts: [statusPart, ...conditionsParts],
+  } = parseParts(from, parts)
 
-  const query = parsePairs(newParts.slice(0, toIndex))
-  const to = newParts[toIndex]
-  const { status, force } = parseStatus(newParts[toIndex + 1])
-  const { Sign, signed = Sign, ...conditions } = parsePairs(newParts.slice(toIndex + 2))
-  return { from, query, to, status, force, conditions, signed, headers: {} }
+  const query = parsePairs(queryParts)
+  const { status, force } = parseStatus(statusPart)
+  const { Sign, signed = Sign, ...conditions } = parsePairs(conditionsParts)
+  return { from, query, to, status, force, conditions, signed }
 }
 
 // Removes inline comments at the end of the line
@@ -85,20 +86,39 @@ const isComment = function (part) {
 
 const LINE_TOKENS_REGEXP = /\s+/g
 
-// Add the optional `to` field when using a forward rule
-const addForwardRule = function (from, parts) {
-  const status = getStatusCode(parts[0])
-  return isSplatRule(from, status) ? [replaceSplatRule(from), ...parts] : parts
+// Figure out the purpose of each whitelist-separated part, taking into account
+// the fact that some are optional.
+const parseParts = function (from, parts) {
+  // Optional `to` field when using a forward rule.
+  // The `to` field is added and validated later on, so we can leave it
+  // `undefined`
+  if (isStatusCode(parts[0])) {
+    return { queryParts: [], to: undefined, lastParts: parts }
+  }
+
+  const toIndex = parts.findIndex(isToPart)
+  if (toIndex === -1) {
+    throw new Error('Missing destination path/URL')
+  }
+
+  const queryParts = parts.slice(0, toIndex)
+  const to = parts[toIndex]
+  const lastParts = parts.slice(toIndex + 1)
+  return { queryParts, to, lastParts }
 }
 
 const isToPart = function (part) {
   return part.startsWith('/') || isUrl(part)
 }
 
+const isStatusCode = function (part) {
+  return Number.isInteger(getStatusCode(part))
+}
+
 // Parse the `status` part
 const parseStatus = function (statusPart) {
   if (statusPart === undefined) {
-    return { force: false }
+    return {}
   }
 
   const status = getStatusCode(statusPart)
