@@ -30,7 +30,7 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "@netlify/config": "^6.9.2",
+    "@netlify/config": "^6.10.0",
     "filter-obj": "^2.0.2",
     "is-plain-obj": "^2.1.0",
     "path-exists": "^4.0.0"
