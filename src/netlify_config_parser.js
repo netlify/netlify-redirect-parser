@@ -9,12 +9,12 @@ const pReadFile = promisify(readFile)
 // Parse `redirects` field in "netlify.toml" to an array of objects.
 // This field is already an array of objects so it only validates and
 // normalizes it.
-const parseConfigRedirects = async function (configPath) {
-  if (!(await pathExists(configPath))) {
+const parseConfigRedirects = async function (netlifyConfigPath) {
+  if (!(await pathExists(netlifyConfigPath))) {
     return []
   }
 
-  const { redirects = [] } = await parseConfig(configPath)
+  const { redirects = [] } = await parseConfig(netlifyConfigPath)
   return redirects
 }
 

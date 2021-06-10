@@ -25,12 +25,12 @@ const readFileAsync = promisify(fs.readFile)
 //     - "Sign" is a special condition
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
-const parseFileRedirects = async function (filePath) {
-  if (!(await pathExists(filePath))) {
+const parseFileRedirects = async function (redirectFile) {
+  if (!(await pathExists(redirectFile))) {
     return []
   }
 
-  const text = await readFileAsync(filePath, 'utf-8')
+  const text = await readFileAsync(redirectFile, 'utf-8')
   return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
 }
 
