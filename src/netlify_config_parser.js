@@ -4,21 +4,18 @@ const { promisify } = require('util')
 const pathExists = require('path-exists')
 const { parse: loadToml } = require('toml')
 
-const { normalizeRedirects } = require('./common')
-
 const pReadFile = promisify(readFile)
 
 // Parse `redirects` field in "netlify.toml" to an array of objects.
 // This field is already an array of objects so it only validates and
 // normalizes it.
-const parseNetlifyConfig = async function (configPath) {
+const parseConfigRedirects = async function (configPath) {
   if (!(await pathExists(configPath))) {
     return []
   }
 
   const { redirects = [] } = await parseConfig(configPath)
-
-  return normalizeRedirects(redirects)
+  return redirects
 }
 
 // Load the configuration file and parse it (TOML)
@@ -33,4 +30,4 @@ const parseConfig = async function (configPath) {
   }
 }
 
-module.exports = { parseNetlifyConfig }
+module.exports = { parseConfigRedirects }
