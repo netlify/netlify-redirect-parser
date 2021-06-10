@@ -1,21 +1,41 @@
-const resolveConfig = require('@netlify/config')
+const { readFile } = require('fs')
+const { promisify } = require('util')
+
 const isPlainObj = require('is-plain-obj')
+const pathExists = require('path-exists')
+const { parse: loadToml } = require('toml')
 
 const { isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
+
+const pReadFile = promisify(readFile)
 
 // Parse `redirects` field in "netlify.toml" to an array of objects.
 // This field is already an array of objects so it only validates and
 // normalizes it.
-const parseNetlifyConfig = async function (config) {
-  const {
-    config: { redirects = [] },
-  } = await resolveConfig({ config })
+const parseNetlifyConfig = async function (configPath) {
+  if (!(await pathExists(configPath))) {
+    return []
+  }
+
+  const { redirects = [] } = await parseConfig(configPath)
 
   if (!Array.isArray(redirects)) {
     throw new TypeError(`Redirects must be an array not: ${redirects}`)
   }
 
   return redirects.map(parseRedirect).map(finalizeRedirect)
+}
+
+// Load the configuration file and parse it (TOML)
+const parseConfig = async function (configPath) {
+  try {
+    const configString = await pReadFile(configPath, 'utf8')
+    const config = loadToml(configString)
+    // Convert `null` prototype objects to normal plain objects
+    return JSON.parse(JSON.stringify(config))
+  } catch (error) {
+    throw new Error(`Could not parse configuration file: ${error}`)
+  }
 }
 
 const parseRedirect = function (obj, index) {
