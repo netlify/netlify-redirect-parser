@@ -3,7 +3,6 @@ const { promisify } = require('util')
 
 const pathExists = require('path-exists')
 
-const { normalizeRedirects } = require('./common')
 const { isUrl } = require('./url')
 
 const readFileAsync = promisify(fs.readFile)
@@ -26,14 +25,13 @@ const readFileAsync = promisify(fs.readFile)
 //     - "Sign" is a special condition
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
-const parseRedirectsFormat = async function (filePath) {
+const parseFileRedirects = async function (filePath) {
   if (!(await pathExists(filePath))) {
     return []
   }
 
   const text = await readFileAsync(filePath, 'utf-8')
-  const redirects = text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
-  return normalizeRedirects(redirects)
+  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
 }
 
 const normalizeLine = function (line, index) {
@@ -140,4 +138,4 @@ const parsePair = function (condition) {
   return { [key]: value }
 }
 
-module.exports = { parseRedirectsFormat }
+module.exports = { parseFileRedirects }

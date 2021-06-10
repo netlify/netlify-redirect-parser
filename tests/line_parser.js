@@ -1,12 +1,13 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { parseRedirectsFormat } = require('..')
+const { parseFileRedirects, normalizeRedirects } = require('..')
 
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
 const parseRedirects = async function (fixtureName) {
-  return await parseRedirectsFormat(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
+  const redirects = await parseFileRedirects(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
+  return normalizeRedirects(redirects)
 }
 
 each(

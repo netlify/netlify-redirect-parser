@@ -1,5 +1,6 @@
-const { parseRedirectsFormat } = require('./line_parser')
+const { parseFileRedirects } = require('./line_parser')
 const { mergeRedirects } = require('./merge')
-const { parseNetlifyConfig } = require('./netlify_config_parser')
+const { parseConfigRedirects } = require('./netlify_config_parser')
+const { normalizeRedirects } = require('./normalize')
 
-module.exports = { parseRedirectsFormat, parseNetlifyConfig, mergeRedirects }
+module.exports = { parseFileRedirects, parseConfigRedirects, mergeRedirects, normalizeRedirects }
