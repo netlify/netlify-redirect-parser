@@ -1,6 +1,8 @@
 const fs = require('fs')
 const { promisify } = require('util')
 
+const pathExists = require('path-exists')
+
 const { isUrl, isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
 
 const readFileAsync = promisify(fs.readFile)
@@ -24,6 +26,10 @@ const readFileAsync = promisify(fs.readFile)
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
 const parseRedirectsFormat = async function (filePath) {
+  if (!(await pathExists(filePath))) {
+    return []
+  }
+
   const text = await readFileAsync(filePath, 'utf-8')
   return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect).map(finalizeRedirect)
 }
