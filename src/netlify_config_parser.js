@@ -1,11 +1,10 @@
 const { readFile } = require('fs')
 const { promisify } = require('util')
 
-const isPlainObj = require('is-plain-obj')
 const pathExists = require('path-exists')
 const { parse: loadToml } = require('toml')
 
-const { isSplatRule, replaceSplatRule, finalizeRedirect } = require('./common')
+const { normalizeRedirects } = require('./common')
 
 const pReadFile = promisify(readFile)
 
@@ -19,11 +18,7 @@ const parseNetlifyConfig = async function (configPath) {
 
   const { redirects = [] } = await parseConfig(configPath)
 
-  if (!Array.isArray(redirects)) {
-    throw new TypeError(`Redirects must be an array not: ${redirects}`)
-  }
-
-  return redirects.map(parseRedirect).map(finalizeRedirect)
+  return normalizeRedirects(redirects)
 }
 
 // Load the configuration file and parse it (TOML)
@@ -36,76 +31,6 @@ const parseConfig = async function (configPath) {
   } catch (error) {
     throw new Error(`Could not parse configuration file: ${error}`)
   }
-}
-
-const parseRedirect = function (obj, index) {
-  if (!isPlainObj(obj)) {
-    throw new TypeError(`Redirects must be objects not: ${obj}`)
-  }
-
-  try {
-    return parseRedirectObject(obj)
-  } catch (error) {
-    throw new Error(`Could not parse redirect number ${index + 1}:
-  ${JSON.stringify(obj)}
-${error.message}`)
-  }
-}
-
-// Parse a single `redirects` object
-const parseRedirectObject = function ({
-  // `from` used to be named `origin`
-  origin,
-  from = origin,
-  // `query` used to be named `params` and `parameters`
-  parameters = {},
-  params = parameters,
-  query = params,
-  // `to` used to be named `destination`
-  destination,
-  to = destination,
-  status,
-  force = false,
-  conditions = {},
-  // `signed` used to be named `signing` and `sign`
-  sign,
-  signing = sign,
-  signed = signing,
-  headers = {},
-}) {
-  if (from === undefined) {
-    throw new Error('Missing "from" field')
-  }
-
-  if (!isPlainObj(headers)) {
-    throw new Error('"headers" field must be an object')
-  }
-
-  const finalTo = addForwardRule(from, status, to)
-
-  return {
-    from,
-    query,
-    to: finalTo,
-    status,
-    force,
-    conditions,
-    signed,
-    headers,
-  }
-}
-
-// Add the optional `to` field when using a forward rule
-const addForwardRule = function (from, status, to) {
-  if (to !== undefined) {
-    return to
-  }
-
-  if (!isSplatRule(from, status)) {
-    throw new Error('Missing "to" field')
-  }
-
-  return replaceSplatRule(from)
 }
 
 module.exports = { parseNetlifyConfig }
