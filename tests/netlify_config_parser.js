@@ -57,6 +57,10 @@ each(
       output: [{ path: '/old-path/*', to: '/old-path/:splat', status: 200 }],
     },
     {
+      title: 'from_no_slash',
+      output: [{ path: 'old-path', to: 'new-path' }],
+    },
+    {
       title: 'query',
       output: [{ path: '/old-path', to: '/new-path', query: { path: ':path' } }],
     },
