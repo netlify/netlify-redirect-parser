@@ -71,7 +71,7 @@ const parseRedirectObject = function ({
     host,
     path,
     query,
-    to: finalTo,
+    destination: finalTo,
     status,
     force,
     conditions,
