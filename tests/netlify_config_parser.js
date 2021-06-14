@@ -47,7 +47,7 @@ each(
           origin: '/old-path',
           path: '/old-path',
           destination: '/new-path',
-          query: { path: ':path' },
+          parameters: { path: ':path' },
         },
       ],
     },
@@ -58,7 +58,7 @@ each(
           origin: '/old-path',
           path: '/old-path',
           destination: '/new-path',
-          query: { path: ':path' },
+          parameters: { path: ':path' },
         },
       ],
     },
@@ -134,7 +134,7 @@ each(
           origin: '/old-path',
           path: '/old-path',
           destination: '/new-path',
-          query: { path: ':path' },
+          parameters: { path: ':path' },
         },
       ],
     },
@@ -157,7 +157,7 @@ each(
           path: '/old-path',
           destination: '/new-path',
           status: 301,
-          query: {
+          parameters: {
             path: ':path',
           },
           conditions: {

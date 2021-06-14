@@ -30,7 +30,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          query: {},
+          parameters: {},
           destination: '/new-path',
           force: false,
           conditions: {},
@@ -46,7 +46,7 @@ each(
         {
           origin: '/home',
           path: '/home',
-          query: {},
+          parameters: {},
           destination: '/',
           force: false,
           conditions: {},
@@ -58,7 +58,7 @@ each(
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          query: {},
+          parameters: {},
           destination: 'http://www.hello.com/:splat',
           force: false,
           conditions: {},
@@ -75,7 +75,7 @@ each(
         {
           origin: '/home',
           path: '/home',
-          query: {},
+          parameters: {},
           destination: '/',
           force: false,
           conditions: {},
@@ -87,7 +87,7 @@ each(
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          query: {},
+          parameters: {},
           destination: 'http://www.hello.com/:splat',
           force: false,
           conditions: {},
@@ -97,7 +97,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          query: {},
+          parameters: {},
           destination: '/new-path',
           force: false,
           conditions: {},
