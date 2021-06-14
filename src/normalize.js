@@ -70,7 +70,7 @@ const parseRedirectObject = function ({
     scheme,
     host,
     path,
-    query,
+    parameters: query,
     destination: finalTo,
     status,
     force,
