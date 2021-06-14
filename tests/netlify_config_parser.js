@@ -139,6 +139,39 @@ each(
       ],
     },
     {
+      title: 'conditions_country_case',
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          destination: '/new-path',
+          conditions: { country: ['US'] },
+        },
+      ],
+    },
+    {
+      title: 'conditions_language_case',
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          destination: '/new-path',
+          conditions: { language: ['en'] },
+        },
+      ],
+    },
+    {
+      title: 'conditions_role_case',
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          destination: '/new-path',
+          conditions: { role: ['admin'] },
+        },
+      ],
+    },
+    {
       title: 'signed',
       output: [
         {
@@ -161,9 +194,9 @@ each(
             path: ':path',
           },
           conditions: {
-            Country: ['US'],
-            Language: ['en'],
-            Role: ['admin'],
+            country: ['US'],
+            language: ['en'],
+            role: ['admin'],
           },
         },
         {
