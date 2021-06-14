@@ -28,6 +28,7 @@ each(
       configFixtureName: 'from_simple',
       output: [
         {
+          origin: '/old-path',
           path: '/old-path',
           query: {},
           to: '/new-path',
@@ -43,6 +44,7 @@ each(
       fileFixtureNames: ['from_simple', 'from_absolute_uri'],
       output: [
         {
+          origin: '/home',
           path: '/home',
           query: {},
           to: '/',
@@ -52,6 +54,7 @@ each(
           proxy: false,
         },
         {
+          origin: 'http://hello.bitballoon.com/*',
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
@@ -70,6 +73,7 @@ each(
       configFixtureName: 'from_simple',
       output: [
         {
+          origin: '/home',
           path: '/home',
           query: {},
           to: '/',
@@ -79,6 +83,7 @@ each(
           proxy: false,
         },
         {
+          origin: 'http://hello.bitballoon.com/*',
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
@@ -90,6 +95,7 @@ each(
           proxy: false,
         },
         {
+          origin: '/old-path',
           path: '/old-path',
           query: {},
           to: '/new-path',

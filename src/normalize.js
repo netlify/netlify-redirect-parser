@@ -63,7 +63,10 @@ const parseRedirectObject = function ({
   const { scheme, host, path } = parseFrom(from)
   const proxy = isProxy(status, finalTo)
 
+  // We ensure the return value has the same shape as our `netlify-commons`
+  // backend
   return removeUndefinedValues({
+    origin: from,
     scheme,
     host,
     path,
