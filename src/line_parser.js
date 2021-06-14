@@ -96,7 +96,7 @@ const parseParts = function (from, parts) {
 
   const toIndex = parts.findIndex(isToPart)
   if (toIndex === -1) {
-    throw new Error('Missing destination path/URL')
+    throw new Error('The destination path/URL must start with "/", "http:" or "https:"')
   }
 
   const queryParts = parts.slice(0, toIndex)
