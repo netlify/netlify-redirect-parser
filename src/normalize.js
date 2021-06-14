@@ -3,6 +3,7 @@ const { URL } = require('url')
 const filterObj = require('filter-obj')
 const isPlainObj = require('is-plain-obj')
 
+const { normalizeConditions } = require('./conditions')
 const { isUrl } = require('./url')
 
 // Validate and normalize an array of `redirects` objects.
@@ -62,6 +63,7 @@ const parseRedirectObject = function ({
   const finalTo = addForwardRule(from, status, to)
   const { scheme, host, path } = parseFrom(from)
   const proxy = isProxy(status, finalTo)
+  const normalizedConditions = normalizeConditions(conditions)
 
   // We ensure the return value has the same shape as our `netlify-commons`
   // backend
@@ -74,7 +76,7 @@ const parseRedirectObject = function ({
     destination: finalTo,
     status,
     force,
-    conditions,
+    conditions: normalizedConditions,
     signed,
     headers,
     proxy,
