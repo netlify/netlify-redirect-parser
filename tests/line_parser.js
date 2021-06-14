@@ -26,12 +26,12 @@ each(
         {
           origin: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          to: '/blog/my-post',
+          destination: '/blog/my-post',
         },
         {
           origin: '/blog/my-post-two.php',
           path: '/blog/my-post-two.php',
-          to: '/blog/my-post-two',
+          destination: '/blog/my-post-two',
         },
       ],
     },
@@ -41,13 +41,13 @@ each(
         {
           origin: '/10thmagnitude',
           path: '/10thmagnitude',
-          to: 'http://www.10thmagnitude.com/',
+          destination: 'http://www.10thmagnitude.com/',
           status: 301,
         },
         {
           origin: '/bananastand',
           path: '/bananastand',
-          to: 'http://eepurl.com/Lgde5',
+          destination: 'http://eepurl.com/Lgde5',
           status: 301,
         },
       ],
@@ -58,7 +58,7 @@ each(
         {
           origin: '/home',
           path: '/home',
-          to: '/',
+          destination: '/',
         },
       ],
     },
@@ -68,7 +68,7 @@ each(
         {
           origin: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          to: '/blog/my-post',
+          destination: '/blog/my-post',
         },
       ],
     },
@@ -78,7 +78,7 @@ each(
         {
           origin: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          to: '/blog/my-post',
+          destination: '/blog/my-post',
         },
       ],
     },
@@ -88,7 +88,7 @@ each(
         {
           origin: '/home',
           path: '/home',
-          to: '/',
+          destination: '/',
         },
       ],
     },
@@ -100,7 +100,7 @@ each(
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          to: 'http://www.hello.com/:splat',
+          destination: 'http://www.hello.com/:splat',
         },
       ],
     },
@@ -110,19 +110,19 @@ each(
         {
           origin: '/',
           path: '/',
-          to: '/news',
+          destination: '/news',
           query: { page: 'news' },
         },
         {
           origin: '/blog',
           path: '/blog',
-          to: '/blog/:post_id',
+          destination: '/blog/:post_id',
           query: { post: ':post_id' },
         },
         {
           origin: '/',
           path: '/',
-          to: '/about',
+          destination: '/about',
           query: { _escaped_fragment_: '/about' },
         },
       ],
@@ -133,7 +133,7 @@ each(
         {
           origin: '/blog/my-post-ads.php',
           path: '/blog/my-post-ads.php',
-          to: '/blog/my-post#ads',
+          destination: '/blog/my-post#ads',
         },
       ],
     },
@@ -143,7 +143,7 @@ each(
         {
           origin: '/*',
           path: '/*',
-          to: 'https://www.bitballoon.com/:splat',
+          destination: 'https://www.bitballoon.com/:splat',
           status: 301,
         },
       ],
@@ -154,7 +154,7 @@ each(
         {
           origin: '/*',
           path: '/*',
-          to: 'https://www.bitballoon.com/:splat',
+          destination: 'https://www.bitballoon.com/:splat',
           status: 301,
           force: true,
         },
@@ -166,13 +166,13 @@ each(
         {
           origin: '/admin/*',
           path: '/admin/*',
-          to: '/admin/:splat',
+          destination: '/admin/:splat',
           status: 200,
         },
         {
           origin: '/admin/*',
           path: '/admin/*',
-          to: '/admin/:splat',
+          destination: '/admin/:splat',
           status: 200,
           force: true,
         },
@@ -184,7 +184,7 @@ each(
         {
           origin: '/api/*',
           path: '/api/*',
-          to: 'https://api.bitballoon.com/*',
+          destination: 'https://api.bitballoon.com/*',
           status: 200,
           proxy: true,
         },
@@ -196,7 +196,7 @@ each(
         {
           origin: '/test',
           path: '/test',
-          to: 'https://www.bitballoon.com/test=hello',
+          destination: 'https://www.bitballoon.com/test=hello',
           status: 301,
         },
       ],
@@ -207,7 +207,7 @@ each(
         {
           origin: '/test',
           path: '/test',
-          to: 'https://www.bitballoon.com/test=hello',
+          destination: 'https://www.bitballoon.com/test=hello',
           status: 301,
           force: true,
         },
@@ -219,7 +219,7 @@ each(
         {
           origin: '/',
           path: '/',
-          to: '/china',
+          destination: '/china',
           status: 302,
           conditions: { Country: 'ch,tw' },
         },
@@ -231,7 +231,7 @@ each(
         {
           origin: '/',
           path: '/',
-          to: '/china',
+          destination: '/china',
           status: 302,
           conditions: { Country: 'il', Language: 'en' },
         },
@@ -243,7 +243,7 @@ each(
         {
           origin: '/admin/*',
           path: '/admin/*',
-          to: '/admin/:splat',
+          destination: '/admin/:splat',
           status: 200,
           conditions: { Role: 'admin' },
         },
@@ -255,7 +255,7 @@ each(
         {
           origin: '/member/*',
           path: '/member/*',
-          to: '/member/:splat',
+          destination: '/member/:splat',
           status: 200,
           conditions: { Role: 'admin,member' },
         },
@@ -267,7 +267,7 @@ each(
         {
           origin: '/donate',
           path: '/donate',
-          to: '/donate/usa?source=:source&email=:email',
+          destination: '/donate/usa?source=:source&email=:email',
           status: 302,
           query: { source: ':source', email: ':email' },
           conditions: { Country: 'us' },
@@ -280,7 +280,7 @@ each(
         {
           origin: '/api/*',
           path: '/api/*',
-          to: 'https://api.example.com/:splat',
+          destination: 'https://api.example.com/:splat',
           status: 200,
           proxy: true,
           force: true,
@@ -294,7 +294,7 @@ each(
         {
           origin: '/api/*',
           path: '/api/*',
-          to: 'https://api.example.com/:splat',
+          destination: 'https://api.example.com/:splat',
           status: 200,
           proxy: true,
           force: true,

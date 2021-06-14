@@ -26,7 +26,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
         },
       ],
     },
@@ -36,7 +36,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
         },
       ],
     },
@@ -46,7 +46,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           query: { path: ':path' },
         },
       ],
@@ -57,7 +57,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           query: { path: ':path' },
         },
       ],
@@ -68,7 +68,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -79,7 +79,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -90,7 +90,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
         },
       ],
     },
@@ -102,7 +102,7 @@ each(
           scheme: 'http',
           host: 'www.example.com',
           path: '/old-path',
-          to: 'http://www.example.com/new-path',
+          destination: 'http://www.example.com/new-path',
         },
       ],
     },
@@ -112,7 +112,7 @@ each(
         {
           origin: '/old-path/*',
           path: '/old-path/*',
-          to: '/old-path/:splat',
+          destination: '/old-path/:splat',
           status: 200,
         },
       ],
@@ -123,7 +123,7 @@ each(
         {
           origin: 'old-path',
           path: 'old-path',
-          to: 'new-path',
+          destination: 'new-path',
         },
       ],
     },
@@ -133,7 +133,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           query: { path: ':path' },
         },
       ],
@@ -144,7 +144,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -155,7 +155,7 @@ each(
         {
           origin: '/old-path',
           path: '/old-path',
-          to: '/new-path',
+          destination: '/new-path',
           status: 301,
           query: {
             path: ':path',
@@ -169,7 +169,7 @@ each(
         {
           origin: '/search',
           path: '/search',
-          to: 'https://api.mysearch.com',
+          destination: 'https://api.mysearch.com',
           status: 200,
           proxy: true,
           force: true,
