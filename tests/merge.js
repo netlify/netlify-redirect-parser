@@ -7,14 +7,66 @@ each(
   [
     { output: [] },
     { fileRedirects: [], configRedirects: [], output: [] },
-    { fileRedirects: [{ from: '/one', to: '/two' }], configRedirects: [], output: [{ from: '/one', to: '/two' }] },
-    { fileRedirects: [], configRedirects: [{ from: '/one', to: '/three' }], output: [{ from: '/one', to: '/three' }] },
     {
-      fileRedirects: [{ from: '/one', to: '/two' }],
-      configRedirects: [{ from: '/one', to: '/three' }],
+      fileRedirects: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/two',
+        },
+      ],
+      configRedirects: [],
       output: [
-        { from: '/one', to: '/two' },
-        { from: '/one', to: '/three' },
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/two',
+        },
+      ],
+    },
+    {
+      fileRedirects: [],
+      configRedirects: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/three',
+        },
+      ],
+      output: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/three',
+        },
+      ],
+    },
+    {
+      fileRedirects: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/two',
+        },
+      ],
+      configRedirects: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/three',
+        },
+      ],
+      output: [
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/two',
+        },
+        {
+          origin: '/one',
+          from: '/one',
+          to: '/three',
+        },
       ],
     },
   ],

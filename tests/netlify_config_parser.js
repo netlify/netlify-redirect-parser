@@ -22,56 +22,138 @@ each(
     },
     {
       title: 'backward_compat_origin',
-      output: [{ path: '/old-path', to: '/new-path' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+        },
+      ],
     },
     {
       title: 'backward_compat_destination',
-      output: [{ path: '/old-path', to: '/new-path' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+        },
+      ],
     },
     {
       title: 'backward_compat_params',
-      output: [{ path: '/old-path', to: '/new-path', query: { path: ':path' } }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          query: { path: ':path' },
+        },
+      ],
     },
     {
       title: 'backward_compat_parameters',
-      output: [{ path: '/old-path', to: '/new-path', query: { path: ':path' } }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          query: { path: ':path' },
+        },
+      ],
     },
     {
       title: 'backward_compat_sign',
-      output: [{ path: '/old-path', to: '/new-path', signed: 'api_key' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          signed: 'api_key',
+        },
+      ],
     },
     {
       title: 'backward_compat_signing',
-      output: [{ path: '/old-path', to: '/new-path', signed: 'api_key' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          signed: 'api_key',
+        },
+      ],
     },
     {
       title: 'from_simple',
-      output: [{ path: '/old-path', to: '/new-path' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+        },
+      ],
     },
     {
       title: 'from_url',
-      output: [{ scheme: 'http', host: 'www.example.com', path: '/old-path', to: 'http://www.example.com/new-path' }],
+      output: [
+        {
+          origin: 'http://www.example.com/old-path',
+          scheme: 'http',
+          host: 'www.example.com',
+          path: '/old-path',
+          to: 'http://www.example.com/new-path',
+        },
+      ],
     },
     {
       title: 'from_forward',
-      output: [{ path: '/old-path/*', to: '/old-path/:splat', status: 200 }],
+      output: [
+        {
+          origin: '/old-path/*',
+          path: '/old-path/*',
+          to: '/old-path/:splat',
+          status: 200,
+        },
+      ],
     },
     {
       title: 'from_no_slash',
-      output: [{ path: 'old-path', to: 'new-path' }],
+      output: [
+        {
+          origin: 'old-path',
+          path: 'old-path',
+          to: 'new-path',
+        },
+      ],
     },
     {
       title: 'query',
-      output: [{ path: '/old-path', to: '/new-path', query: { path: ':path' } }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          query: { path: ':path' },
+        },
+      ],
     },
     {
       title: 'signed',
-      output: [{ path: '/old-path', to: '/new-path', signed: 'api_key' }],
+      output: [
+        {
+          origin: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          signed: 'api_key',
+        },
+      ],
     },
     {
       title: 'complex',
       output: [
         {
+          origin: '/old-path',
           path: '/old-path',
           to: '/new-path',
           status: 301,
@@ -85,6 +167,7 @@ each(
           },
         },
         {
+          origin: '/search',
           path: '/search',
           to: 'https://api.mysearch.com',
           status: 200,

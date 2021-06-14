@@ -23,96 +23,249 @@ each(
     {
       title: 'empty_line',
       output: [
-        { path: '/blog/my-post.php', to: '/blog/my-post' },
-        { path: '/blog/my-post-two.php', to: '/blog/my-post-two' },
+        {
+          origin: '/blog/my-post.php',
+          path: '/blog/my-post.php',
+          to: '/blog/my-post',
+        },
+        {
+          origin: '/blog/my-post-two.php',
+          path: '/blog/my-post-two.php',
+          to: '/blog/my-post-two',
+        },
       ],
     },
     {
       title: 'multiple_lines',
       output: [
-        { path: '/10thmagnitude', to: 'http://www.10thmagnitude.com/', status: 301 },
-        { path: '/bananastand', to: 'http://eepurl.com/Lgde5', status: 301 },
+        {
+          origin: '/10thmagnitude',
+          path: '/10thmagnitude',
+          to: 'http://www.10thmagnitude.com/',
+          status: 301,
+        },
+        {
+          origin: '/bananastand',
+          path: '/bananastand',
+          to: 'http://eepurl.com/Lgde5',
+          status: 301,
+        },
       ],
     },
     {
       title: 'line_trim',
-      output: [{ path: '/home', to: '/' }],
+      output: [
+        {
+          origin: '/home',
+          path: '/home',
+          to: '/',
+        },
+      ],
     },
     {
       title: 'comment_full',
-      output: [{ path: '/blog/my-post.php', to: '/blog/my-post' }],
+      output: [
+        {
+          origin: '/blog/my-post.php',
+          path: '/blog/my-post.php',
+          to: '/blog/my-post',
+        },
+      ],
     },
     {
       title: 'comment_inline',
-      output: [{ path: '/blog/my-post.php', to: '/blog/my-post' }],
+      output: [
+        {
+          origin: '/blog/my-post.php',
+          path: '/blog/my-post.php',
+          to: '/blog/my-post',
+        },
+      ],
     },
     {
       title: 'from_simple',
-      output: [{ path: '/home', to: '/' }],
+      output: [
+        {
+          origin: '/home',
+          path: '/home',
+          to: '/',
+        },
+      ],
     },
     {
       title: 'from_absolute_uri',
-      output: [{ host: 'hello.bitballoon.com', scheme: 'http', path: '/*', to: 'http://www.hello.com/:splat' }],
+      output: [
+        {
+          origin: 'http://hello.bitballoon.com/*',
+          scheme: 'http',
+          host: 'hello.bitballoon.com',
+          path: '/*',
+          to: 'http://www.hello.com/:splat',
+        },
+      ],
     },
     {
       title: 'query',
       output: [
-        { path: '/', to: '/news', query: { page: 'news' } },
-        { path: '/blog', to: '/blog/:post_id', query: { post: ':post_id' } },
-        { path: '/', to: '/about', query: { _escaped_fragment_: '/about' } },
+        {
+          origin: '/',
+          path: '/',
+          to: '/news',
+          query: { page: 'news' },
+        },
+        {
+          origin: '/blog',
+          path: '/blog',
+          to: '/blog/:post_id',
+          query: { post: ':post_id' },
+        },
+        {
+          origin: '/',
+          path: '/',
+          to: '/about',
+          query: { _escaped_fragment_: '/about' },
+        },
       ],
     },
     {
       title: 'to_anchor',
-      output: [{ path: '/blog/my-post-ads.php', to: '/blog/my-post#ads' }],
+      output: [
+        {
+          origin: '/blog/my-post-ads.php',
+          path: '/blog/my-post-ads.php',
+          to: '/blog/my-post#ads',
+        },
+      ],
     },
     {
       title: 'to_splat_no_force',
-      output: [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301 }],
+      output: [
+        {
+          origin: '/*',
+          path: '/*',
+          to: 'https://www.bitballoon.com/:splat',
+          status: 301,
+        },
+      ],
     },
     {
       title: 'to_splat_force',
-      output: [{ path: '/*', to: 'https://www.bitballoon.com/:splat', status: 301, force: true }],
+      output: [
+        {
+          origin: '/*',
+          path: '/*',
+          to: 'https://www.bitballoon.com/:splat',
+          status: 301,
+          force: true,
+        },
+      ],
     },
     {
       title: 'to_path_forward',
       output: [
-        { path: '/admin/*', to: '/admin/:splat', status: 200 },
-        { path: '/admin/*', to: '/admin/:splat', status: 200, force: true },
+        {
+          origin: '/admin/*',
+          path: '/admin/*',
+          to: '/admin/:splat',
+          status: 200,
+        },
+        {
+          origin: '/admin/*',
+          path: '/admin/*',
+          to: '/admin/:splat',
+          status: 200,
+          force: true,
+        },
       ],
     },
     {
       title: 'proxy',
-      output: [{ path: '/api/*', to: 'https://api.bitballoon.com/*', status: 200, proxy: true }],
+      output: [
+        {
+          origin: '/api/*',
+          path: '/api/*',
+          to: 'https://api.bitballoon.com/*',
+          status: 200,
+          proxy: true,
+        },
+      ],
     },
     {
       title: 'status',
-      output: [{ path: '/test', to: 'https://www.bitballoon.com/test=hello', status: 301 }],
+      output: [
+        {
+          origin: '/test',
+          path: '/test',
+          to: 'https://www.bitballoon.com/test=hello',
+          status: 301,
+        },
+      ],
     },
     {
       title: 'status_force',
-      output: [{ path: '/test', to: 'https://www.bitballoon.com/test=hello', status: 301, force: true }],
+      output: [
+        {
+          origin: '/test',
+          path: '/test',
+          to: 'https://www.bitballoon.com/test=hello',
+          status: 301,
+          force: true,
+        },
+      ],
     },
     {
       title: 'conditions_country',
-      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'ch,tw' } }],
+      output: [
+        {
+          origin: '/',
+          path: '/',
+          to: '/china',
+          status: 302,
+          conditions: { Country: 'ch,tw' },
+        },
+      ],
     },
     {
       title: 'conditions_country_language',
-      output: [{ path: '/', to: '/china', status: 302, conditions: { Country: 'il', Language: 'en' } }],
+      output: [
+        {
+          origin: '/',
+          path: '/',
+          to: '/china',
+          status: 302,
+          conditions: { Country: 'il', Language: 'en' },
+        },
+      ],
     },
     {
       title: 'conditions_role',
-      output: [{ path: '/admin/*', to: '/admin/:splat', status: 200, conditions: { Role: 'admin' } }],
+      output: [
+        {
+          origin: '/admin/*',
+          path: '/admin/*',
+          to: '/admin/:splat',
+          status: 200,
+          conditions: { Role: 'admin' },
+        },
+      ],
     },
     {
       title: 'conditions_roles',
-      output: [{ path: '/member/*', to: '/member/:splat', status: 200, conditions: { Role: 'admin,member' } }],
+      output: [
+        {
+          origin: '/member/*',
+          path: '/member/*',
+          to: '/member/:splat',
+          status: 200,
+          conditions: { Role: 'admin,member' },
+        },
+      ],
     },
     {
       title: 'conditions_query',
       output: [
         {
+          origin: '/donate',
           path: '/donate',
           to: '/donate/usa?source=:source&email=:email',
           status: 302,
@@ -125,6 +278,7 @@ each(
       title: 'signed',
       output: [
         {
+          origin: '/api/*',
           path: '/api/*',
           to: 'https://api.example.com/:splat',
           status: 200,
@@ -138,6 +292,7 @@ each(
       title: 'signed_backward_compat',
       output: [
         {
+          origin: '/api/*',
           path: '/api/*',
           to: 'https://api.example.com/:splat',
           status: 200,
