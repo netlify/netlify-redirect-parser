@@ -24,9 +24,9 @@ each(
       title: 'backward_compat_origin',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
         },
       ],
     },
@@ -34,9 +34,9 @@ each(
       title: 'backward_compat_destination',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
         },
       ],
     },
@@ -44,10 +44,10 @@ each(
       title: 'backward_compat_params',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
-          parameters: { path: ':path' },
+          to: '/new-path',
+          query: { path: ':path' },
         },
       ],
     },
@@ -55,10 +55,10 @@ each(
       title: 'backward_compat_parameters',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
-          parameters: { path: ':path' },
+          to: '/new-path',
+          query: { path: ':path' },
         },
       ],
     },
@@ -66,9 +66,9 @@ each(
       title: 'backward_compat_sign',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -77,9 +77,9 @@ each(
       title: 'backward_compat_signing',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -88,9 +88,9 @@ each(
       title: 'from_simple',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
         },
       ],
     },
@@ -98,11 +98,11 @@ each(
       title: 'from_url',
       output: [
         {
-          origin: 'http://www.example.com/old-path',
+          from: 'http://www.example.com/old-path',
           scheme: 'http',
           host: 'www.example.com',
           path: '/old-path',
-          destination: 'http://www.example.com/new-path',
+          to: 'http://www.example.com/new-path',
         },
       ],
     },
@@ -110,9 +110,9 @@ each(
       title: 'from_forward',
       output: [
         {
-          origin: '/old-path/*',
+          from: '/old-path/*',
           path: '/old-path/*',
-          destination: '/old-path/:splat',
+          to: '/old-path/:splat',
           status: 200,
         },
       ],
@@ -121,9 +121,9 @@ each(
       title: 'from_no_slash',
       output: [
         {
-          origin: 'old-path',
+          from: 'old-path',
           path: 'old-path',
-          destination: 'new-path',
+          to: 'new-path',
         },
       ],
     },
@@ -131,10 +131,10 @@ each(
       title: 'query',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
-          parameters: { path: ':path' },
+          to: '/new-path',
+          query: { path: ':path' },
         },
       ],
     },
@@ -142,9 +142,9 @@ each(
       title: 'conditions_country_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           conditions: { country: ['US'] },
         },
       ],
@@ -153,9 +153,9 @@ each(
       title: 'conditions_language_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           conditions: { language: ['en'] },
         },
       ],
@@ -164,9 +164,9 @@ each(
       title: 'conditions_role_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           conditions: { role: ['admin'] },
         },
       ],
@@ -175,9 +175,9 @@ each(
       title: 'signed',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           signed: 'api_key',
         },
       ],
@@ -186,11 +186,11 @@ each(
       title: 'complex',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           status: 301,
-          parameters: {
+          query: {
             path: ':path',
           },
           conditions: {
@@ -200,9 +200,9 @@ each(
           },
         },
         {
-          origin: '/search',
+          from: '/search',
           path: '/search',
-          destination: 'https://api.mysearch.com',
+          to: 'https://api.mysearch.com',
           status: 200,
           proxy: true,
           force: true,

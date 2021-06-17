@@ -24,14 +24,14 @@ each(
       title: 'empty_line',
       output: [
         {
-          origin: '/blog/my-post.php',
+          from: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          destination: '/blog/my-post',
+          to: '/blog/my-post',
         },
         {
-          origin: '/blog/my-post-two.php',
+          from: '/blog/my-post-two.php',
           path: '/blog/my-post-two.php',
-          destination: '/blog/my-post-two',
+          to: '/blog/my-post-two',
         },
       ],
     },
@@ -39,15 +39,15 @@ each(
       title: 'multiple_lines',
       output: [
         {
-          origin: '/10thmagnitude',
+          from: '/10thmagnitude',
           path: '/10thmagnitude',
-          destination: 'http://www.10thmagnitude.com/',
+          to: 'http://www.10thmagnitude.com/',
           status: 301,
         },
         {
-          origin: '/bananastand',
+          from: '/bananastand',
           path: '/bananastand',
-          destination: 'http://eepurl.com/Lgde5',
+          to: 'http://eepurl.com/Lgde5',
           status: 301,
         },
       ],
@@ -56,9 +56,9 @@ each(
       title: 'line_trim',
       output: [
         {
-          origin: '/home',
+          from: '/home',
           path: '/home',
-          destination: '/',
+          to: '/',
         },
       ],
     },
@@ -66,9 +66,9 @@ each(
       title: 'comment_full',
       output: [
         {
-          origin: '/blog/my-post.php',
+          from: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          destination: '/blog/my-post',
+          to: '/blog/my-post',
         },
       ],
     },
@@ -76,9 +76,9 @@ each(
       title: 'comment_inline',
       output: [
         {
-          origin: '/blog/my-post.php',
+          from: '/blog/my-post.php',
           path: '/blog/my-post.php',
-          destination: '/blog/my-post',
+          to: '/blog/my-post',
         },
       ],
     },
@@ -86,9 +86,9 @@ each(
       title: 'from_simple',
       output: [
         {
-          origin: '/home',
+          from: '/home',
           path: '/home',
-          destination: '/',
+          to: '/',
         },
       ],
     },
@@ -96,11 +96,11 @@ each(
       title: 'from_absolute_uri',
       output: [
         {
-          origin: 'http://hello.bitballoon.com/*',
+          from: 'http://hello.bitballoon.com/*',
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          destination: 'http://www.hello.com/:splat',
+          to: 'http://www.hello.com/:splat',
         },
       ],
     },
@@ -108,22 +108,22 @@ each(
       title: 'query',
       output: [
         {
-          origin: '/',
+          from: '/',
           path: '/',
-          destination: '/news',
-          parameters: { page: 'news' },
+          to: '/news',
+          query: { page: 'news' },
         },
         {
-          origin: '/blog',
+          from: '/blog',
           path: '/blog',
-          destination: '/blog/:post_id',
-          parameters: { post: ':post_id' },
+          to: '/blog/:post_id',
+          query: { post: ':post_id' },
         },
         {
-          origin: '/',
+          from: '/',
           path: '/',
-          destination: '/about',
-          parameters: { _escaped_fragment_: '/about' },
+          to: '/about',
+          query: { _escaped_fragment_: '/about' },
         },
       ],
     },
@@ -131,9 +131,9 @@ each(
       title: 'to_anchor',
       output: [
         {
-          origin: '/blog/my-post-ads.php',
+          from: '/blog/my-post-ads.php',
           path: '/blog/my-post-ads.php',
-          destination: '/blog/my-post#ads',
+          to: '/blog/my-post#ads',
         },
       ],
     },
@@ -141,9 +141,9 @@ each(
       title: 'to_splat_no_force',
       output: [
         {
-          origin: '/*',
+          from: '/*',
           path: '/*',
-          destination: 'https://www.bitballoon.com/:splat',
+          to: 'https://www.bitballoon.com/:splat',
           status: 301,
         },
       ],
@@ -152,9 +152,9 @@ each(
       title: 'to_splat_force',
       output: [
         {
-          origin: '/*',
+          from: '/*',
           path: '/*',
-          destination: 'https://www.bitballoon.com/:splat',
+          to: 'https://www.bitballoon.com/:splat',
           status: 301,
           force: true,
         },
@@ -164,15 +164,15 @@ each(
       title: 'to_path_forward',
       output: [
         {
-          origin: '/admin/*',
+          from: '/admin/*',
           path: '/admin/*',
-          destination: '/admin/:splat',
+          to: '/admin/:splat',
           status: 200,
         },
         {
-          origin: '/admin/*',
+          from: '/admin/*',
           path: '/admin/*',
-          destination: '/admin/:splat',
+          to: '/admin/:splat',
           status: 200,
           force: true,
         },
@@ -182,9 +182,9 @@ each(
       title: 'proxy',
       output: [
         {
-          origin: '/api/*',
+          from: '/api/*',
           path: '/api/*',
-          destination: 'https://api.bitballoon.com/*',
+          to: 'https://api.bitballoon.com/*',
           status: 200,
           proxy: true,
         },
@@ -194,9 +194,9 @@ each(
       title: 'status',
       output: [
         {
-          origin: '/test',
+          from: '/test',
           path: '/test',
-          destination: 'https://www.bitballoon.com/test=hello',
+          to: 'https://www.bitballoon.com/test=hello',
           status: 301,
         },
       ],
@@ -205,9 +205,9 @@ each(
       title: 'status_force',
       output: [
         {
-          origin: '/test',
+          from: '/test',
           path: '/test',
-          destination: 'https://www.bitballoon.com/test=hello',
+          to: 'https://www.bitballoon.com/test=hello',
           status: 301,
           force: true,
         },
@@ -217,9 +217,9 @@ each(
       title: 'conditions_country',
       output: [
         {
-          origin: '/',
+          from: '/',
           path: '/',
-          destination: '/china',
+          to: '/china',
           status: 302,
           conditions: { country: ['ch', 'tw'] },
         },
@@ -229,9 +229,9 @@ each(
       title: 'conditions_country_language',
       output: [
         {
-          origin: '/',
+          from: '/',
           path: '/',
-          destination: '/china',
+          to: '/china',
           status: 302,
           conditions: { country: ['il'], language: ['en'] },
         },
@@ -241,9 +241,9 @@ each(
       title: 'conditions_role',
       output: [
         {
-          origin: '/admin/*',
+          from: '/admin/*',
           path: '/admin/*',
-          destination: '/admin/:splat',
+          to: '/admin/:splat',
           status: 200,
           conditions: { role: ['admin'] },
         },
@@ -253,9 +253,9 @@ each(
       title: 'conditions_roles',
       output: [
         {
-          origin: '/member/*',
+          from: '/member/*',
           path: '/member/*',
-          destination: '/member/:splat',
+          to: '/member/:splat',
           status: 200,
           conditions: { role: ['admin', 'member'] },
         },
@@ -265,11 +265,11 @@ each(
       title: 'conditions_query',
       output: [
         {
-          origin: '/donate',
+          from: '/donate',
           path: '/donate',
-          destination: '/donate/usa?source=:source&email=:email',
+          to: '/donate/usa?source=:source&email=:email',
           status: 302,
-          parameters: { source: ':source', email: ':email' },
+          query: { source: ':source', email: ':email' },
           conditions: { country: ['us'] },
         },
       ],
@@ -278,9 +278,9 @@ each(
       title: 'conditions_country_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           status: 200,
           conditions: { country: ['US'] },
         },
@@ -290,9 +290,9 @@ each(
       title: 'conditions_language_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           status: 200,
           conditions: { language: ['en'] },
         },
@@ -302,9 +302,9 @@ each(
       title: 'conditions_role_case',
       output: [
         {
-          origin: '/old-path',
+          from: '/old-path',
           path: '/old-path',
-          destination: '/new-path',
+          to: '/new-path',
           status: 200,
           conditions: { role: ['admin'] },
         },
@@ -314,9 +314,9 @@ each(
       title: 'signed',
       output: [
         {
-          origin: '/api/*',
+          from: '/api/*',
           path: '/api/*',
-          destination: 'https://api.example.com/:splat',
+          to: 'https://api.example.com/:splat',
           status: 200,
           proxy: true,
           force: true,
@@ -328,9 +328,9 @@ each(
       title: 'signed_backward_compat',
       output: [
         {
-          origin: '/api/*',
+          from: '/api/*',
           path: '/api/*',
-          destination: 'https://api.example.com/:splat',
+          to: 'https://api.example.com/:splat',
           status: 200,
           proxy: true,
           force: true,

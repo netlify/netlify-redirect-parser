@@ -8,7 +8,7 @@ const normalizeRedirect = function (redirect) {
 const DEFAULT_REDIRECT = {
   proxy: false,
   force: false,
-  parameters: {},
+  query: {},
   conditions: {},
   headers: {},
 }

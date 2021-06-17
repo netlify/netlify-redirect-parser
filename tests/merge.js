@@ -10,17 +10,15 @@ each(
     {
       fileRedirects: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/two',
+          to: '/two',
         },
       ],
       configRedirects: [],
       output: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/two',
+          to: '/two',
         },
       ],
     },
@@ -28,44 +26,38 @@ each(
       fileRedirects: [],
       configRedirects: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/three',
+          to: '/three',
         },
       ],
       output: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/three',
+          to: '/three',
         },
       ],
     },
     {
       fileRedirects: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/two',
+          to: '/two',
         },
       ],
       configRedirects: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/three',
+          to: '/three',
         },
       ],
       output: [
         {
-          origin: '/one',
           from: '/one',
-          destination: '/two',
+          to: '/two',
         },
         {
-          origin: '/one',
           from: '/one',
-          destination: '/three',
+          to: '/three',
         },
       ],
     },
@@ -79,8 +71,8 @@ each(
 
 each(
   [
-    { fileRedirects: { from: '/one', destination: '/three' }, errorMessage: /should be an array/ },
-    { configRedirects: { from: '/one', destination: '/three' }, errorMessage: /should be an array/ },
+    { fileRedirects: { from: '/one', to: '/three' }, errorMessage: /should be an array/ },
+    { configRedirects: { from: '/one', to: '/three' }, errorMessage: /should be an array/ },
   ],
   ({ title }, { fileRedirects, configRedirects, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
