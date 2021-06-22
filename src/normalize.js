@@ -68,12 +68,12 @@ const parseRedirectObject = function ({
   // We ensure the return value has the same shape as our `netlify-commons`
   // backend
   return removeUndefinedValues({
-    origin: from,
+    from,
     scheme,
     host,
     path,
-    parameters: query,
-    destination: finalTo,
+    query,
+    to: finalTo,
     status,
     force,
     conditions: normalizedConditions,
