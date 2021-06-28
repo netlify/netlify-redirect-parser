@@ -9,5 +9,9 @@
       matchPackageNames: ['is-plain-obj'],
       allowedVersions: '<3',
     },
+    {
+      matchPackageNames: ['test-each'],
+      allowedVersions: '<3',
+    },
   ],
 }
