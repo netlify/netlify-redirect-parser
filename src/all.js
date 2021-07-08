@@ -10,8 +10,9 @@ const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPa
     getFileRedirects(redirectsFiles),
     getConfigRedirects(netlifyConfigPath),
   ])
-  const redirects = mergeRedirects({ fileRedirects, configRedirects })
-  return normalizeRedirects(redirects)
+  const normalizedFileRedirects = normalizeRedirects(fileRedirects)
+  const normalizedConfigRedirects = normalizeRedirects(configRedirects)
+  return mergeRedirects({ fileRedirects: normalizedFileRedirects, configRedirects: normalizedConfigRedirects })
 }
 
 const getFileRedirects = async function (redirectsFiles) {
