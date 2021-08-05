@@ -5,9 +5,9 @@ const { parseConfigRedirects, normalizeRedirects } = require('..')
 
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
-const parseRedirects = async function (fixtureName) {
+const parseRedirects = async function (fixtureName, opts) {
   const redirects = await parseConfigRedirects(`${FIXTURES_DIR}/netlify_config/${fixtureName}.toml`)
-  return normalizeRedirects(redirects)
+  return normalizeRedirects(redirects, opts)
 }
 
 each(
@@ -213,10 +213,38 @@ each(
         },
       ],
     },
+    {
+      title: 'minimal',
+      output: [
+        {
+          from: '/here',
+          to: '/there',
+          status: 200,
+          force: true,
+          signed: 'API_SIGNATURE_TOKEN',
+          headers: {
+            'X-From': 'Netlify',
+          },
+          query: {
+            path: ':path',
+          },
+          conditions: {
+            country: ['US'],
+            language: ['en'],
+            role: ['admin'],
+          },
+        },
+      ],
+      opts: { minimal: true },
+    },
   ],
-  ({ title }, { fixtureName = title, output }) => {
+  ({ title }, { fixtureName = title, output, opts }) => {
     test(`Parses netlify.toml redirects | ${title}`, async (t) => {
-      t.deepEqual(await parseRedirects(fixtureName), output.map(normalizeRedirect))
+      t.deepEqual(
+        await parseRedirects(fixtureName, opts),
+        // eslint-disable-next-line max-nested-callbacks
+        output.map((redirect) => normalizeRedirect(redirect, opts)),
+      )
     })
   },
 )

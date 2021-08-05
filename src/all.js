@@ -5,13 +5,13 @@ const { normalizeRedirects } = require('./normalize')
 
 // Parse all redirects from `netlify.toml` and `_redirects` file, then normalize
 // and validate those.
-const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath } = {}) {
+const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath, ...opts } = {}) {
   const [fileRedirects, configRedirects] = await Promise.all([
     getFileRedirects(redirectsFiles),
     getConfigRedirects(netlifyConfigPath),
   ])
-  const normalizedFileRedirects = normalizeRedirects(fileRedirects)
-  const normalizedConfigRedirects = normalizeRedirects(configRedirects)
+  const normalizedFileRedirects = normalizeRedirects(fileRedirects, opts)
+  const normalizedConfigRedirects = normalizeRedirects(configRedirects, opts)
   return mergeRedirects({ fileRedirects: normalizedFileRedirects, configRedirects: normalizedConfigRedirects })
 }
 

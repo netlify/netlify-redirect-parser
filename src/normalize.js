@@ -9,21 +9,21 @@ const { isUrl } = require('./url')
 // Validate and normalize an array of `redirects` objects.
 // This step is performed after `redirects` have been parsed from either
 // `netlify.toml` or `_redirects`.
-const normalizeRedirects = function (redirects) {
+const normalizeRedirects = function (redirects, opts = {}) {
   if (!Array.isArray(redirects)) {
     throw new TypeError(`Redirects must be an array not: ${redirects}`)
   }
 
-  return redirects.map(parseRedirect)
+  return redirects.map((obj, index) => parseRedirect(obj, index, opts))
 }
 
-const parseRedirect = function (obj, index) {
+const parseRedirect = function (obj, index, opts) {
   if (!isPlainObj(obj)) {
     throw new TypeError(`Redirects must be objects not: ${obj}`)
   }
 
   try {
-    return parseRedirectObject(obj)
+    return parseRedirectObject(obj, opts)
   } catch (error) {
     throw new Error(`Could not parse redirect number ${index + 1}:
   ${JSON.stringify(obj)}
@@ -32,26 +32,29 @@ ${error.message}`)
 }
 
 // Parse a single `redirects` object
-const parseRedirectObject = function ({
-  // `from` used to be named `origin`
-  origin,
-  from = origin,
-  // `query` used to be named `params` and `parameters`
-  parameters = {},
-  params = parameters,
-  query = params,
-  // `to` used to be named `destination`
-  destination,
-  to = destination,
-  status,
-  force = false,
-  conditions = {},
-  // `signed` used to be named `signing` and `sign`
-  sign,
-  signing = sign,
-  signed = signing,
-  headers = {},
-}) {
+const parseRedirectObject = function (
+  {
+    // `from` used to be named `origin`
+    origin,
+    from = origin,
+    // `query` used to be named `params` and `parameters`
+    parameters = {},
+    params = parameters,
+    query = params,
+    // `to` used to be named `destination`
+    destination,
+    to = destination,
+    status,
+    force = false,
+    conditions = {},
+    // `signed` used to be named `signing` and `sign`
+    sign,
+    signing = sign,
+    signed = signing,
+    headers = {},
+  },
+  { minimal = false },
+) {
   if (from === undefined) {
     throw new Error('Missing "from" field')
   }
@@ -69,9 +72,6 @@ const parseRedirectObject = function ({
   // backend
   return removeUndefinedValues({
     from,
-    scheme,
-    host,
-    path,
     query,
     to: finalTo,
     status,
@@ -79,7 +79,9 @@ const parseRedirectObject = function ({
     conditions: normalizedConditions,
     signed,
     headers,
-    proxy,
+    // If `minimal: true`, does not add additional properties that are not
+    // valid in `netlify.toml`
+    ...(!minimal && { scheme, host, path, proxy }),
   })
 }
 

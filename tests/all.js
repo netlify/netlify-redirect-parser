@@ -5,7 +5,7 @@ const { parseAllRedirects } = require('..')
 
 const { FIXTURES_DIR } = require('./helpers/main')
 
-const parseRedirects = async function ({ fileFixtureNames, configFixtureName }) {
+const parseRedirects = async function ({ fileFixtureNames, configFixtureName, opts }) {
   const redirectsFiles =
     fileFixtureNames === undefined
       ? undefined
@@ -13,7 +13,9 @@ const parseRedirects = async function ({ fileFixtureNames, configFixtureName }) 
   const netlifyConfigPath =
     configFixtureName === undefined ? undefined : `${FIXTURES_DIR}/netlify_config/${configFixtureName}.toml`
   const options =
-    redirectsFiles === undefined && netlifyConfigPath === undefined ? undefined : { redirectsFiles, netlifyConfigPath }
+    redirectsFiles === undefined && netlifyConfigPath === undefined
+      ? opts
+      : { redirectsFiles, netlifyConfigPath, ...opts }
   return await parseAllRedirects(options)
 }
 
@@ -106,10 +108,42 @@ each(
         },
       ],
     },
+    {
+      title: 'minimal',
+      fileFixtureNames: ['from_simple', 'from_absolute_uri'],
+      configFixtureName: 'from_simple',
+      output: [
+        {
+          from: '/home',
+          query: {},
+          to: '/',
+          force: false,
+          conditions: {},
+          headers: {},
+        },
+        {
+          from: 'http://hello.bitballoon.com/*',
+          query: {},
+          to: 'http://www.hello.com/:splat',
+          force: false,
+          conditions: {},
+          headers: {},
+        },
+        {
+          from: '/old-path',
+          query: {},
+          to: '/new-path',
+          force: false,
+          conditions: {},
+          headers: {},
+        },
+      ],
+      opts: { minimal: true },
+    },
   ],
-  ({ title }, { fileFixtureNames, configFixtureName, output }) => {
+  ({ title }, { fileFixtureNames, configFixtureName, output, opts }) => {
     test(`Parses netlify.toml and _redirects | ${title}`, async (t) => {
-      t.deepEqual(await parseRedirects({ fileFixtureNames, configFixtureName }), output)
+      t.deepEqual(await parseRedirects({ fileFixtureNames, configFixtureName, opts }), output)
     })
   },
 )
