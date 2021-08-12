@@ -2,28 +2,42 @@ const { parseFileRedirects } = require('./line_parser')
 const { mergeRedirects } = require('./merge')
 const { parseConfigRedirects } = require('./netlify_config_parser')
 const { normalizeRedirects } = require('./normalize')
+const { splitResults, concatResults } = require('./results')
 
 // Parse all redirects from `netlify.toml` and `_redirects` file, then normalize
 // and validate those.
 const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath, ...opts } = {}) {
-  const [fileRedirects, configRedirects] = await Promise.all([
-    getFileRedirects(redirectsFiles),
-    getConfigRedirects(netlifyConfigPath),
-  ])
-  const normalizedFileRedirects = normalizeRedirects(fileRedirects, opts)
-  const normalizedConfigRedirects = normalizeRedirects(configRedirects, opts)
-  return mergeRedirects({ fileRedirects: normalizedFileRedirects, configRedirects: normalizedConfigRedirects })
+  const [
+    { redirects: fileRedirects, errors: fileParseErrors },
+    { redirects: configRedirects, errors: configParseErrors },
+  ] = await Promise.all([getFileRedirects(redirectsFiles), getConfigRedirects(netlifyConfigPath)])
+  const { redirects: normalizedFileRedirects, errors: fileNormalizeErrors } = normalizeRedirects(fileRedirects, opts)
+  const { redirects: normalizedConfigRedirects, errors: configNormalizeErrors } = normalizeRedirects(
+    configRedirects,
+    opts,
+  )
+  const { redirects, errors: mergeErrors } = mergeRedirects({
+    fileRedirects: normalizedFileRedirects,
+    configRedirects: normalizedConfigRedirects,
+  })
+  const errors = [
+    ...fileParseErrors,
+    ...fileNormalizeErrors,
+    ...configParseErrors,
+    ...configNormalizeErrors,
+    ...mergeErrors,
+  ]
+  return { redirects, errors }
 }
 
 const getFileRedirects = async function (redirectsFiles) {
-  const fileRedirects = await Promise.all(redirectsFiles.map(parseFileRedirects))
-  // eslint-disable-next-line unicorn/prefer-spread
-  return [].concat(...fileRedirects)
+  const resultsArrays = await Promise.all(redirectsFiles.map(parseFileRedirects))
+  return concatResults(resultsArrays)
 }
 
 const getConfigRedirects = async function (netlifyConfigPath) {
   if (netlifyConfigPath === undefined) {
-    return []
+    return splitResults([])
   }
 
   return await parseConfigRedirects(netlifyConfigPath)

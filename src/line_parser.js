@@ -3,6 +3,7 @@ const { promisify } = require('util')
 
 const pathExists = require('path-exists')
 
+const { splitResults } = require('./results')
 const { isUrl } = require('./url')
 
 const pReadFile = promisify(readFile)
@@ -27,11 +28,12 @@ const pReadFile = promisify(readFile)
 // cannot be specified.
 const parseFileRedirects = async function (redirectFile) {
   if (!(await pathExists(redirectFile))) {
-    return []
+    return splitResults([])
   }
 
   const text = await pReadFile(redirectFile, 'utf8')
-  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+  const results = text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+  return splitResults(results)
 }
 
 const normalizeLine = function (line, index) {
@@ -46,7 +48,7 @@ const parseRedirect = function ({ line, index }) {
   try {
     return parseRedirectLine(line)
   } catch (error) {
-    throw new Error(`Could not parse redirect line ${index + 1}:
+    return new Error(`Could not parse redirect line ${index + 1}:
   ${line}
 ${error.message}`)
   }
