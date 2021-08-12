@@ -61,6 +61,42 @@ each(
         },
       ],
     },
+    {
+      fileRedirects: [
+        {
+          from: '/one',
+          to: '/two',
+        },
+        {
+          from: '/one',
+          to: '/four',
+        },
+      ],
+      configRedirects: [
+        {
+          from: '/one',
+          to: '/two',
+        },
+        {
+          from: '/one',
+          to: '/three',
+        },
+      ],
+      output: [
+        {
+          from: '/one',
+          to: '/four',
+        },
+        {
+          from: '/one',
+          to: '/two',
+        },
+        {
+          from: '/one',
+          to: '/three',
+        },
+      ],
+    },
   ],
   ({ title }, { fileRedirects, configRedirects, output }) => {
     test(`Merges _redirects with netlify.toml redirects | ${title}`, (t) => {
