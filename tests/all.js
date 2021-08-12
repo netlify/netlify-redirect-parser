@@ -5,18 +5,24 @@ const { parseAllRedirects } = require('..')
 
 const { FIXTURES_DIR } = require('./helpers/main')
 
-const parseRedirects = async function ({ fileFixtureNames, configFixtureName, opts }) {
+const parseRedirects = async function ({ fileFixtureNames, configFixtureName, configRedirects, opts }) {
   const redirectsFiles =
     fileFixtureNames === undefined
       ? undefined
       : fileFixtureNames.map((fileFixtureName) => `${FIXTURES_DIR}/redirects_file/${fileFixtureName}`)
   const netlifyConfigPath =
     configFixtureName === undefined ? undefined : `${FIXTURES_DIR}/netlify_config/${configFixtureName}.toml`
-  const options =
-    redirectsFiles === undefined && netlifyConfigPath === undefined
-      ? opts
-      : { redirectsFiles, netlifyConfigPath, ...opts }
+  const options = getOptions({ redirectsFiles, netlifyConfigPath, configRedirects, opts })
   return await parseAllRedirects(options)
+}
+
+const getOptions = function ({ redirectsFiles, netlifyConfigPath, configRedirects, opts }) {
+  return redirectsFiles === undefined &&
+    netlifyConfigPath === undefined &&
+    configRedirects === undefined &&
+    opts === undefined
+    ? undefined
+    : { redirectsFiles, netlifyConfigPath, configRedirects, ...opts }
 }
 
 each(
@@ -109,6 +115,38 @@ each(
       ],
     },
     {
+      title: 'config_redirects',
+      configFixtureName: 'from_simple',
+      configRedirects: [
+        {
+          from: '/home',
+          to: '/',
+        },
+      ],
+      output: [
+        {
+          from: '/old-path',
+          path: '/old-path',
+          query: {},
+          to: '/new-path',
+          force: false,
+          conditions: {},
+          headers: {},
+          proxy: false,
+        },
+        {
+          from: '/home',
+          path: '/home',
+          query: {},
+          to: '/',
+          force: false,
+          conditions: {},
+          headers: {},
+          proxy: false,
+        },
+      ],
+    },
+    {
       title: 'minimal',
       fileFixtureNames: ['from_simple', 'from_absolute_uri'],
       configFixtureName: 'from_simple',
@@ -141,9 +179,9 @@ each(
       opts: { minimal: true },
     },
   ],
-  ({ title }, { fileFixtureNames, configFixtureName, output, opts }) => {
+  ({ title }, { fileFixtureNames, configFixtureName, configRedirects, output, opts }) => {
     test(`Parses netlify.toml and _redirects | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects({ fileFixtureNames, configFixtureName, opts })
+      const { redirects, errors } = await parseRedirects({ fileFixtureNames, configFixtureName, configRedirects, opts })
       t.is(errors.length, 0)
       t.deepEqual(redirects, output)
     })
