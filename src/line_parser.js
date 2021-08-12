@@ -1,11 +1,11 @@
-const fs = require('fs')
+const { readFile } = require('fs')
 const { promisify } = require('util')
 
 const pathExists = require('path-exists')
 
 const { isUrl } = require('./url')
 
-const readFileAsync = promisify(fs.readFile)
+const pReadFile = promisify(readFile)
 
 // Parse `_redirects` file to an array of objects.
 // Each line in that file must be either:
@@ -30,7 +30,7 @@ const parseFileRedirects = async function (redirectFile) {
     return []
   }
 
-  const text = await readFileAsync(redirectFile, 'utf-8')
+  const text = await pReadFile(redirectFile, 'utf8')
   return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
 }
 
