@@ -4,7 +4,7 @@ const { parseConfigRedirects } = require('./netlify_config_parser')
 const { normalizeRedirects } = require('./normalize')
 const { splitResults, concatResults } = require('./results')
 
-// Parse all redirects from `netlify.toml` and `_redirects` file, then normalize
+// Parse all redirects given programmatically via the `configRedirects` property, `netlify.toml` and `_redirects` files, then normalize
 // and validate those.
 const parseAllRedirects = async function ({
   redirectsFiles = [],
