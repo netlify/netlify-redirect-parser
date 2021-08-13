@@ -1,107 +1,115 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { mergeRedirects } = require('../src/merge')
+const { validateSuccess } = require('./helpers/main')
 
 each(
   [
-    { fileRedirects: [], configRedirects: [], output: [] },
     {
-      fileRedirects: [
-        {
-          from: '/one',
-          to: '/two',
-        },
-      ],
-      configRedirects: [],
+      title: 'undefined',
+      input: {},
+      output: [],
+    },
+    {
+      title: 'empty',
+      input: {
+        redirectsFiles: ['empty'],
+      },
+      output: [],
+    },
+    {
+      title: 'simple',
+      input: {
+        redirectsFiles: ['simple'],
+      },
       output: [
         {
           from: '/one',
+          path: '/one',
           to: '/two',
         },
       ],
     },
     {
-      fileRedirects: [],
-      configRedirects: [
-        {
-          from: '/one',
-          to: '/three',
-        },
-      ],
+      title: 'only_config',
+      input: {
+        redirectsFiles: ['empty'],
+        configRedirects: [
+          {
+            from: '/one',
+            to: '/three',
+          },
+        ],
+      },
       output: [
         {
           from: '/one',
+          path: '/one',
           to: '/three',
         },
       ],
     },
     {
-      fileRedirects: [
-        {
-          from: '/one',
-          to: '/two',
-        },
-      ],
-      configRedirects: [
-        {
-          from: '/one',
-          to: '/three',
-        },
-      ],
+      title: 'simple_merge',
+      input: {
+        redirectsFiles: ['simple'],
+        configRedirects: [
+          {
+            from: '/one',
+            to: '/three',
+          },
+        ],
+      },
       output: [
         {
           from: '/one',
+          path: '/one',
           to: '/two',
         },
         {
           from: '/one',
+          path: '/one',
           to: '/three',
         },
       ],
     },
     {
-      fileRedirects: [
+      title: 'simple_multiple',
+      input: {
+        redirectsFiles: ['simple_multiple'],
+        configRedirects: [
+          {
+            from: '/one',
+            to: '/two',
+          },
+          {
+            from: '/one',
+            to: '/three',
+          },
+        ],
+      },
+      output: [
         {
           from: '/one',
-          to: '/two',
-        },
-        {
-          from: '/one',
+          path: '/one',
           to: '/four',
         },
-      ],
-      configRedirects: [
         {
           from: '/one',
+          path: '/one',
           to: '/two',
         },
         {
           from: '/one',
-          to: '/three',
-        },
-      ],
-      output: [
-        {
-          from: '/one',
-          to: '/four',
-        },
-        {
-          from: '/one',
-          to: '/two',
-        },
-        {
-          from: '/one',
+          path: '/one',
           to: '/three',
         },
       ],
     },
   ],
-  ({ title }, { fileRedirects, configRedirects, output }) => {
-    test(`Merges _redirects with netlify.toml redirects | ${title}`, (t) => {
-      const { redirects, errors } = mergeRedirects({ fileRedirects, configRedirects })
-      t.is(errors.length, 0)
-      t.deepEqual(redirects, output)
+  ({ title }, opts) => {
+    test(`Merges _redirects with netlify.toml redirects | ${title}`, async (t) => {
+      await validateSuccess(t, opts)
     })
   },
 )

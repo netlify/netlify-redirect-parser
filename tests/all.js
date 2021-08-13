@@ -1,179 +1,163 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { parseAllRedirects } = require('..')
-
-const { FIXTURES_DIR } = require('./helpers/main')
-
-const parseRedirects = async function ({ fileFixtureNames, configFixtureName, configRedirects, opts }) {
-  const redirectsFiles =
-    fileFixtureNames === undefined
-      ? undefined
-      : fileFixtureNames.map((fileFixtureName) => `${FIXTURES_DIR}/redirects_file/${fileFixtureName}`)
-  const netlifyConfigPath =
-    configFixtureName === undefined ? undefined : `${FIXTURES_DIR}/netlify_config/${configFixtureName}.toml`
-  return await parseAllRedirects({ redirectsFiles, netlifyConfigPath, configRedirects, ...opts })
-}
+const { validateSuccess, validateErrors } = require('./helpers/main')
 
 each(
   [
     {
       title: 'empty',
+      input: {},
       output: [],
     },
     {
       title: 'only_config',
-      configFixtureName: 'from_simple',
+      input: {
+        netlifyConfigPath: 'from_simple',
+      },
       output: [
         {
           from: '/old-path',
           path: '/old-path',
-          query: {},
           to: '/new-path',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
       ],
     },
     {
       title: 'only_files',
-      fileFixtureNames: ['from_simple', 'from_absolute_uri'],
+      input: {
+        redirectsFiles: ['from_simple', 'from_absolute_uri'],
+      },
       output: [
         {
           from: '/home',
           path: '/home',
-          query: {},
           to: '/',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
         {
           from: 'http://hello.bitballoon.com/*',
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          query: {},
           to: 'http://www.hello.com/:splat',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
       ],
     },
     {
       title: 'both_config_files',
-      fileFixtureNames: ['from_simple', 'from_absolute_uri'],
-      configFixtureName: 'from_simple',
+      input: {
+        redirectsFiles: ['from_simple', 'from_absolute_uri'],
+        netlifyConfigPath: 'from_simple',
+      },
       output: [
         {
           from: '/home',
           path: '/home',
-          query: {},
           to: '/',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
         {
           from: 'http://hello.bitballoon.com/*',
           scheme: 'http',
           host: 'hello.bitballoon.com',
           path: '/*',
-          query: {},
           to: 'http://www.hello.com/:splat',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
         {
           from: '/old-path',
           path: '/old-path',
-          query: {},
           to: '/new-path',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
       ],
     },
     {
       title: 'config_redirects',
-      configFixtureName: 'from_simple',
-      configRedirects: [
-        {
-          from: '/home',
-          to: '/',
-        },
-      ],
+      input: {
+        netlifyConfigPath: 'from_simple',
+        configRedirects: [
+          {
+            from: '/home',
+            to: '/',
+          },
+        ],
+      },
       output: [
         {
           from: '/old-path',
           path: '/old-path',
-          query: {},
           to: '/new-path',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
         {
           from: '/home',
           path: '/home',
-          query: {},
           to: '/',
-          force: false,
-          conditions: {},
-          headers: {},
-          proxy: false,
         },
       ],
     },
     {
       title: 'minimal',
-      fileFixtureNames: ['from_simple', 'from_absolute_uri'],
-      configFixtureName: 'from_simple',
+      input: {
+        redirectsFiles: ['from_simple', 'from_absolute_uri'],
+        netlifyConfigPath: 'from_simple',
+        minimal: true,
+      },
       output: [
         {
           from: '/home',
-          query: {},
           to: '/',
-          force: false,
-          conditions: {},
-          headers: {},
         },
         {
           from: 'http://hello.bitballoon.com/*',
-          query: {},
           to: 'http://www.hello.com/:splat',
-          force: false,
-          conditions: {},
-          headers: {},
         },
         {
           from: '/old-path',
-          query: {},
           to: '/new-path',
-          force: false,
-          conditions: {},
-          headers: {},
         },
       ],
-      opts: { minimal: true },
+    },
+    {
+      title: 'valid_redirects_mixed',
+      input: {
+        redirectsFiles: ['from_simple'],
+        configRedirects: {},
+      },
+      output: [
+        {
+          from: '/home',
+          path: '/home',
+          to: '/',
+        },
+      ],
     },
   ],
-  ({ title }, { fileFixtureNames, configFixtureName, configRedirects, output, opts }) => {
+  ({ title }, opts) => {
     test(`Parses netlify.toml and _redirects | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects({ fileFixtureNames, configFixtureName, configRedirects, opts })
-      t.is(errors.length, 0)
-      t.deepEqual(redirects, output)
+      await validateSuccess(t, opts)
+    })
+  },
+)
+
+each(
+  [
+    {
+      title: 'invalid_redirects_array',
+      input: {
+        configRedirects: {},
+      },
+      errorMessage: /must be an array/,
+    },
+    {
+      title: 'invalid_redirects_mixed',
+      input: {
+        redirectsFiles: ['from_simple'],
+        configRedirects: {},
+      },
+      errorMessage: /must be an array/,
+    },
+  ],
+  ({ title }, opts) => {
+    test(`Validate syntax errors | ${title}`, async (t) => {
+      await validateErrors(t, opts)
     })
   },
 )
