@@ -1,11 +1,12 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { parseConfigRedirects, normalizeRedirects } = require('..')
+const { parseConfigRedirects } = require('../src/netlify_config_parser')
+const { normalizeRedirects } = require('../src/normalize')
 
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
-const parseRedirects = async function (fixtureName, opts) {
+const parseRedirects = async function (fixtureName, opts = {}) {
   const { redirects, errors: parseErrors } = await parseConfigRedirects(
     `${FIXTURES_DIR}/netlify_config/${fixtureName}.toml`,
   )

@@ -10,7 +10,7 @@ const { isUrl } = require('./url')
 // Validate and normalize an array of `redirects` objects.
 // This step is performed after `redirects` have been parsed from either
 // `netlify.toml` or `_redirects`.
-const normalizeRedirects = function (redirects, opts = {}) {
+const normalizeRedirects = function (redirects, opts) {
   if (!Array.isArray(redirects)) {
     const error = new TypeError(`Redirects must be an array not: ${redirects}`)
     return splitResults([error])

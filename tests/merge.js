@@ -1,11 +1,10 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { mergeRedirects } = require('..')
+const { mergeRedirects } = require('../src/merge')
 
 each(
   [
-    { output: [] },
     { fileRedirects: [], configRedirects: [], output: [] },
     {
       fileRedirects: [
@@ -103,21 +102,6 @@ each(
       const { redirects, errors } = mergeRedirects({ fileRedirects, configRedirects })
       t.is(errors.length, 0)
       t.deepEqual(redirects, output)
-    })
-  },
-)
-
-each(
-  [
-    { fileRedirects: { from: '/one', to: '/three' }, errorMessage: /should be an array/ },
-    { configRedirects: { from: '/one', to: '/three' }, errorMessage: /should be an array/ },
-  ],
-  ({ title }, { fileRedirects, configRedirects, errorMessage }) => {
-    test(`Validate syntax errors | ${title}`, async (t) => {
-      const { redirects, errors } = await mergeRedirects({ fileRedirects, configRedirects })
-      t.is(redirects.length, 0)
-      // eslint-disable-next-line max-nested-callbacks
-      t.true(errors.some((error) => errorMessage.test(error.message)))
     })
   },
 )

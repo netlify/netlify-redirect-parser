@@ -12,17 +12,7 @@ const parseRedirects = async function ({ fileFixtureNames, configFixtureName, co
       : fileFixtureNames.map((fileFixtureName) => `${FIXTURES_DIR}/redirects_file/${fileFixtureName}`)
   const netlifyConfigPath =
     configFixtureName === undefined ? undefined : `${FIXTURES_DIR}/netlify_config/${configFixtureName}.toml`
-  const options = getOptions({ redirectsFiles, netlifyConfigPath, configRedirects, opts })
-  return await parseAllRedirects(options)
-}
-
-const getOptions = function ({ redirectsFiles, netlifyConfigPath, configRedirects, opts }) {
-  return redirectsFiles === undefined &&
-    netlifyConfigPath === undefined &&
-    configRedirects === undefined &&
-    opts === undefined
-    ? undefined
-    : { redirectsFiles, netlifyConfigPath, configRedirects, ...opts }
+  return await parseAllRedirects({ redirectsFiles, netlifyConfigPath, configRedirects, ...opts })
 }
 
 each(

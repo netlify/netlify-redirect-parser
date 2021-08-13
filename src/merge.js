@@ -1,4 +1,4 @@
-const { inspect, isDeepStrictEqual } = require('util')
+const { isDeepStrictEqual } = require('util')
 
 const { splitResults } = require('./results')
 
@@ -7,17 +7,11 @@ const { splitResults } = require('./results')
 // Since in both `netlify.toml` and `_redirects`, only the first matching rule
 // is used, it is possible to merge `_redirects` to `netlify.toml` by prepending
 // its rules to `netlify.toml` `redirects` field.
-const mergeRedirects = function ({ fileRedirects = [], configRedirects = [] }) {
-  const results = [...validateArray(fileRedirects), ...validateArray(configRedirects)]
+const mergeRedirects = function ({ fileRedirects, configRedirects }) {
+  const results = [...fileRedirects, ...configRedirects]
   const { redirects, errors } = splitResults(results)
   const mergedRedirects = redirects.filter(isUniqueRedirect)
   return { redirects: mergedRedirects, errors }
-}
-
-const validateArray = function (redirects) {
-  return Array.isArray(redirects)
-    ? redirects
-    : [new TypeError(`Redirects should be an array: ${inspect(redirects, { colors: false })}`)]
 }
 
 // Remove duplicates. This is especially likely considering `fileRedirects`
