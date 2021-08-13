@@ -4,26 +4,36 @@ const { parseConfigRedirects } = require('./netlify_config_parser')
 const { normalizeRedirects } = require('./normalize')
 const { splitResults, concatResults } = require('./results')
 
-// Parse all redirects from `netlify.toml` and `_redirects` file, then normalize
+// Parse all redirects given programmatically via the `configRedirects` property, `netlify.toml` and `_redirects` files, then normalize
 // and validate those.
-const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath, ...opts } = {}) {
+const parseAllRedirects = async function ({
+  redirectsFiles = [],
+  netlifyConfigPath,
+  configRedirects = [],
+  ...opts
+} = {}) {
   const [
     { redirects: fileRedirects, errors: fileParseErrors },
-    { redirects: configRedirects, errors: configParseErrors },
+    { redirects: parsedConfigRedirects, errors: configParseErrors },
   ] = await Promise.all([getFileRedirects(redirectsFiles), getConfigRedirects(netlifyConfigPath)])
   const { redirects: normalizedFileRedirects, errors: fileNormalizeErrors } = normalizeRedirects(fileRedirects, opts)
+  const { redirects: normalizedParsedConfigRedirects, errors: parsedConfigNormalizeErrors } = normalizeRedirects(
+    parsedConfigRedirects,
+    opts,
+  )
   const { redirects: normalizedConfigRedirects, errors: configNormalizeErrors } = normalizeRedirects(
     configRedirects,
     opts,
   )
   const { redirects, errors: mergeErrors } = mergeRedirects({
     fileRedirects: normalizedFileRedirects,
-    configRedirects: normalizedConfigRedirects,
+    configRedirects: [...normalizedParsedConfigRedirects, ...normalizedConfigRedirects],
   })
   const errors = [
     ...fileParseErrors,
     ...fileNormalizeErrors,
     ...configParseErrors,
+    ...parsedConfigNormalizeErrors,
     ...configNormalizeErrors,
     ...mergeErrors,
   ]
