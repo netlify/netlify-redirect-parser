@@ -6,12 +6,7 @@ const { splitResults, concatResults } = require('./results')
 
 // Parse all redirects given programmatically via the `configRedirects` property, `netlify.toml` and `_redirects` files, then normalize
 // and validate those.
-const parseAllRedirects = async function ({
-  redirectsFiles = [],
-  netlifyConfigPath,
-  configRedirects = [],
-  ...opts
-} = {}) {
+const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath, configRedirects = [], ...opts }) {
   const [
     { redirects: fileRedirects, errors: fileParseErrors },
     { redirects: parsedConfigRedirects, errors: configParseErrors },
