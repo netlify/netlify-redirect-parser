@@ -143,7 +143,9 @@ each(
   ],
   ({ title }, { fileFixtureNames, configFixtureName, output, opts }) => {
     test(`Parses netlify.toml and _redirects | ${title}`, async (t) => {
-      t.deepEqual(await parseRedirects({ fileFixtureNames, configFixtureName, opts }), output)
+      const { redirects, errors } = await parseRedirects({ fileFixtureNames, configFixtureName, opts })
+      t.is(errors.length, 0)
+      t.deepEqual(redirects, output)
     })
   },
 )

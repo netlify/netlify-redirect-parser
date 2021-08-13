@@ -4,6 +4,7 @@ const filterObj = require('filter-obj')
 const isPlainObj = require('is-plain-obj')
 
 const { normalizeConditions } = require('./conditions')
+const { splitResults } = require('./results')
 const { isUrl } = require('./url')
 
 // Validate and normalize an array of `redirects` objects.
@@ -11,21 +12,23 @@ const { isUrl } = require('./url')
 // `netlify.toml` or `_redirects`.
 const normalizeRedirects = function (redirects, opts = {}) {
   if (!Array.isArray(redirects)) {
-    throw new TypeError(`Redirects must be an array not: ${redirects}`)
+    const error = new TypeError(`Redirects must be an array not: ${redirects}`)
+    return splitResults([error])
   }
 
-  return redirects.map((obj, index) => parseRedirect(obj, index, opts))
+  const results = redirects.map((obj, index) => parseRedirect(obj, index, opts))
+  return splitResults(results)
 }
 
 const parseRedirect = function (obj, index, opts) {
   if (!isPlainObj(obj)) {
-    throw new TypeError(`Redirects must be objects not: ${obj}`)
+    return new TypeError(`Redirects must be objects not: ${obj}`)
   }
 
   try {
     return parseRedirectObject(obj, opts)
   } catch (error) {
-    throw new Error(`Could not parse redirect number ${index + 1}:
+    return new Error(`Could not parse redirect number ${index + 1}:
   ${JSON.stringify(obj)}
 ${error.message}`)
   }

@@ -100,7 +100,9 @@ each(
   ],
   ({ title }, { fileRedirects, configRedirects, output }) => {
     test(`Merges _redirects with netlify.toml redirects | ${title}`, (t) => {
-      t.deepEqual(mergeRedirects({ fileRedirects, configRedirects }), output)
+      const { redirects, errors } = mergeRedirects({ fileRedirects, configRedirects })
+      t.is(errors.length, 0)
+      t.deepEqual(redirects, output)
     })
   },
 )
@@ -112,7 +114,10 @@ each(
   ],
   ({ title }, { fileRedirects, configRedirects, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
-      await t.throws(mergeRedirects.bind(undefined, { fileRedirects, configRedirects }), errorMessage)
+      const { redirects, errors } = await mergeRedirects({ fileRedirects, configRedirects })
+      t.is(redirects.length, 0)
+      // eslint-disable-next-line max-nested-callbacks
+      t.true(errors.some((error) => errorMessage.test(error.message)))
     })
   },
 )

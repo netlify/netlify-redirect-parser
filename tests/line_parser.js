@@ -6,8 +6,9 @@ const { parseFileRedirects, normalizeRedirects } = require('..')
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
 const parseRedirects = async function (fixtureName) {
-  const redirects = await parseFileRedirects(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
-  return normalizeRedirects(redirects)
+  const { redirects, errors: parseErrors } = await parseFileRedirects(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
+  const { redirects: normalizedRedirects, errors: normalizeErrors } = normalizeRedirects(redirects)
+  return { redirects: normalizedRedirects, errors: [...parseErrors, ...normalizeErrors] }
 }
 
 each(
@@ -341,7 +342,9 @@ each(
   ],
   ({ title }, { fixtureName = title, output }) => {
     test(`Parses _redirects | ${title}`, async (t) => {
-      t.deepEqual(await parseRedirects(fixtureName), output.map(normalizeRedirect))
+      const { redirects, errors } = await parseRedirects(fixtureName)
+      t.is(errors.length, 0)
+      t.deepEqual(redirects, output.map(normalizeRedirect))
     })
   },
 )
@@ -359,7 +362,10 @@ each(
   ],
   ({ title }, { fixtureName = title, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
-      await t.throwsAsync(parseRedirects(fixtureName), errorMessage)
+      const { redirects, errors } = await parseRedirects(fixtureName)
+      t.is(redirects.length, 0)
+      // eslint-disable-next-line max-nested-callbacks
+      t.true(errors.some((error) => errorMessage.test(error.message)))
     })
   },
 )

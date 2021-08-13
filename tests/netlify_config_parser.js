@@ -6,8 +6,11 @@ const { parseConfigRedirects, normalizeRedirects } = require('..')
 const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
 
 const parseRedirects = async function (fixtureName, opts) {
-  const redirects = await parseConfigRedirects(`${FIXTURES_DIR}/netlify_config/${fixtureName}.toml`)
-  return normalizeRedirects(redirects, opts)
+  const { redirects, errors: parseErrors } = await parseConfigRedirects(
+    `${FIXTURES_DIR}/netlify_config/${fixtureName}.toml`,
+  )
+  const { redirects: normalizedRedirects, errors: normalizeErrors } = normalizeRedirects(redirects, opts)
+  return { redirects: normalizedRedirects, errors: [...parseErrors, ...normalizeErrors] }
 }
 
 each(
@@ -240,8 +243,10 @@ each(
   ],
   ({ title }, { fixtureName = title, output, opts }) => {
     test(`Parses netlify.toml redirects | ${title}`, async (t) => {
+      const { redirects, errors } = await parseRedirects(fixtureName, opts)
+      t.is(errors.length, 0)
       t.deepEqual(
-        await parseRedirects(fixtureName, opts),
+        redirects,
         // eslint-disable-next-line max-nested-callbacks
         output.map((redirect) => normalizeRedirect(redirect, opts)),
       )
@@ -264,7 +269,10 @@ each(
   ],
   ({ title }, { fixtureName = title, errorMessage }) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
-      await t.throwsAsync(parseRedirects(fixtureName), errorMessage)
+      const { redirects, errors } = await parseRedirects(fixtureName)
+      t.is(redirects.length, 0)
+      // eslint-disable-next-line max-nested-callbacks
+      t.true(errors.some((error) => errorMessage.test(error.message)))
     })
   },
 )
