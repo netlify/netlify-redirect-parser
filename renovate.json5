@@ -11,6 +11,10 @@
       allowedVersions: '<4',
     },
     {
+      matchPackageNames: ['path-exists'],
+      allowedVersions: '<5',
+    },
+    {
       matchPackageNames: ['test-each'],
       allowedVersions: '<3',
     },
