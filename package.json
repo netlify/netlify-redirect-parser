@@ -31,7 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "filter-obj": "^2.0.2",
-    "is-plain-obj": "^2.1.0",
+    "is-plain-obj": "^3.0.0",
     "path-exists": "^4.0.0",
     "toml": "^3.0.0"
   },
