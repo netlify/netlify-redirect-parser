@@ -423,6 +423,13 @@ each(
 each(
   [
     {
+      title: 'invalid_dir',
+      input: {
+        redirectsFiles: ['invalid_dir'],
+      },
+      errorMessage: /read redirects file/,
+    },
+    {
       title: 'invalid_url',
       input: {
         redirectsFiles: ['invalid_url'],

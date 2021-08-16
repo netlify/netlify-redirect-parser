@@ -27,13 +27,28 @@ const pReadFile = promisify(readFile)
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
 const parseFileRedirects = async function (redirectFile) {
+  const results = await parseRedirects(redirectFile)
+  return splitResults(results)
+}
+
+const parseRedirects = async function (redirectFile) {
   if (!(await pathExists(redirectFile))) {
-    return splitResults([])
+    return []
   }
 
-  const text = await pReadFile(redirectFile, 'utf8')
-  const results = text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
-  return splitResults(results)
+  const text = await readRedirectFile(redirectFile)
+  if (typeof text !== 'string') {
+    return [text]
+  }
+  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+}
+
+const readRedirectFile = async function (redirectFile) {
+  try {
+    return await pReadFile(redirectFile, 'utf8')
+  } catch (error) {
+    return new Error(`Could not read redirects file: ${redirectFile}`)
+  }
 }
 
 const normalizeLine = function (line, index) {
