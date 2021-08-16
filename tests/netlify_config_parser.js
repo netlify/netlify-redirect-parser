@@ -1,31 +1,29 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { parseConfigRedirects } = require('../src/netlify_config_parser')
-const { normalizeRedirects } = require('../src/normalize')
-
-const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
-
-const parseRedirects = async function (fixtureName, opts = {}) {
-  const { redirects, errors: parseErrors } = await parseConfigRedirects(
-    `${FIXTURES_DIR}/netlify_config/${fixtureName}.toml`,
-  )
-  const { redirects: normalizedRedirects, errors: normalizeErrors } = normalizeRedirects(redirects, opts)
-  return { redirects: normalizedRedirects, errors: [...parseErrors, ...normalizeErrors] }
-}
+const { validateSuccess, validateErrors } = require('./helpers/main')
 
 each(
   [
     {
       title: 'empty',
+      input: {
+        netlifyConfigPath: 'empty',
+      },
       output: [],
     },
     {
       title: 'non_existing',
+      input: {
+        netlifyConfigPath: 'non_existing',
+      },
       output: [],
     },
     {
       title: 'backward_compat_origin',
+      input: {
+        netlifyConfigPath: 'backward_compat_origin',
+      },
       output: [
         {
           from: '/old-path',
@@ -36,6 +34,9 @@ each(
     },
     {
       title: 'backward_compat_destination',
+      input: {
+        netlifyConfigPath: 'backward_compat_destination',
+      },
       output: [
         {
           from: '/old-path',
@@ -46,6 +47,9 @@ each(
     },
     {
       title: 'backward_compat_params',
+      input: {
+        netlifyConfigPath: 'backward_compat_params',
+      },
       output: [
         {
           from: '/old-path',
@@ -57,6 +61,9 @@ each(
     },
     {
       title: 'backward_compat_parameters',
+      input: {
+        netlifyConfigPath: 'backward_compat_parameters',
+      },
       output: [
         {
           from: '/old-path',
@@ -68,6 +75,9 @@ each(
     },
     {
       title: 'backward_compat_sign',
+      input: {
+        netlifyConfigPath: 'backward_compat_sign',
+      },
       output: [
         {
           from: '/old-path',
@@ -79,6 +89,9 @@ each(
     },
     {
       title: 'backward_compat_signing',
+      input: {
+        netlifyConfigPath: 'backward_compat_signing',
+      },
       output: [
         {
           from: '/old-path',
@@ -90,6 +103,9 @@ each(
     },
     {
       title: 'from_simple',
+      input: {
+        netlifyConfigPath: 'from_simple',
+      },
       output: [
         {
           from: '/old-path',
@@ -100,6 +116,9 @@ each(
     },
     {
       title: 'from_url',
+      input: {
+        netlifyConfigPath: 'from_url',
+      },
       output: [
         {
           from: 'http://www.example.com/old-path',
@@ -112,6 +131,9 @@ each(
     },
     {
       title: 'from_forward',
+      input: {
+        netlifyConfigPath: 'from_forward',
+      },
       output: [
         {
           from: '/old-path/*',
@@ -123,6 +145,9 @@ each(
     },
     {
       title: 'from_no_slash',
+      input: {
+        netlifyConfigPath: 'from_no_slash',
+      },
       output: [
         {
           from: 'old-path',
@@ -133,6 +158,9 @@ each(
     },
     {
       title: 'query',
+      input: {
+        netlifyConfigPath: 'query',
+      },
       output: [
         {
           from: '/old-path',
@@ -144,6 +172,9 @@ each(
     },
     {
       title: 'conditions_country_case',
+      input: {
+        netlifyConfigPath: 'conditions_country_case',
+      },
       output: [
         {
           from: '/old-path',
@@ -155,6 +186,9 @@ each(
     },
     {
       title: 'conditions_language_case',
+      input: {
+        netlifyConfigPath: 'conditions_language_case',
+      },
       output: [
         {
           from: '/old-path',
@@ -166,6 +200,9 @@ each(
     },
     {
       title: 'conditions_role_case',
+      input: {
+        netlifyConfigPath: 'conditions_role_case',
+      },
       output: [
         {
           from: '/old-path',
@@ -177,6 +214,9 @@ each(
     },
     {
       title: 'signed',
+      input: {
+        netlifyConfigPath: 'signed',
+      },
       output: [
         {
           from: '/old-path',
@@ -188,6 +228,9 @@ each(
     },
     {
       title: 'complex',
+      input: {
+        netlifyConfigPath: 'complex',
+      },
       output: [
         {
           from: '/old-path',
@@ -219,6 +262,10 @@ each(
     },
     {
       title: 'minimal',
+      input: {
+        netlifyConfigPath: 'minimal',
+        minimal: true,
+      },
       output: [
         {
           from: '/here',
@@ -239,41 +286,91 @@ each(
           },
         },
       ],
-      opts: { minimal: true },
     },
   ],
-  ({ title }, { fixtureName = title, output, opts }) => {
+  ({ title }, opts) => {
     test(`Parses netlify.toml redirects | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects(fixtureName, opts)
-      t.is(errors.length, 0)
-      t.deepEqual(
-        redirects,
-        // eslint-disable-next-line max-nested-callbacks
-        output.map((redirect) => normalizeRedirect(redirect, opts)),
-      )
+      await validateSuccess(t, opts)
     })
   },
 )
 
 each(
   [
-    { title: 'invalid_toml', errorMessage: /parse configuration file/ },
-    { title: 'invalid_type', errorMessage: /must be an array/ },
-    { title: 'invalid_object', errorMessage: /must be objects/ },
-    { title: 'invalid_no_from', errorMessage: /Missing "from"/ },
-    { title: 'invalid_no_to', errorMessage: /Missing "to"/ },
-    { title: 'invalid_forward_status', errorMessage: /Missing "to"/ },
-    { title: 'invalid_url', errorMessage: /Invalid URL/ },
-    { title: 'invalid_dot_netlify_url', errorMessage: /must not start/ },
-    { title: 'invalid_dot_netlify_path', errorMessage: /must not start/ },
-    { title: 'invalid_headers', errorMessage: /must be an object/ },
+    {
+      title: 'invalid_toml',
+      input: {
+        netlifyConfigPath: 'invalid_toml',
+      },
+      errorMessage: /parse configuration file/,
+    },
+    {
+      title: 'invalid_type',
+      input: {
+        netlifyConfigPath: 'invalid_type',
+      },
+      errorMessage: /must be an array/,
+    },
+    {
+      title: 'invalid_object',
+      input: {
+        netlifyConfigPath: 'invalid_object',
+      },
+      errorMessage: /must be objects/,
+    },
+    {
+      title: 'invalid_no_from',
+      input: {
+        netlifyConfigPath: 'invalid_no_from',
+      },
+      errorMessage: /Missing "from"/,
+    },
+    {
+      title: 'invalid_no_to',
+      input: {
+        netlifyConfigPath: 'invalid_no_to',
+      },
+      errorMessage: /Missing "to"/,
+    },
+    {
+      title: 'invalid_forward_status',
+      input: {
+        netlifyConfigPath: 'invalid_forward_status',
+      },
+      errorMessage: /Missing "to"/,
+    },
+    {
+      title: 'invalid_url',
+      input: {
+        netlifyConfigPath: 'invalid_url',
+      },
+      errorMessage: /Invalid URL/,
+    },
+    {
+      title: 'invalid_dot_netlify_url',
+      input: {
+        netlifyConfigPath: 'invalid_dot_netlify_url',
+      },
+      errorMessage: /must not start/,
+    },
+    {
+      title: 'invalid_dot_netlify_path',
+      input: {
+        netlifyConfigPath: 'invalid_dot_netlify_path',
+      },
+      errorMessage: /must not start/,
+    },
+    {
+      title: 'invalid_headers',
+      input: {
+        netlifyConfigPath: 'invalid_headers',
+      },
+      errorMessage: /must be an object/,
+    },
   ],
-  ({ title }, { fixtureName = title, errorMessage }) => {
+  ({ title }, opts) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects(fixtureName)
-      t.is(redirects.length, 0)
-      // eslint-disable-next-line max-nested-callbacks
-      t.true(errors.some((error) => errorMessage.test(error.message)))
+      await validateErrors(t, opts)
     })
   },
 )

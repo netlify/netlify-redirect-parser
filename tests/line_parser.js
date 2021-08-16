@@ -1,29 +1,29 @@
 const test = require('ava')
 const { each } = require('test-each')
 
-const { parseFileRedirects } = require('../src/line_parser')
-const { normalizeRedirects } = require('../src/normalize')
-
-const { FIXTURES_DIR, normalizeRedirect } = require('./helpers/main')
-
-const parseRedirects = async function (fixtureName) {
-  const { redirects, errors: parseErrors } = await parseFileRedirects(`${FIXTURES_DIR}/redirects_file/${fixtureName}`)
-  const { redirects: normalizedRedirects, errors: normalizeErrors } = normalizeRedirects(redirects, {})
-  return { redirects: normalizedRedirects, errors: [...parseErrors, ...normalizeErrors] }
-}
+const { validateSuccess, validateErrors } = require('./helpers/main')
 
 each(
   [
     {
       title: 'empty',
+      input: {
+        redirectsFiles: ['empty'],
+      },
       output: [],
     },
     {
       title: 'non_existing',
+      input: {
+        redirectsFiles: ['non_existing'],
+      },
       output: [],
     },
     {
       title: 'empty_line',
+      input: {
+        redirectsFiles: ['empty_line'],
+      },
       output: [
         {
           from: '/blog/my-post.php',
@@ -39,6 +39,9 @@ each(
     },
     {
       title: 'multiple_lines',
+      input: {
+        redirectsFiles: ['multiple_lines'],
+      },
       output: [
         {
           from: '/10thmagnitude',
@@ -56,6 +59,9 @@ each(
     },
     {
       title: 'line_trim',
+      input: {
+        redirectsFiles: ['line_trim'],
+      },
       output: [
         {
           from: '/home',
@@ -66,6 +72,9 @@ each(
     },
     {
       title: 'comment_full',
+      input: {
+        redirectsFiles: ['comment_full'],
+      },
       output: [
         {
           from: '/blog/my-post.php',
@@ -76,6 +85,9 @@ each(
     },
     {
       title: 'comment_inline',
+      input: {
+        redirectsFiles: ['comment_inline'],
+      },
       output: [
         {
           from: '/blog/my-post.php',
@@ -86,6 +98,9 @@ each(
     },
     {
       title: 'from_simple',
+      input: {
+        redirectsFiles: ['from_simple'],
+      },
       output: [
         {
           from: '/home',
@@ -96,6 +111,9 @@ each(
     },
     {
       title: 'from_absolute_uri',
+      input: {
+        redirectsFiles: ['from_absolute_uri'],
+      },
       output: [
         {
           from: 'http://hello.bitballoon.com/*',
@@ -108,6 +126,9 @@ each(
     },
     {
       title: 'query',
+      input: {
+        redirectsFiles: ['query'],
+      },
       output: [
         {
           from: '/',
@@ -131,6 +152,9 @@ each(
     },
     {
       title: 'to_anchor',
+      input: {
+        redirectsFiles: ['to_anchor'],
+      },
       output: [
         {
           from: '/blog/my-post-ads.php',
@@ -141,6 +165,9 @@ each(
     },
     {
       title: 'to_splat_no_force',
+      input: {
+        redirectsFiles: ['to_splat_no_force'],
+      },
       output: [
         {
           from: '/*',
@@ -152,6 +179,9 @@ each(
     },
     {
       title: 'to_splat_force',
+      input: {
+        redirectsFiles: ['to_splat_force'],
+      },
       output: [
         {
           from: '/*',
@@ -164,6 +194,9 @@ each(
     },
     {
       title: 'to_path_forward',
+      input: {
+        redirectsFiles: ['to_path_forward'],
+      },
       output: [
         {
           from: '/admin/*',
@@ -182,6 +215,9 @@ each(
     },
     {
       title: 'proxy',
+      input: {
+        redirectsFiles: ['proxy'],
+      },
       output: [
         {
           from: '/api/*',
@@ -194,6 +230,9 @@ each(
     },
     {
       title: 'status',
+      input: {
+        redirectsFiles: ['status'],
+      },
       output: [
         {
           from: '/test',
@@ -205,6 +244,9 @@ each(
     },
     {
       title: 'status_force',
+      input: {
+        redirectsFiles: ['status_force'],
+      },
       output: [
         {
           from: '/test',
@@ -217,6 +259,9 @@ each(
     },
     {
       title: 'conditions_country',
+      input: {
+        redirectsFiles: ['conditions_country'],
+      },
       output: [
         {
           from: '/',
@@ -229,6 +274,9 @@ each(
     },
     {
       title: 'conditions_country_language',
+      input: {
+        redirectsFiles: ['conditions_country_language'],
+      },
       output: [
         {
           from: '/',
@@ -241,6 +289,9 @@ each(
     },
     {
       title: 'conditions_role',
+      input: {
+        redirectsFiles: ['conditions_role'],
+      },
       output: [
         {
           from: '/admin/*',
@@ -253,6 +304,9 @@ each(
     },
     {
       title: 'conditions_roles',
+      input: {
+        redirectsFiles: ['conditions_roles'],
+      },
       output: [
         {
           from: '/member/*',
@@ -265,6 +319,9 @@ each(
     },
     {
       title: 'conditions_query',
+      input: {
+        redirectsFiles: ['conditions_query'],
+      },
       output: [
         {
           from: '/donate',
@@ -278,6 +335,9 @@ each(
     },
     {
       title: 'conditions_country_case',
+      input: {
+        redirectsFiles: ['conditions_country_case'],
+      },
       output: [
         {
           from: '/old-path',
@@ -290,6 +350,9 @@ each(
     },
     {
       title: 'conditions_language_case',
+      input: {
+        redirectsFiles: ['conditions_language_case'],
+      },
       output: [
         {
           from: '/old-path',
@@ -302,6 +365,9 @@ each(
     },
     {
       title: 'conditions_role_case',
+      input: {
+        redirectsFiles: ['conditions_role_case'],
+      },
       output: [
         {
           from: '/old-path',
@@ -314,6 +380,9 @@ each(
     },
     {
       title: 'signed',
+      input: {
+        redirectsFiles: ['signed'],
+      },
       output: [
         {
           from: '/api/*',
@@ -328,6 +397,9 @@ each(
     },
     {
       title: 'signed_backward_compat',
+      input: {
+        redirectsFiles: ['signed_backward_compat'],
+      },
       output: [
         {
           from: '/api/*',
@@ -341,32 +413,75 @@ each(
       ],
     },
   ],
-  ({ title }, { fixtureName = title, output }) => {
+  ({ title }, opts) => {
     test(`Parses _redirects | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects(fixtureName)
-      t.is(errors.length, 0)
-      t.deepEqual(redirects, output.map(normalizeRedirect))
+      await validateSuccess(t, opts)
     })
   },
 )
 
 each(
   [
-    { title: 'invalid_url', errorMessage: /Invalid URL/ },
-    { title: 'invalid_dot_netlify_url', errorMessage: /must not start/ },
-    { title: 'invalid_dot_netlify_path', errorMessage: /must not start/ },
-    { title: 'invalid_no_to_no_status', errorMessage: /Missing destination/ },
-    { title: 'invalid_no_to_status', errorMessage: /Missing "to" field/ },
-    { title: 'invalid_no_to_query', errorMessage: /must start with/ },
-    { title: 'invalid_no_slash', errorMessage: /must start with/ },
-    { title: 'invalid_mistaken_headers', errorMessage: /Missing destination/ },
+    {
+      title: 'invalid_url',
+      input: {
+        redirectsFiles: ['invalid_url'],
+      },
+      errorMessage: /Invalid URL/,
+    },
+    {
+      title: 'invalid_dot_netlify_url',
+      input: {
+        redirectsFiles: ['invalid_dot_netlify_url'],
+      },
+      errorMessage: /must not start/,
+    },
+    {
+      title: 'invalid_dot_netlify_path',
+      input: {
+        redirectsFiles: ['invalid_dot_netlify_path'],
+      },
+      errorMessage: /must not start/,
+    },
+    {
+      title: 'invalid_no_to_no_status',
+      input: {
+        redirectsFiles: ['invalid_no_to_no_status'],
+      },
+      errorMessage: /Missing destination/,
+    },
+    {
+      title: 'invalid_no_to_status',
+      input: {
+        redirectsFiles: ['invalid_no_to_status'],
+      },
+      errorMessage: /Missing "to" field/,
+    },
+    {
+      title: 'invalid_no_to_query',
+      input: {
+        redirectsFiles: ['invalid_no_to_query'],
+      },
+      errorMessage: /must start with/,
+    },
+    {
+      title: 'invalid_no_slash',
+      input: {
+        redirectsFiles: ['invalid_no_slash'],
+      },
+      errorMessage: /must start with/,
+    },
+    {
+      title: 'invalid_mistaken_headers',
+      input: {
+        redirectsFiles: ['invalid_mistaken_headers'],
+      },
+      errorMessage: /Missing destination/,
+    },
   ],
-  ({ title }, { fixtureName = title, errorMessage }) => {
+  ({ title }, opts) => {
     test(`Validate syntax errors | ${title}`, async (t) => {
-      const { redirects, errors } = await parseRedirects(fixtureName)
-      t.is(redirects.length, 0)
-      // eslint-disable-next-line max-nested-callbacks
-      t.true(errors.some((error) => errorMessage.test(error.message)))
+      await validateErrors(t, opts)
     })
   },
 )
