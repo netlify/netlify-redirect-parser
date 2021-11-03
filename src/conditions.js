@@ -18,7 +18,7 @@ const CONDITION_CAPITALIZED_PROPS = [
 
 const normalizeConditionCase = function (conditions, { name, capitalizedName }) {
   const { [capitalizedName]: capitalizedProp, [name]: prop = capitalizedProp, ...conditionsA } = conditions
-  return prop === undefined ? conditionsA : { ...conditionsA, [name]: prop }
+  return prop === undefined ? conditionsA : { ...conditionsA, [capitalizedName]: prop }
 }
 
 // Some `conditions` are array of strings.
@@ -27,7 +27,7 @@ const normalizeConditionLists = function (conditions) {
   return CONDITION_LIST_PROPS.reduce(normalizeConditionList, conditions)
 }
 
-const CONDITION_LIST_PROPS = ['role', 'language', 'country']
+const CONDITION_LIST_PROPS = ['Role', 'Language', 'Country']
 
 const normalizeConditionList = function (conditions, name) {
   return typeof conditions[name] === 'string'
