@@ -3,20 +3,5 @@
   ignorePresets: [':prHourlyLimit2'],
   semanticCommits: true,
   dependencyDashboard: true,
-  packageRules: [
-    // Those cannot be upgraded until we drop support for Node 10 and
-    // use ES modules
-    {
-      matchPackageNames: ['is-plain-obj'],
-      allowedVersions: '<4',
-    },
-    {
-      matchPackageNames: ['path-exists'],
-      allowedVersions: '<5',
-    },
-    {
-      matchPackageNames: ['test-each'],
-      allowedVersions: '<3',
-    },
-  ],
+  packageRules: [],
 }
