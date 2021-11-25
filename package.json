@@ -25,7 +25,7 @@
     "netlify"
   ],
   "engines": {
-    "node": ">=10.18.0"
+    "node": "^12.20.0 || ^14.14.0 || >=16.0.0"
   },
   "author": "Netlify",
   "license": "MIT",
