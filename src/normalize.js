@@ -1,16 +1,14 @@
-const { URL } = require('url')
+import filterObj from 'filter-obj'
+import isPlainObj from 'is-plain-obj'
 
-const filterObj = require('filter-obj')
-const isPlainObj = require('is-plain-obj')
-
-const { normalizeConditions } = require('./conditions')
-const { splitResults } = require('./results')
-const { isUrl } = require('./url')
+import { normalizeConditions } from './conditions.js'
+import { splitResults } from './results.js'
+import { isUrl } from './url.js'
 
 // Validate and normalize an array of `redirects` objects.
 // This step is performed after `redirects` have been parsed from either
 // `netlify.toml` or `_redirects`.
-const normalizeRedirects = function (redirects, opts) {
+export const normalizeRedirects = function (redirects, opts) {
   if (!Array.isArray(redirects)) {
     const error = new TypeError(`Redirects must be an array not: ${redirects}`)
     return splitResults([error])
@@ -145,5 +143,3 @@ const removeUndefinedValues = function (object) {
 const isDefined = function (key, value) {
   return value !== undefined
 }
-
-module.exports = { normalizeRedirects }

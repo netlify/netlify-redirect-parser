@@ -1,5 +1,5 @@
 // If one redirect fails to parse, we still try to return the other ones
-const splitResults = function (results) {
+export const splitResults = function (results) {
   const redirects = results.filter((result) => !isError(result))
   const errors = results.filter(isError)
   return { redirects, errors }
@@ -10,7 +10,7 @@ const isError = function (result) {
 }
 
 // Concatenate an array of `{ redirects, erors }`
-const concatResults = function (resultsArrays) {
+export const concatResults = function (resultsArrays) {
   // eslint-disable-next-line unicorn/prefer-spread
   const redirects = [].concat(...resultsArrays.map(getRedirects))
   // eslint-disable-next-line unicorn/prefer-spread
@@ -25,5 +25,3 @@ const getRedirects = function ({ redirects }) {
 const getErrors = function ({ errors }) {
   return errors
 }
-
-module.exports = { splitResults, concatResults }
