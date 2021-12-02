@@ -1,10 +1,10 @@
-const { readFile } = require('fs')
-const { promisify } = require('util')
+import { readFile } from 'fs'
+import { promisify } from 'util'
 
-const pathExists = require('path-exists')
+import pathExists from 'path-exists'
 
-const { splitResults } = require('./results')
-const { isUrl } = require('./url')
+import { splitResults } from './results.js'
+import { isUrl } from './url.js'
 
 const pReadFile = promisify(readFile)
 
@@ -26,7 +26,7 @@ const pReadFile = promisify(readFile)
 //     - "Sign" is a special condition
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
-const parseFileRedirects = async function (redirectFile) {
+export const parseFileRedirects = async function (redirectFile) {
   const results = await parseRedirects(redirectFile)
   return splitResults(results)
 }
@@ -154,5 +154,3 @@ const parsePair = function (condition) {
   const [key, value] = condition.split('=')
   return { [key]: value }
 }
-
-module.exports = { parseFileRedirects }

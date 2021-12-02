@@ -1,17 +1,17 @@
-const { readFile } = require('fs')
-const { promisify } = require('util')
+import { readFile } from 'fs'
+import { promisify } from 'util'
 
-const pathExists = require('path-exists')
-const { parse: loadToml } = require('toml')
+import pathExists from 'path-exists'
+import { parse as loadToml } from 'toml'
 
-const { splitResults } = require('./results')
+import { splitResults } from './results.js'
 
 const pReadFile = promisify(readFile)
 
 // Parse `redirects` field in "netlify.toml" to an array of objects.
 // This field is already an array of objects so it only validates and
 // normalizes it.
-const parseConfigRedirects = async function (netlifyConfigPath) {
+export const parseConfigRedirects = async function (netlifyConfigPath) {
   if (!(await pathExists(netlifyConfigPath))) {
     return splitResults([])
   }
@@ -35,5 +35,3 @@ const parseConfig = async function (configPath) {
     return [new Error(`Could not parse configuration file: ${error}`)]
   }
 }
-
-module.exports = { parseConfigRedirects }

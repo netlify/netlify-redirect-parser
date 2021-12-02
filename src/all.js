@@ -1,12 +1,17 @@
-const { parseFileRedirects } = require('./line_parser')
-const { mergeRedirects } = require('./merge')
-const { parseConfigRedirects } = require('./netlify_config_parser')
-const { normalizeRedirects } = require('./normalize')
-const { splitResults, concatResults } = require('./results')
+import { parseFileRedirects } from './line_parser.js'
+import { mergeRedirects } from './merge.js'
+import { parseConfigRedirects } from './netlify_config_parser.js'
+import { normalizeRedirects } from './normalize.js'
+import { splitResults, concatResults } from './results.js'
 
 // Parse all redirects given programmatically via the `configRedirects` property, `netlify.toml` and `_redirects` files, then normalize
 // and validate those.
-const parseAllRedirects = async function ({ redirectsFiles = [], netlifyConfigPath, configRedirects = [], ...opts }) {
+export const parseAllRedirects = async function ({
+  redirectsFiles = [],
+  netlifyConfigPath,
+  configRedirects = [],
+  ...opts
+}) {
   const [
     { redirects: fileRedirects, errors: fileParseErrors },
     { redirects: parsedConfigRedirects, errors: configParseErrors },
@@ -47,5 +52,3 @@ const getConfigRedirects = async function (netlifyConfigPath) {
 
   return await parseConfigRedirects(netlifyConfigPath)
 }
-
-module.exports = { parseAllRedirects }

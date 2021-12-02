@@ -1,5 +1,5 @@
 // Normalize conditions
-const normalizeConditions = function (rawConditions) {
+export const normalizeConditions = function (rawConditions) {
   const caseNormalizedConditions = normalizeConditionCases(rawConditions)
   const listNormalizedConditions = normalizeConditionLists(caseNormalizedConditions)
   return listNormalizedConditions
@@ -36,5 +36,3 @@ const normalizeConditionList = function (conditions, name) {
 }
 
 const CONDITION_LIST_REGEXP = /\s*,\s*/gu
-
-module.exports = { normalizeConditions }

@@ -1,7 +1,7 @@
-const test = require('ava')
-const { each } = require('test-each')
+import test from 'ava'
+import { each } from 'test-each'
 
-const { validateSuccess } = require('./helpers/main')
+import { validateSuccess } from './helpers/main.js'
 
 each(
   [

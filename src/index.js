@@ -1,3 +1,1 @@
-const { parseAllRedirects } = require('./all')
-
-module.exports = { parseAllRedirects }
+export { parseAllRedirects } from './all.js'
