@@ -9,7 +9,7 @@
     "prepublishOnly": "npm ci && npm test",
     "test": "run-s format test:dev",
     "test:dev": "ava",
-    "test:ci": "nyc -r lcovonly -r text -r json ava",
+    "test:ci": "c8 -r lcovonly -r text -r json ava",
     "format": "run-s format:check-fix:*",
     "format:ci": "run-s format:check:*",
     "format:check-fix:lint": "run-e format:check:lint format:fix:lint",
@@ -40,7 +40,7 @@
   "devDependencies": {
     "@netlify/eslint-config-node": "^4.1.0",
     "ava": "^3.0.0",
-    "nyc": "^15.1.0",
+    "c8": "^7.11.0",
     "test-each": "^2.0.1"
   },
   "files": [
