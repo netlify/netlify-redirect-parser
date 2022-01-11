@@ -11,10 +11,8 @@ const isError = function (result) {
 
 // Concatenate an array of `{ redirects, erors }`
 export const concatResults = function (resultsArrays) {
-  // eslint-disable-next-line unicorn/prefer-spread
-  const redirects = [].concat(...resultsArrays.map(getRedirects))
-  // eslint-disable-next-line unicorn/prefer-spread
-  const errors = [].concat(...resultsArrays.map(getErrors))
+  const redirects = resultsArrays.flatMap(getRedirects)
+  const errors = resultsArrays.flatMap(getErrors)
   return { redirects, errors }
 }
 

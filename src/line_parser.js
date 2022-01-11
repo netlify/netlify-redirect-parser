@@ -46,7 +46,7 @@ const parseRedirects = async function (redirectFile) {
 const readRedirectFile = async function (redirectFile) {
   try {
     return await pReadFile(redirectFile, 'utf8')
-  } catch (error) {
+  } catch {
     return new Error(`Could not read redirects file: ${redirectFile}`)
   }
 }
