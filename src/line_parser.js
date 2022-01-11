@@ -1,12 +1,9 @@
-import { readFile } from 'fs'
-import { promisify } from 'util'
+import { promises as fs } from 'fs'
 
 import pathExists from 'path-exists'
 
 import { splitResults } from './results.js'
 import { isUrl } from './url.js'
-
-const pReadFile = promisify(readFile)
 
 // Parse `_redirects` file to an array of objects.
 // Each line in that file must be either:
@@ -45,7 +42,7 @@ const parseRedirects = async function (redirectFile) {
 
 const readRedirectFile = async function (redirectFile) {
   try {
-    return await pReadFile(redirectFile, 'utf8')
+    return await fs.readFile(redirectFile, 'utf8')
   } catch {
     return new Error(`Could not read redirects file: ${redirectFile}`)
   }

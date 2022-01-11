@@ -1,12 +1,9 @@
-import { readFile } from 'fs'
-import { promisify } from 'util'
+import { promises as fs } from 'fs'
 
 import pathExists from 'path-exists'
 import { parse as loadToml } from 'toml'
 
 import { splitResults } from './results.js'
-
-const pReadFile = promisify(readFile)
 
 // Parse `redirects` field in "netlify.toml" to an array of objects.
 // This field is already an array of objects so it only validates and
@@ -23,7 +20,7 @@ export const parseConfigRedirects = async function (netlifyConfigPath) {
 // Load the configuration file and parse it (TOML)
 const parseConfig = async function (configPath) {
   try {
-    const configString = await pReadFile(configPath, 'utf8')
+    const configString = await fs.readFile(configPath, 'utf8')
     const config = loadToml(configString)
     // Convert `null` prototype objects to normal plain objects
     const { redirects = [] } = JSON.parse(JSON.stringify(config))
