@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs'
 
-import pathExists from 'path-exists'
+import { pathExists } from 'path-exists'
 
 import { splitResults } from './results.js'
 import { isUrl } from './url.js'
