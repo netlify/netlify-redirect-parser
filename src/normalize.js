@@ -3,6 +3,7 @@ import isPlainObj from 'is-plain-obj'
 
 import { normalizeConditions } from './conditions.js'
 import { splitResults } from './results.js'
+import { normalizeStatus } from './status.js'
 import { isUrl } from './url.js'
 
 // Validate and normalize an array of `redirects` objects.
@@ -64,9 +65,10 @@ const parseRedirectObject = function (
     throw new Error('"headers" field must be an object')
   }
 
-  const finalTo = addForwardRule(from, status, to)
+  const statusA = normalizeStatus(status)
+  const finalTo = addForwardRule(from, statusA, to)
   const { scheme, host, path } = parseFrom(from)
-  const proxy = isProxy(status, finalTo)
+  const proxy = isProxy(statusA, finalTo)
   const normalizedConditions = normalizeConditions(conditions)
 
   // We ensure the return value has the same shape as our `netlify-commons`
@@ -75,7 +77,7 @@ const parseRedirectObject = function (
     from,
     query,
     to: finalTo,
-    status,
+    status: statusA,
     force,
     conditions: normalizedConditions,
     signed,

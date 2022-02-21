@@ -130,6 +130,20 @@ each(
       ],
     },
     {
+      title: 'status_string',
+      input: {
+        netlifyConfigPath: 'status_string',
+      },
+      output: [
+        {
+          from: '/old-path',
+          path: '/old-path',
+          to: '/new-path',
+          status: 200,
+        },
+      ],
+    },
+    {
       title: 'from_forward',
       input: {
         netlifyConfigPath: 'from_forward',
@@ -331,6 +345,34 @@ each(
         netlifyConfigPath: 'invalid_no_to',
       },
       errorMessage: /Missing "to"/,
+    },
+    {
+      title: 'invalid_status_string',
+      input: {
+        netlifyConfigPath: 'invalid_status_string',
+      },
+      errorMessage: /Invalid status code/,
+    },
+    {
+      title: 'invalid_status_negative',
+      input: {
+        netlifyConfigPath: 'invalid_status_negative',
+      },
+      errorMessage: /Invalid status code/,
+    },
+    {
+      title: 'invalid_status_high',
+      input: {
+        netlifyConfigPath: 'invalid_status_high',
+      },
+      errorMessage: /Invalid status code/,
+    },
+    {
+      title: 'invalid_status_empty',
+      input: {
+        netlifyConfigPath: 'invalid_status_empty',
+      },
+      errorMessage: /Invalid status code/,
     },
     {
       title: 'invalid_forward_status',
