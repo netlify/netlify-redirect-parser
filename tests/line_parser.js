@@ -451,13 +451,6 @@ each(
       errorMessage: /must not start/,
     },
     {
-      title: 'invalid_status',
-      input: {
-        redirectsFiles: ['invalid_status'],
-      },
-      errorMessage: /Invalid status code/,
-    },
-    {
       title: 'invalid_no_to_no_status',
       input: {
         redirectsFiles: ['invalid_no_to_no_status'],

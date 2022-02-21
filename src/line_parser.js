@@ -3,7 +3,6 @@ import { promises as fs } from 'fs'
 import { pathExists } from 'path-exists'
 
 import { splitResults } from './results.js'
-import { transtypeStatusCode, isValidStatusCode } from './status.js'
 import { isUrl } from './url.js'
 
 // Parse `_redirects` file to an array of objects.
@@ -105,7 +104,7 @@ const parseParts = function (from, parts) {
   // Optional `to` field when using a forward rule.
   // The `to` field is added and validated later on, so we can leave it
   // `undefined`
-  if (isValidStatusCode(transtypeStatusCode(parts[0]))) {
+  if (isStatusCode(parts[0])) {
     return { queryParts: [], to: undefined, lastParts: parts }
   }
 
@@ -124,20 +123,23 @@ const isToPart = function (part) {
   return part.startsWith('/') || isUrl(part)
 }
 
+const isStatusCode = function (part) {
+  return Number.isInteger(getStatusCode(part))
+}
+
 // Parse the `status` part
 const parseStatus = function (statusPart) {
   if (statusPart === undefined) {
     return {}
   }
 
-  const status = transtypeStatusCode(statusPart)
-
-  if (!isValidStatusCode(status)) {
-    return { status: statusPart, force: false }
-  }
-
+  const status = getStatusCode(statusPart)
   const force = statusPart.endsWith('!')
   return { status, force }
+}
+
+const getStatusCode = function (statusPart) {
+  return Number.parseInt(statusPart)
 }
 
 // Part key=value pairs used for both the `query` and `conditions` parts
