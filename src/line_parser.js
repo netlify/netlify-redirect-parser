@@ -24,12 +24,12 @@ import { isUrl } from './url.js'
 //     - "Sign" is a special condition
 // Unlike "redirects" in "netlify.toml", the "headers" and "edge_handlers"
 // cannot be specified.
-export const parseFileRedirects = async function (redirectFile) {
-  const results = await parseRedirects(redirectFile)
+export const parseFileRedirects = async function (redirectFile, featureFlags) {
+  const results = await parseRedirects(redirectFile, featureFlags)
   return splitResults(results)
 }
 
-const parseRedirects = async function (redirectFile) {
+const parseRedirects = async function (redirectFile, featureFlags) {
   if (!(await pathExists(redirectFile))) {
     return []
   }
@@ -38,7 +38,11 @@ const parseRedirects = async function (redirectFile) {
   if (typeof text !== 'string') {
     return [text]
   }
-  return text.split('\n').map(normalizeLine).filter(hasRedirect).map(parseRedirect)
+  return text
+    .split('\n')
+    .map(normalizeLine)
+    .filter(hasRedirect)
+    .map((redirectLine) => parseRedirect(redirectLine, featureFlags))
 }
 
 const readRedirectFile = async function (redirectFile) {
@@ -57,9 +61,9 @@ const hasRedirect = function ({ line }) {
   return line !== '' && !isComment(line)
 }
 
-const parseRedirect = function ({ line, index }) {
+const parseRedirect = function ({ line, index }, featureFlags) {
   try {
-    return parseRedirectLine(line)
+    return parseRedirectLine(line, featureFlags)
   } catch (error) {
     return new Error(`Could not parse redirect line ${index + 1}:
   ${line}
@@ -68,7 +72,7 @@ ${error.message}`)
 }
 
 // Parse a single redirect line
-const parseRedirectLine = function (line) {
+const parseRedirectLine = function (line, featureFlags) {
   const [from, ...parts] = trimComment(line.split(LINE_TOKENS_REGEXP))
 
   if (parts.length === 0) {
@@ -82,7 +86,7 @@ const parseRedirectLine = function (line) {
   } = parseParts(from, parts)
 
   const query = parsePairs(queryParts)
-  const { status, force } = parseStatus(statusPart)
+  const { status, force } = parseStatus(statusPart, featureFlags)
   const { Sign, signed = Sign, ...conditions } = parsePairs(conditionsParts)
   return { from, query, to, status, force, conditions, signed }
 }
@@ -125,14 +129,14 @@ const isToPart = function (part) {
 }
 
 // Parse the `status` part
-const parseStatus = function (statusPart) {
+const parseStatus = function (statusPart, featureFlags) {
   if (statusPart === undefined) {
     return {}
   }
 
   const status = transtypeStatusCode(statusPart)
 
-  if (!isValidStatusCode(status)) {
+  if (featureFlags.redirects_parser_normalize_status && !isValidStatusCode(status)) {
     return { status: statusPart, force: false }
   }
 

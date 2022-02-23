@@ -10,20 +10,27 @@ export const parseAllRedirects = async function ({
   redirectsFiles = [],
   netlifyConfigPath,
   configRedirects = [],
-  ...opts
+  minimal = false,
+  featureFlags = {},
 }) {
   const [
     { redirects: fileRedirects, errors: fileParseErrors },
     { redirects: parsedConfigRedirects, errors: configParseErrors },
-  ] = await Promise.all([getFileRedirects(redirectsFiles), getConfigRedirects(netlifyConfigPath)])
-  const { redirects: normalizedFileRedirects, errors: fileNormalizeErrors } = normalizeRedirects(fileRedirects, opts)
+  ] = await Promise.all([getFileRedirects(redirectsFiles, featureFlags), getConfigRedirects(netlifyConfigPath)])
+  const { redirects: normalizedFileRedirects, errors: fileNormalizeErrors } = normalizeRedirects(
+    fileRedirects,
+    minimal,
+    featureFlags,
+  )
   const { redirects: normalizedParsedConfigRedirects, errors: parsedConfigNormalizeErrors } = normalizeRedirects(
     parsedConfigRedirects,
-    opts,
+    minimal,
+    featureFlags,
   )
   const { redirects: normalizedConfigRedirects, errors: configNormalizeErrors } = normalizeRedirects(
     configRedirects,
-    opts,
+    minimal,
+    featureFlags,
   )
   const { redirects, errors: mergeErrors } = mergeRedirects({
     fileRedirects: normalizedFileRedirects,
@@ -40,8 +47,10 @@ export const parseAllRedirects = async function ({
   return { redirects, errors }
 }
 
-const getFileRedirects = async function (redirectsFiles) {
-  const resultsArrays = await Promise.all(redirectsFiles.map(parseFileRedirects))
+const getFileRedirects = async function (redirectsFiles, featureFlags) {
+  const resultsArrays = await Promise.all(
+    redirectsFiles.map((redirectFile) => parseFileRedirects(redirectFile, featureFlags)),
+  )
   return concatResults(resultsArrays)
 }
 

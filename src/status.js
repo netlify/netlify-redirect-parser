@@ -18,8 +18,5 @@ export const transtypeStatusCode = function (status) {
 
 // Check whether the field is a valid status code
 export const isValidStatusCode = function (status) {
-  return Number.isInteger(status) && status >= MIN_STATUS && status <= MAX_STATUS
+  return Number.isInteger(status)
 }
-
-const MIN_STATUS = 100
-const MAX_STATUS = 599

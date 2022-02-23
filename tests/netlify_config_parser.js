@@ -354,20 +354,6 @@ each(
       errorMessage: /Invalid status code/,
     },
     {
-      title: 'invalid_status_negative',
-      input: {
-        netlifyConfigPath: 'invalid_status_negative',
-      },
-      errorMessage: /Invalid status code/,
-    },
-    {
-      title: 'invalid_status_high',
-      input: {
-        netlifyConfigPath: 'invalid_status_high',
-      },
-      errorMessage: /Invalid status code/,
-    },
-    {
       title: 'invalid_status_empty',
       input: {
         netlifyConfigPath: 'invalid_status_empty',
