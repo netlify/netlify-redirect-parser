@@ -26,6 +26,7 @@ const parseRedirects = async function ({ redirectsFiles, netlifyConfigPath, conf
     ...(netlifyConfigPath && { netlifyConfigPath: addConfigFixtureDir(netlifyConfigPath) }),
     configRedirects,
     minimal,
+    featureFlags: { redirects_parser_normalize_status: true },
   })
 }
 
