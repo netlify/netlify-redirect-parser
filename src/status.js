@@ -11,7 +11,9 @@ export const normalizeStatus = function (status) {
   return statusCode
 }
 
-// Transtype `status` string to a number
+// Transtype `status` string to a number.
+// `status` might be a string ending with `!`. If so, `Number.parseInt()` strips
+// and ignores it.
 export const transtypeStatusCode = function (status) {
   return Number.parseInt(status)
 }
