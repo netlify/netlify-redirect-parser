@@ -9,23 +9,23 @@ import { isUrl } from './url.js'
 // Validate and normalize an array of `redirects` objects.
 // This step is performed after `redirects` have been parsed from either
 // `netlify.toml` or `_redirects`.
-export const normalizeRedirects = function (redirects, minimal, featureFlags) {
+export const normalizeRedirects = function (redirects, minimal) {
   if (!Array.isArray(redirects)) {
     const error = new TypeError(`Redirects must be an array not: ${redirects}`)
     return splitResults([error])
   }
 
-  const results = redirects.map((obj, index) => parseRedirect(obj, index, minimal, featureFlags))
+  const results = redirects.map((obj, index) => parseRedirect(obj, index, minimal))
   return splitResults(results)
 }
 
-const parseRedirect = function (obj, index, minimal, featureFlags) {
+const parseRedirect = function (obj, index, minimal) {
   if (!isPlainObj(obj)) {
     return new TypeError(`Redirects must be objects not: ${obj}`)
   }
 
   try {
-    return parseRedirectObject(obj, minimal, featureFlags)
+    return parseRedirectObject(obj, minimal)
   } catch (error) {
     return new Error(`Could not parse redirect number ${index + 1}:
   ${JSON.stringify(obj)}
@@ -56,7 +56,6 @@ const parseRedirectObject = function (
     headers = {},
   },
   minimal,
-  featureFlags,
 ) {
   if (from === undefined) {
     throw new Error('Missing "from" field')
@@ -66,7 +65,7 @@ const parseRedirectObject = function (
     throw new Error('"headers" field must be an object')
   }
 
-  const statusA = featureFlags.redirects_parser_normalize_status ? normalizeStatus(status) : status
+  const statusA = normalizeStatus(status)
   const finalTo = addForwardRule(from, statusA, to)
   const { scheme, host, path } = parseFrom(from)
   const proxy = isProxy(statusA, finalTo)
