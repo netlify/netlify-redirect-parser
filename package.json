@@ -33,7 +33,7 @@
   "author": "Netlify",
   "license": "MIT",
   "dependencies": {
-    "filter-obj": "^3.0.0",
+    "filter-obj": "^4.0.0",
     "is-plain-obj": "^4.0.0",
     "path-exists": "^5.0.0",
     "toml": "^3.0.0"
