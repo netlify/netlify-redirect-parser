@@ -1,3 +1,8 @@
+> ## !important Notice
+>
+> This repository was moved into the mono repository of [github.com/netlify/build](https://github.com/netlify/build) The
+> package name and the versions are preserved!
+
 # Netlify Redirect Parser
 
 [![Coverage Status](https://codecov.io/gh/netlify/netlify-redirect-parser/branch/main/graph/badge.svg)](https://codecov.io/gh/netlify/netlify-redirect-parser)
